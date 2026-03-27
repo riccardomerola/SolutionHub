@@ -196,14 +196,18 @@ class DetailWindow(ctk.CTkToplevel):
         # Descrizione dettagliata del problema
         self.label_win_description = ctk.CTkLabel(master=self.win_frame, text="Descrizione del problema", font=("Roboto", 18, "bold"))
         self.label_win_description.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nw")
-        self.text_win_description_detail = ctk.CTkLabel(master=self.win_frame, text=self.problem, font=("Roboto", 15))
-        self.text_win_description_detail.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nw")
+        self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color="#2B2B2B")
+        self.text_win_description_detail.grid(row=1, column=0, padx=0, pady=(0, 10), sticky="nsew")
+        self.text_win_description_detail.insert("0.0", self.problem)
+        self.text_win_description_detail.configure(state="disabled")
 
         # Descrizione dettagliata della soluzione
         self.label_win_solution = ctk.CTkLabel(master=self.win_frame, text="Descrizione della soluzione", font=("Roboto", 18, "bold"))
         self.label_win_solution.grid(row=2, column=0, padx=10, pady=(10, 0), sticky="nw")
-        self.text_win_solution_detail = ctk.CTkLabel(master=self.win_frame, text=self.solution, font=("Roboto", 15))
-        self.text_win_solution_detail.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="nw")
+        self.text_win_solution_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color="#2B2B2B")
+        self.text_win_solution_detail.grid(row=3, column=0, padx=0, pady=(0, 10), sticky="nsew")
+        self.text_win_solution_detail.insert("0.0", self.solution)
+        self.text_win_description_detail.configure(state="disabled")
 
         # Pulsante visualizza documento e chiudi finestra
         self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Visualizza documento 📄", font=("Roboto", 15))
