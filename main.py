@@ -11,7 +11,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("App")
+        self.title("Archivio Errori")
         self.center_win_app(1500, 830)
 
         # configurazione griglia principale
@@ -90,6 +90,12 @@ class App(ctk.CTk):
         if not self.selected_row_data:
             print("Nessuna riga selezionata")
             return
+        
+        # Se la riga è vuota non compare la finestra
+        if self.selected_row_data[0] == ' ':
+            print("Riga vuota")
+            return
+        
         CancelConfirm(self, self.selected_row_data)
 
     # Funzione per centrare la finestra nello schermo
@@ -128,6 +134,12 @@ class App(ctk.CTk):
         # Recupera riga seleizonata
         if not self.selected_row_data:
             return
+        
+        # Se la riga è vuota non compare la finestra
+        if self.selected_row_data[0] == ' ':
+            print("Riga vuota")
+            return
+        
         DetailWindow(self, self.selected_row_data)
 
     # Funzione per formattare i dati del database in liste di liste per la CTkTable
