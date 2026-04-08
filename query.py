@@ -37,6 +37,7 @@ def delete_record(id):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("DELETE FROM archivio_errori WHERE id=?", (id, ))
+        conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
     

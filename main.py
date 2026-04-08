@@ -262,6 +262,7 @@ class CancelConfirm(ctk.CTkToplevel):
         super().__init__(master)
         
         self.id, self.component, self.problem, self.solution, self.document = data
+        self.master = master
 
         self.title("Conferma cancellazione")
         self.center_cancell_win(400, 350)
@@ -282,7 +283,7 @@ class CancelConfirm(ctk.CTkToplevel):
         self.label_cancel_confirm.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # Pulsanti di conferma cancellazione o chiudi finestra (senza cancellare record)
-        self.button_delete_record = ctk.CTkButton(master=self.cancel_win_frame, text="      Cancella record 🗑️", font=("Roboto", 15), fg_color="red", hover_color="#C82333")
+        self.button_delete_record = ctk.CTkButton(master=self.cancel_win_frame, text="      Cancella record 🗑️", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.delete_record)
         self.button_delete_record.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
         self.button_back = ctk.CTkButton(master=self.cancel_win_frame, text="Annulla operazione ↩️", font=("Roboto", 15), command=self.destroy)
         self.button_back.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
@@ -291,6 +292,7 @@ class CancelConfirm(ctk.CTkToplevel):
         self.after(10, self.grab_set)
         self.after(10, self.focus_force)
 
+    # Funzione per centrare la finestra nello schermo
     def center_cancell_win(self, width, height):
         self.update_idletasks()
         screen_width = self.winfo_screenwidth()
@@ -300,6 +302,13 @@ class CancelConfirm(ctk.CTkToplevel):
         x = int(((screen_width / 2) - (width / 2)) * scale)
         y = int(((screen_height / 2) - (height / 2)) * scale)
         self.geometry(f"{width}x{height}+{x}+{y}")
+    
+    # Funzione per eliminare il record dal database
+    def delete_record(self):
+        query.delete_record(self.id)
+        self.master.load_data()
+        self.destroy()
+        
 
 
 # Classe per la finestra di conferma cancellazione record
@@ -333,6 +342,7 @@ class DocumentExistAllert(ctk.CTkToplevel):
         self.after(10, self.grab_set)
         self.after(10, self.focus_force)
 
+    # Funzione per centrare la finestra nello schermo
     def center_document_exist_win(self, width, height):
         self.update_idletasks()
         screen_width = self.winfo_screenwidth()
