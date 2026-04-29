@@ -70,7 +70,7 @@ class App(ctk.CTk):
         self.scrollable_frame.grid_rowconfigure((0, 1), weight=1)
 
         # Definizione della tabella, della sua header e delle dimensioni delle colonne
-        headers = "        ID\t          Componente\t\t                 Problema\t\t\t\t                Soluzione\t\t\t         Documento"
+        headers = "      ID\t      Componente\t\t                 Problema\t\t\t\t                    Soluzione\t\t          Documento"
         self.header_table = ctk.CTkLabel(master=self.scrollable_frame, width=1150, corner_radius=4, text=headers, anchor="w",  font=("Roboto", 18, "bold"))
         self.header_table.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
 
@@ -242,7 +242,11 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per aggiungere un documento
     def add_document(self):
-        DocumentExistAllert(self)
+        print(self.document)
+        if self.document == "Si":
+            DocumentExistAllert(self)
+        else:
+            DocumentNotExistAllert(self)
 
     # Funzione per centrare la finestra di dettaglio all'apertura
     def center_win_detail(self, width, height):
@@ -315,7 +319,7 @@ class CancelConfirm(ctk.CTkToplevel):
 class DocumentExistAllert(ctk.CTkToplevel):
     def __init__(self, master):
         super().__init__(master)
-        
+
         self.title("Documento già esistente")
         self.center_document_exist_win(450, 250)
         self.resizable(False, False)
@@ -353,6 +357,45 @@ class DocumentExistAllert(ctk.CTkToplevel):
         y = int(((screen_height / 2) - (height / 2)) * scale)
         self.geometry(f"{width}x{height}+{x}+{y}")
 
+
+class DocumentNotExistAllert(ctk.CTkToplevel):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.title("Documento non esistente")
+        self.center_document_exist_win(450, 250)
+        self.resizable(False, False)
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        # ======================= FRAME =======================
+        self.document_not_exist_win_frame = ctk.CTkFrame(self, corner_radius=4)
+        self.document_not_exist_win_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.document_not_exist_win_frame.grid_columnconfigure(0, weight=1)
+        self.document_not_exist_win_frame.grid_rowconfigure((0, 1, 2), weight=1)
+
+        self.label_document_not_exist = ctk.CTkLabel(master=self.document_not_exist_win_frame, text="Per questo record NON è presente un documento.\nVuoi aggiungerlo?", font=("Roboto", 17, "bold"))
+        self.label_document_not_exist.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.button_add_document = ctk.CTkButton(master=self.document_not_exist_win_frame, text="Aggiungi documento 📄", font=("Roboto", 15))
+        self.button_add_document.grid(row=1, column=0, padx=10, pady=10, sticky="sew")
+        self.button_close_win_document = ctk.CTkButton(master=self.document_not_exist_win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
+        self.button_close_win_document.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="new")
+
+        self.attributes("-topmost", True)
+        self.after(10, self.grab_set)
+        self.after(10, self.focus_force)
+
+    # Funzione per centrare la finestra nello schermo
+    def center_document_exist_win(self, width, height):
+        self.update_idletasks()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        scale = self._get_window_scaling()
+
+        x = int(((screen_width / 2) - (width / 2)) * scale)
+        y = int(((screen_height / 2) - (height / 2)) * scale)
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
 if __name__ == "__main__":
     db.create_table()
