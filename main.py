@@ -2,7 +2,7 @@ import customtkinter as ctk
 from CTkTable import *
 import db
 import query
-from tkinter import filedialog
+from tkinter import filedialog, TclError
 from CTkMessagebox import CTkMessagebox
 import shutil
 import os
@@ -190,8 +190,8 @@ class App(ctk.CTk):
         # Messaggio per chiedere se si vuole allegare un file
         msg = CTkMessagebox(
             title="Allega file",
-            message="Vuoi allegare un file a questo record?",
-            icon="warning",
+            message="Vuoi allegare un file al record?",
+            icon="info",
             option_1="Si",
             option_2="No",
             justify="center"
@@ -322,7 +322,6 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per aggiungere un documento
     def add_document(self):
-        print(self.document)
         if self.document == "Si":
             DocumentExistAllert(self)
         else:
@@ -405,8 +404,14 @@ class CancelConfirm(ctk.CTkToplevel):
             os.remove(document)
             print(f"Documento {document} rimosso")
             return
+
+        msg = CTkMessagebox(title="Not found",
+                            message="Documento non trovato",
+                            icon="warning",
+                            option_1="Ok",
+                            justify="center")
         print("Documento non trovato")
-        
+
 
 # Classe per la finestra di conferma cancellazione record
 class DocumentExistAllert(ctk.CTkToplevel):
@@ -424,16 +429,16 @@ class DocumentExistAllert(ctk.CTkToplevel):
         self.document_exist_win_frame = ctk.CTkFrame(self, corner_radius=4)
         self.document_exist_win_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.document_exist_win_frame.grid_columnconfigure(0, weight=1)
-        self.document_exist_win_frame.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.document_exist_win_frame.grid_rowconfigure((0, 1, 2), weight=1)
 
         self.label_document_exist = ctk.CTkLabel(master=self.document_exist_win_frame, text="Per questo record è già presente un documento.\nVuoi sostituirlo?", font=("Roboto", 17, "bold"))
         self.label_document_exist.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.button_view_document = ctk.CTkButton(master=self.document_exist_win_frame, text="Visualizza documento 📄", font=("Roboto", 15))
-        self.button_view_document.grid(row=1, column=0, padx=10, pady=10, sticky="sew")
+        #self.button_view_document = ctk.CTkButton(master=self.document_exist_win_frame, text="Visualizza documento 📄", font=("Roboto", 15))
+        #self.button_view_document.grid(row=1, column=0, padx=10, pady=10, sticky="sew")
         self.button_replace_document = ctk.CTkButton(master=self.document_exist_win_frame, text="Sostituisci documento ↩️", font=("Roboto", 15))
-        self.button_replace_document.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+        self.button_replace_document.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
         self.button_close_win_document = ctk.CTkButton(master=self.document_exist_win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
-        self.button_close_win_document.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="new")
+        self.button_close_win_document.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="new")
 
         self.attributes("-topmost", True)
         self.after(10, self.grab_set)
