@@ -123,20 +123,23 @@ class App(ctk.CTk):
 
     # Funzione "intelligente" per gestire i click sui record della tabella
     def handle_table_click(self, event):
-        row = event["row"]
-        # se il click è sulla riga 0 di indice si ignora
-        if row < 0:
-            return
-        
-        # Deseleziona tutto prima di una nuova selezione, ciclo che evita l'accumulo di selezioni
-        for i in range(self.value_table.rows):
-            self.value_table.deselect_row(i)
+        try:
+            row = event["row"]
+            # se il click è sulla riga 0 di indice si ignora
+            if row < 0:
+                return
+            
+            # Deseleziona tutto prima di una nuova selezione, ciclo che evita l'accumulo di selezioni
+            for i in range(self.value_table.rows):
+                self.value_table.deselect_row(i)
 
-        self.selected_row_data = None
-        # Selezione della riga corrente
-        self.value_table.select_row(row)
-        # Salva i dati della riga selezionata
-        self.selected_row_data = self.value_table.get_row(row)
+            self.selected_row_data = None
+            # Selezione della riga corrente
+            self.value_table.select_row(row)
+            # Salva i dati della riga selezionata
+            self.selected_row_data = self.full_data[row]
+        except:
+            return
     
     # Funzione per l'apertura della finestra al doppio click
     def handle_double_click(self, event):
@@ -160,17 +163,21 @@ class App(ctk.CTk):
                                   row['Componente'], 
                                   row['Problema'], 
                                   row['Soluzione'], 
-                                  row['Documentazione']])
+                                  row['Documentazione'],
+                                  row['Percorso']])
         
         return formatted_data
 
     # Funzione per caricare i dati del database dentro alla tabella
     def load_data(self):
         raw_rows = query.get_database()                 # lista di dizionari (coppie key-value)
-        values = self.format_data(raw_rows)             # lista di liste (solo valori)
+        #values = self.format_data(raw_rows)             # lista di liste (solo valori)
 
-        self.value_table.values = values
-        self.value_table.update_values(values)
+        self.full_data = self.format_data(raw_rows)
+        # Solo prime 5 colonne per la tabella
+        visible_values = [row[:5] for row in self.full_data]
+        self.value_table.values = visible_values
+        self.value_table.update_values(visible_values)
 
         self.selected_row_data = None
 
@@ -276,7 +283,13 @@ class DetailWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 
-        self.id, self.component, self.problem, self.solution, self.document = data
+        self.id, self.component, self.problem, self.solution, self.document, self.root = data 
+        print("id: ", self.id)
+        print("component: ", self.component)
+        print("problem: ", self.problem)
+        print("solution: ", self.solution)
+        print("document: ", self.document)
+        print("root: ", self.root)
 
         self.title(f"Dettaglio problema # {self.id}")
         self.center_win_detail(500, 450)
@@ -310,7 +323,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_description_detail.configure(state="disabled")
 
         # Pulsante visualizza documento e chiudi finestra
-        self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Visualizza documento 📄", font=("Roboto", 15))
+        self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Visualizza documento 📄", font=("Roboto", 15), command=self.view_document)
         self.button_view_doc.grid(row=4, column=0, padx=10, pady=10, sticky="new")
         self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi documento 🆕", font=("Roboto", 15), command=self.add_document)
         self.button_add_doc.grid(row=4, column=1, padx=10, pady=10, sticky="new")
@@ -319,6 +332,11 @@ class DetailWindow(ctk.CTkToplevel):
 
         # Necessario per portare la finestra in primo piano
         self.after(100, self.lift)
+
+    # Funzione per visualizzare il documento allegato
+    def view_document(self):
+        if self.root != None:
+            os.startfile(self.root)
 
     # Funzione per aggiungere un documento
     def add_document(self):
@@ -344,7 +362,7 @@ class CancelConfirm(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
         
-        self.id, self.component, self.problem, self.solution, self.document = data
+        self.id, self.component, self.problem, self.solution, self.document, self.root = data
         self.master = master
 
         self.title("Conferma cancellazione")
