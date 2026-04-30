@@ -24,7 +24,8 @@ def create_table():
     Componente TEXT NOT NULL,
     Problema TEXT NOT NULL,
     Soluzione TEXT NOT NULL,
-    Documentazione TEXT);
+    Documentazione TEXT,
+    Percorso TEXT DEFAULT NULL);
     """
 
     cursor.execute(query)

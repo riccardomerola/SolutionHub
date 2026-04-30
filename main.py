@@ -10,7 +10,7 @@ import os
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
-documents_root = "C:\\BRETON\\Appunti\\Programmazione\\Archivio Errori\\documents"
+documents_root = r"C:\BRETON\Appunti\Programmazione\Archivio Errori\documents"
 
 # Classe della finestra principale
 class App(ctk.CTk):
@@ -262,9 +262,7 @@ class App(ctk.CTk):
         shutil.copy(selected_file, destination_path)    # copia file al percorso
         print("File sovrascritto")
         document = "Si"
-        
-        print(f"Aggiungo al db {document}")
-
+        root = destination_path
         query.insert_record(id, component, description, solution, document, root)
         self.load_data()
 
@@ -365,7 +363,8 @@ class CancelConfirm(ctk.CTkToplevel):
         # Label di attenzione
         self.label_cancel = ctk.CTkLabel(master=self.cancel_win_frame, text="⚠️ ATTENZIONE ⚠️", font=("Roboto", 18, "bold"), text_color="red")
         self.label_cancel.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
-        self.label_cancel_confirm = ctk.CTkLabel(master=self.cancel_win_frame, text=f"Il record {self.id} verrà cancellato definitivamente.\nConfermi la cancellazione?", font=("Roboto", 15))
+        self.label_cancel_confirm = ctk.CTkLabel(master=self.cancel_win_frame, 
+                                                 text=f"Il record {self.id} verrà cancellato definitivamente.\nVerrà cancellato anche l'eventuale file allegato!\n\nConfermi la cancellazione?", font=("Roboto", 15))
         self.label_cancel_confirm.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # Pulsanti di conferma cancellazione o chiudi finestra (senza cancellare record)
@@ -391,11 +390,23 @@ class CancelConfirm(ctk.CTkToplevel):
     
     # Funzione per eliminare il record dal database
     def delete_record(self):
+        row = query.get_dettaglio(self.id)
+        document = row[0]["Percorso"]
+        if document != None:
+            self.delete_document(document)
+        
         query.delete_record(self.id)
         self.master.load_data()
         self.destroy()
+    
+    # Funzione per eliminare il documento allegato
+    def delete_document(self, document):
+        if os.path.isfile(document):
+            os.remove(document)
+            print(f"Documento {document} rimosso")
+            return
+        print("Documento non trovato")
         
-
 
 # Classe per la finestra di conferma cancellazione record
 class DocumentExistAllert(ctk.CTkToplevel):
