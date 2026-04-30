@@ -2,10 +2,15 @@ import customtkinter as ctk
 from CTkTable import *
 import db
 import query
+from tkinter import filedialog
+from CTkMessagebox import CTkMessagebox
+import shutil
+import os
 
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
+documents_root = "C:\\BRETON\\Appunti\\Programmazione\\Archivio Errori\\documents"
 
 # Classe della finestra principale
 class App(ctk.CTk):
@@ -46,8 +51,8 @@ class App(ctk.CTk):
         self.text_solution.grid(column=0, row=5, padx=10, pady=(0, 10), sticky="nsew")
 
         # Pulsanti per allegare documenti, salvare il db, chiudere il programma
-        self.button_allega = ctk.CTkButton(master=self.left_frame, text="Allega documento 📁", font=("Roboto", 15))
-        self.button_allega.grid(column=0, row=6, padx=10, pady=10, sticky="ew")
+        #self.button_allega = ctk.CTkButton(master=self.left_frame, text="Allega documento 📁", font=("Roboto", 15), command=self.add_document)
+        #self.button_allega.grid(column=0, row=6, padx=10, pady=10, sticky="ew")
         self.button_save = ctk.CTkButton(master=self.left_frame, text="Salva in database 💾", font=("Roboto", 15), fg_color="green", hover_color="#218838", command=self.insert_record)
         self.button_save.grid(column=0, row=7, padx=10, pady=10, sticky="ew")
         self.button_exit = ctk.CTkButton(master=self.left_frame, text="Esci dal programma ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.quit)
@@ -128,10 +133,8 @@ class App(ctk.CTk):
             self.value_table.deselect_row(i)
 
         self.selected_row_data = None
-
         # Selezione della riga corrente
         self.value_table.select_row(row)
-
         # Salva i dati della riga selezionata
         self.selected_row_data = self.value_table.get_row(row)
     
@@ -177,13 +180,92 @@ class App(ctk.CTk):
         raw_row = query.get_max_id()
         current_id = raw_row[0]["ID"]
 
+        # Calcola ID del nuovo record e legge le entry
         id = int(current_id) + 1
         component = self.entry_component.get().strip()
         description = self.text_description.get("1.0", "end-1c").strip()
         solution = self.text_solution.get("1.0", "end-1c").strip()
-        document = "No"
+        root = None
+        
+        # Messaggio per chiedere se si vuole allegare un file
+        msg = CTkMessagebox(
+            title="Allega file",
+            message="Vuoi allegare un file a questo record?",
+            icon="warning",
+            option_1="Si",
+            option_2="No",
+            justify="center"
+        )
 
-        query.insert_record(id, component, description, solution, document)
+        # Se non si vuole aggiungere un file
+        if msg.get() == "No":
+            print("Non voglio aggiungere")
+            document = "No"
+            query.insert_record(id, component, description, solution, document, root)
+            self.load_data()
+            self.entry_component.delete("0", "end")
+            self.text_description.delete("0.0", "end")
+            self.text_solution.delete("0.0", "end")
+            return
+        
+        # Apre file explorer: restituisce il percorso in stringa se seleziona file, altrimenti stringa vuota 
+        selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
+
+        # Se si clicca "Si" ma non si seleziona nessun file
+        if not selected_file:
+            print("File non selezionato")
+            document = "No"
+            query.insert_record(id, component, description, solution, document, root)
+            self.load_data()
+            self.entry_component.delete("0", "end")
+            self.text_description.delete("0.0", "end")
+            self.text_solution.delete("0.0", "end")
+            return
+        
+        filename = os.path.basename(selected_file)  # estrae l'ultimo componente da un percorso (qui è nome file)
+        destination_path = os.path.join(documents_root, filename)   # combina segmenti creando il percorso con separatori
+        
+        # Verifica se il percorso esiste, restituisce True o False
+        if not os.path.isfile(destination_path):
+            print("File nuovo")
+            shutil.copy(selected_file, documents_root)  # copia file al percorso
+            document = "Si"
+            root = destination_path
+            query.insert_record(id, component, description, solution, document, root)
+            self.load_data()
+            self.entry_component.delete("0", "end")
+            self.text_description.delete("0.0", "end")
+            self.text_solution.delete("0.0", "end")
+            return
+        
+        # Messaggio che avvisa di file con stesso nome già presente
+        msg_exist = CTkMessagebox(
+            title="File esistente", 
+            message=f'Il file "{filename}" esiste già.\nVuoi sovrascriverlo?', 
+            icon="warning", 
+            option_1="Si", 
+            option_2="No",
+            justify="center"
+        )
+
+        if msg_exist.get() == "No":
+            print("Non voglio sovrascrivere")
+            document = "No"
+            query.insert_record(id, component, description, solution, document, root)
+            self.load_data()
+            self.entry_component.delete("0", "end")
+            self.text_description.delete("0.0", "end")
+            self.text_solution.delete("0.0", "end")
+            return
+        
+        # Se si vuole sovrascrivere
+        shutil.copy(selected_file, destination_path)    # copia file al percorso
+        print("File sovrascritto")
+        document = "Si"
+        
+        print(f"Aggiungo al db {document}")
+
+        query.insert_record(id, component, description, solution, document, root)
         self.load_data()
 
         self.entry_component.delete("0", "end")

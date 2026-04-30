@@ -52,13 +52,13 @@ def get_max_id():
 
 
 # Inserisci record nel database
-def insert_record(id, componente, problema, soluzione, documento):
+def insert_record(id, componente, problema, soluzione, documento, percorso):
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        query = "INSERT INTO archivio_errori VALUES (?, ?, ?, ?, ?);"
+        query = "INSERT INTO archivio_errori VALUES (?, ?, ?, ?, ?, ?);"
 
-        cursor.execute(query, (id, componente, problema, soluzione, documento))
+        cursor.execute(query, (id, componente, problema, soluzione, documento, percorso))
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
