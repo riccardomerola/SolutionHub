@@ -184,10 +184,11 @@ class App(ctk.CTk):
         self.value_table.update_values(visible_values)
 
         self.selected_row_data = None
+        print("Dati caricati correttamente")
 
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
     def insert_record(self):
-        self.load_data()
+        # self.load_data()
         raw_row = query.get_max_id()
         current_id = raw_row[0]["ID"]
 
@@ -340,15 +341,24 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_solution_detail.insert("0.0", self.solution)
         self.text_win_description_detail.configure(state="disabled")
 
-        # Pulsante visualizza documento e chiudi finestra
-        self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Apri allegato 📄", font=("Roboto", 15), command=self.view_document)
-        self.button_view_doc.grid(row=4, column=0, padx=10, pady=10, sticky="new")
-        self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
-        self.button_edit.grid(row=4, column=1, padx=10, pady=10, sticky="new")
-        self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi allegato 🆕", font=("Roboto", 15), command=self.add_document)
-        self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
-        self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
-        self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+        # Pulsante visualizza documento, edita record e chiudi finestra
+        if self.document == "Si":
+            self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Apri allegato 📄", font=("Roboto", 15), command=self.view_document)
+            self.button_view_doc.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+            self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
+            self.button_edit.grid(row=4, column=1, padx=10, pady=10, sticky="new")
+            self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Cambia allegato 🆕", font=("Roboto", 15), command=self.add_document)
+            self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
+            self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
+            self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+        else:
+            self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
+            self.button_edit.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+            self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi allegato 🆕", font=("Roboto", 15), command=self.add_document)
+            self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
+            self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
+            self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+
 
         # Necessario per portare la finestra in primo piano
         self.after(100, self.lift)
@@ -360,10 +370,11 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per aggiungere un documento
     def add_document(self):
+        current_data = (self.id, self.component, self.problem, self.solution, self.document, self.root)
         if self.document == "Si":
-            DocumentExistAllert(self)
+            DocumentExistAllert(self, current_data)
         else:
-            DocumentNotExistAllert(self)
+            DocumentNotExistAllert(self, current_data)
 
     # Funzione per editare il record
     def edit_record(self):
@@ -508,8 +519,11 @@ class DocumentExistAllert(ctk.CTkToplevel):
 
 
 class DocumentNotExistAllert(ctk.CTkToplevel):
-    def __init__(self, master):
+    def __init__(self, master, data):
         super().__init__(master)
+
+        self.id, self.component, self.description, self.solution, self.document, self.root = data
+        self.master = master
 
         self.title("Documento non esistente")
         self.center_document_exist_win(450, 250)
@@ -526,7 +540,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
 
         self.label_document_not_exist = ctk.CTkLabel(master=self.document_not_exist_win_frame, text="Per questo record NON è presente un documento.\nVuoi aggiungerlo?", font=("Roboto", 17, "bold"))
         self.label_document_not_exist.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.button_add_document = ctk.CTkButton(master=self.document_not_exist_win_frame, text="Aggiungi documento 📄", font=("Roboto", 15))
+        self.button_add_document = ctk.CTkButton(master=self.document_not_exist_win_frame, text="Aggiungi documento 📄", font=("Roboto", 15), command=self.add_new_document)
         self.button_add_document.grid(row=1, column=0, padx=10, pady=10, sticky="sew")
         self.button_close_win_document = ctk.CTkButton(master=self.document_not_exist_win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
         self.button_close_win_document.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="new")
@@ -545,6 +559,52 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
         x = int(((screen_width / 2) - (width / 2)) * scale)
         y = int(((screen_height / 2) - (height / 2)) * scale)
         self.geometry(f"{width}x{height}+{x}+{y}")
+
+    # Funzione per aggiungere un documento ad un record creato senza
+    def add_new_document(self):
+        self.master.destroy()
+        self.destroy()
+        data = query.get_dettaglio(self.id)
+        print(data)
+        selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
+
+        filename = os.path.basename(selected_file)
+        destination_path = os.path.join(documents_root, filename)
+
+        if not os.path.isfile(destination_path):
+            print("File nuovo")
+            shutil.copy(selected_file, documents_root)
+            self.document = "Si"
+            self.root = destination_path
+            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root)
+            self.master.master.load_data()
+            return
+        
+        msg_exist = CTkMessagebox(
+            title="File esistente",
+            message=f'Il file "{filename}" esiste già.\nVuoi sovrascriverlo?',
+            icon="warning",
+            option_1="Si",
+            option_2="No",
+            justify="center"
+        )
+
+        if msg_exist.get() == "No":
+            print("Non voglio sovrascrivere")
+            self.destroy
+            return
+        else:
+            shutil.copy(selected_file, destination_path)
+            print("File sovrascritto")
+            self.document = "Si"
+            self.root = destination_path
+            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root)
+            self.master.master.load_data()
+            return
+
+        
+
+       
 
 if __name__ == "__main__":
     db.create_table()
