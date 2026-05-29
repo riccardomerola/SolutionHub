@@ -69,6 +69,8 @@ class App(ctk.CTk):
         self.search_entry = ctk.CTkEntry(self.right_frame, placeholder_text="🔎 Cerca", height=40, corner_radius=4, font=("Roboto", 18))
         self.search_entry.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
+        self.search_entry.bind("<KeyRelease>", self.dynamic_search)
+
         # Frame con scroll-bar in cui inserire la tabella
         self.scrollable_frame = ctk.CTkScrollableFrame(self.right_frame, corner_radius=4)
         self.scrollable_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
@@ -173,18 +175,21 @@ class App(ctk.CTk):
         return formatted_data
 
     # Funzione per caricare i dati del database dentro alla tabella
-    def load_data(self):
-        raw_rows = query.get_database()                 # lista di dizionari (coppie key-value)
-        #values = self.format_data(raw_rows)             # lista di liste (solo valori)
+    def load_data(self, search_text=None):
+        # se viene scritto qualcosa nella barra si carica la tabella di ricerca
+        if search_text and search_text.strip() != "":
+            raw_rows = query.search(search_text)
+        else:
+            raw_rows = query.get_database()                  # lista di dizionari (coppie key-value)
+            #values = self.format_data(raw_rows)             # lista di liste (solo valori)
 
         self.full_data = self.format_data(raw_rows)
         # Solo prime 5 colonne per la tabella
         visible_values = [row[:5] for row in self.full_data]
         self.value_table.values = visible_values
         self.value_table.update_values(visible_values)
-
         self.selected_row_data = None
-        print("Dati caricati correttamente")
+        print(f"TEST: Record trovati: {len(raw_rows)}")
 
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
     def insert_record(self):
@@ -295,7 +300,26 @@ class App(ctk.CTk):
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
-
+    
+    # Funzione per ricerca dinamica
+    def dynamic_search(self, event=None):
+        # reset timer precedente se l'utente clicca un pulsante prima di 400ms
+        if hasattr(self, 'search_timer') and self.search_timer is not None:
+            self.after_cancel(self.search_timer)
+            self.search_timer = None
+        
+        # event si attiva al rilascio di un tasto sulla tastiera
+        if event is not None:
+            # pianifica di richiamare la funzione forzando event=None per impostare tempo scaduto
+            self.search_timer = self.after(400, lambda: self.dynamic_search(event=None))
+            return              # interruzione di esecuzione
+        
+        # event non è None, utente ha smesso di digitare e si cattura il testo
+        text = self.search_entry.get().strip()
+        # aggiorna la tabella quando sono finiti altri processi 
+        self.after_idle(lambda: self.load_data(search_text=text))
+        # reset del timer pronto per la prossima ricerca
+        self.search_timer = None
 
 # Classe della finestra di dettaglio
 class DetailWindow(ctk.CTkToplevel):

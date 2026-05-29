@@ -19,7 +19,7 @@ def get_dettaglio(id):
 
 
 # Ricerca di componente/problema/soluzione
-def ricerca(text):
+def search(text):
     with get_connection() as conn:
         cursor = conn.cursor()
         
@@ -27,7 +27,7 @@ def ricerca(text):
         SELECT * FROM archivio_errori 
         WHERE Componente LIKE ? OR Problema LIKE ? OR Soluzione LIKE ?;"""
         
-        cursor.execute(query, (f"%{text}%, %{text}%, %{text}%"))
+        cursor.execute(query, (f"%{text}%", f"%{text}%", f"%{text}%"))
         result = cursor.fetchall()
         return [dict(row) for row in result]
     
