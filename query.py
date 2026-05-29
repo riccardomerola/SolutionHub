@@ -62,3 +62,19 @@ def insert_record(id, componente, problema, soluzione, documento, percorso):
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
+    
+
+# Modifica un record già presente nel database
+def edit_record(id, componente, problema, soluzione, documento, percorso):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        query = """
+        UPDATE archivio_errori
+        SET Componente=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?
+        WHERE ID=?;
+        """
+
+        cursor.execute(query, (componente, problema, soluzione, documento, percorso, id))
+        result = cursor.fetchall()
+        return [dict(row) for row in result]

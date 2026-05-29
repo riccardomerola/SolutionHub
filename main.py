@@ -4,6 +4,7 @@ import db
 import query
 from tkinter import filedialog, TclError
 from CTkMessagebox import CTkMessagebox
+from CTkMenuBarPlus import ContextMenu
 import shutil
 import os
 
@@ -92,6 +93,9 @@ class App(ctk.CTk):
 
         self.value_table.bind("<Double-1>", self.handle_double_click)
         self.selected_row_data = None
+        self.record_edit_id = None
+        self.record_edit_document = None
+        self.record_edit_root = None
 
         # Pulsante per rimuovere il record selezionato della tabella
         self.button_remove = ctk.CTkButton(master=self.right_frame, text="Elimina record 🗑️", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.open_delete_window)
@@ -187,103 +191,117 @@ class App(ctk.CTk):
         raw_row = query.get_max_id()
         current_id = raw_row[0]["ID"]
 
-        # Calcola ID del nuovo record e legge le entry
-        id = int(current_id) + 1
         component = self.entry_component.get().strip()
         description = self.text_description.get("1.0", "end-1c").strip()
+        document = ""
         solution = self.text_solution.get("1.0", "end-1c").strip()
         root = None
-        
-        # Messaggio per chiedere se si vuole allegare un file
-        msg = CTkMessagebox(
-            title="Allega file",
-            message="Vuoi allegare un file al record?",
-            icon="info",
-            option_1="Si",
-            option_2="No",
-            justify="center"
-        )
 
-        # Se non si vuole aggiungere un file
-        if msg.get() == "No":
-            print("Non voglio aggiungere")
-            document = "No"
-            query.insert_record(id, component, description, solution, document, root)
+        if self.record_edit_id is not None:
+            id = self.record_edit_id
+            document = self.record_edit_document
+            root = self.record_edit_root
+            query.edit_record(id, component, description, solution, document, root)
+            self.record_edit_id = None
             self.load_data()
+
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
-            return
-        
-        # Apre file explorer: restituisce il percorso in stringa se seleziona file, altrimenti stringa vuota 
-        selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
+        else:
+            # Calcola ID del nuovo record e legge le entry
+            id = int(current_id) + 1
 
-        # Se si clicca "Si" ma non si seleziona nessun file
-        if not selected_file:
-            print("File non selezionato")
-            document = "No"
-            query.insert_record(id, component, description, solution, document, root)
-            self.load_data()
-            self.entry_component.delete("0", "end")
-            self.text_description.delete("0.0", "end")
-            self.text_solution.delete("0.0", "end")
-            return
-        
-        filename = os.path.basename(selected_file)  # estrae l'ultimo componente da un percorso (qui è nome file)
-        destination_path = os.path.join(documents_root, filename)   # combina segmenti creando il percorso con separatori
-        
-        # Verifica se il percorso esiste, restituisce True o False
-        if not os.path.isfile(destination_path):
-            print("File nuovo")
-            shutil.copy(selected_file, documents_root)  # copia file al percorso
+            # Messaggio per chiedere se si vuole allegare un file
+            msg = CTkMessagebox(
+                title="Allega file",
+                message="Vuoi allegare un file al record?",
+                icon="info",
+                option_1="Si",
+                option_2="No",
+                justify="center"
+            )
+
+            # Se non si vuole aggiungere un file
+            if msg.get() == "No":
+                print("Non voglio aggiungere")
+                document = "No"
+                query.insert_record(id, component, description, solution, document, root)
+                self.load_data()
+                self.entry_component.delete("0", "end")
+                self.text_description.delete("0.0", "end")
+                self.text_solution.delete("0.0", "end")
+                return
+            
+            # Apre file explorer: restituisce il percorso in stringa se seleziona file, altrimenti stringa vuota 
+            selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
+
+            # Se si clicca "Si" ma non si seleziona nessun file
+            if not selected_file:
+                print("File non selezionato")
+                document = "No"
+                query.insert_record(id, component, description, solution, document, root)
+                self.load_data()
+                self.entry_component.delete("0", "end")
+                self.text_description.delete("0.0", "end")
+                self.text_solution.delete("0.0", "end")
+                return
+            
+            filename = os.path.basename(selected_file)  # estrae l'ultimo componente da un percorso (qui è nome file)
+            destination_path = os.path.join(documents_root, filename)   # combina segmenti creando il percorso con separatori
+            
+            # Verifica se il percorso esiste, restituisce True o False
+            if not os.path.isfile(destination_path):
+                print("File nuovo")
+                shutil.copy(selected_file, documents_root)  # copia file al percorso
+                document = "Si"
+                root = destination_path
+                query.insert_record(id, component, description, solution, document, root)
+                self.load_data()
+                self.entry_component.delete("0", "end")
+                self.text_description.delete("0.0", "end")
+                self.text_solution.delete("0.0", "end")
+                return
+            
+            # Messaggio che avvisa di file con stesso nome già presente
+            msg_exist = CTkMessagebox(
+                title="File esistente", 
+                message=f'Il file "{filename}" esiste già.\nVuoi sovrascriverlo?', 
+                icon="warning", 
+                option_1="Si", 
+                option_2="No",
+                justify="center"
+            )
+
+            if msg_exist.get() == "No":
+                print("Non voglio sovrascrivere")
+                document = "No"
+                query.insert_record(id, component, description, solution, document, root)
+                self.load_data()
+                self.entry_component.delete("0", "end")
+                self.text_description.delete("0.0", "end")
+                self.text_solution.delete("0.0", "end")
+                return
+            
+            # Se si vuole sovrascrivere
+            shutil.copy(selected_file, destination_path)    # copia file al percorso
+            print("File sovrascritto")
             document = "Si"
             root = destination_path
             query.insert_record(id, component, description, solution, document, root)
             self.load_data()
+
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
-            return
-        
-        # Messaggio che avvisa di file con stesso nome già presente
-        msg_exist = CTkMessagebox(
-            title="File esistente", 
-            message=f'Il file "{filename}" esiste già.\nVuoi sovrascriverlo?', 
-            icon="warning", 
-            option_1="Si", 
-            option_2="No",
-            justify="center"
-        )
 
-        if msg_exist.get() == "No":
-            print("Non voglio sovrascrivere")
-            document = "No"
-            query.insert_record(id, component, description, solution, document, root)
-            self.load_data()
-            self.entry_component.delete("0", "end")
-            self.text_description.delete("0.0", "end")
-            self.text_solution.delete("0.0", "end")
-            return
-        
-        # Se si vuole sovrascrivere
-        shutil.copy(selected_file, destination_path)    # copia file al percorso
-        print("File sovrascritto")
-        document = "Si"
-        root = destination_path
-        query.insert_record(id, component, description, solution, document, root)
-        self.load_data()
-
-        self.entry_component.delete("0", "end")
-        self.text_description.delete("0.0", "end")
-        self.text_solution.delete("0.0", "end")
-        
 
 # Classe della finestra di dettaglio
 class DetailWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 
-        self.id, self.component, self.problem, self.solution, self.document, self.root = data 
+        self.id, self.component, self.problem, self.solution, self.document, self.root = data
         print("id: ", self.id)
         print("component: ", self.component)
         print("problem: ", self.problem)
@@ -302,7 +320,7 @@ class DetailWindow(ctk.CTkToplevel):
         # ======================= FRAME =======================
         self.win_frame = ctk.CTkFrame(self, corner_radius=4)
         self.win_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.win_frame.grid_columnconfigure((0, 1), weight=1)
+        self.win_frame.grid_columnconfigure((0, 1, 2), weight=1)
         self.win_frame.grid_rowconfigure((1, 3), weight=1)
 
         # Descrizione dettagliata del problema
@@ -323,12 +341,14 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_description_detail.configure(state="disabled")
 
         # Pulsante visualizza documento e chiudi finestra
-        self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Visualizza documento 📄", font=("Roboto", 15), command=self.view_document)
+        self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Apri allegato 📄", font=("Roboto", 15), command=self.view_document)
         self.button_view_doc.grid(row=4, column=0, padx=10, pady=10, sticky="new")
-        self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi documento 🆕", font=("Roboto", 15), command=self.add_document)
-        self.button_add_doc.grid(row=4, column=1, padx=10, pady=10, sticky="new")
+        self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
+        self.button_edit.grid(row=4, column=1, padx=10, pady=10, sticky="new")
+        self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi allegato 🆕", font=("Roboto", 15), command=self.add_document)
+        self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
         self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
-        self.button_close_win.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="sew")
+        self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
 
         # Necessario per portare la finestra in primo piano
         self.after(100, self.lift)
@@ -345,6 +365,19 @@ class DetailWindow(ctk.CTkToplevel):
         else:
             DocumentNotExistAllert(self)
 
+    # Funzione per editare il record
+    def edit_record(self):
+        self.master.record_edit_id = self.id
+        self.master.record_edit_document = self.document
+        self.master.record_edit_root = self.root
+        component = self.component
+        self.master.entry_component.insert("0", component)
+        description = self.text_win_description_detail.get("1.0", "end-1c")
+        self.master.text_description.insert("0.0", description)
+        solution = self.text_win_solution_detail.get("1.0", "end-1c")
+        self.master.text_solution.insert("0.0", solution)
+        self.destroy()
+    
     # Funzione per centrare la finestra di dettaglio all'apertura
     def center_win_detail(self, width, height):
         self.update_idletasks()
