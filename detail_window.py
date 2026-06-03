@@ -12,13 +12,16 @@ class DetailWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 
-        self.id, self.component, self.description, self.solution, self.document, self.root = data
+        self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         print("id: ", self.id)
         print("component: ", self.component)
         print("problem: ", self.description)
         print("solution: ", self.solution)
         print("document: ", self.document)
         print("root: ", self.root)
+        print("edit: ", self.edit)
+        print("user: ", self.user)
+        print("data: ", self.data)
 
         self.title(f"Dettaglio problema # {self.id}")
         self.center_win_detail(500, 450)
@@ -32,42 +35,48 @@ class DetailWindow(ctk.CTkToplevel):
         self.win_frame = ctk.CTkFrame(self, corner_radius=4)
         self.win_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.win_frame.grid_columnconfigure((0, 1, 2), weight=1)
-        self.win_frame.grid_rowconfigure((1, 3), weight=1)
+        self.win_frame.grid_rowconfigure((2, 4), weight=1)
+
+        # Utente e data di rilevazione del problema
+        self.user_label = ctk.CTkLabel(master=self.win_frame, text=f"Utente: {self.user}", font=("Roboto", 13))
+        self.user_label.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
+        self.data_label = ctk.CTkLabel(master=self.win_frame, text=f"Data: {self.data}", font=("Roboto", 13))
+        self.data_label.grid(row=0, column=1, padx=10, pady=10, sticky="nw")
 
         # Descrizione dettagliata del problema
         color = "#DBDBDB" if mode == 'Light'else "#2B2B2B"
         self.label_win_description = ctk.CTkLabel(master=self.win_frame, text="Descrizione del problema", font=("Roboto", 18, "bold"))
-        self.label_win_description.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
+        self.label_win_description.grid(row=1, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
         self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=color)
-        self.text_win_description_detail.grid(row=1, column=0, columnspan=2, padx=0, pady=(0, 10), sticky="nsew")
+        self.text_win_description_detail.grid(row=2, column=0, columnspan=2, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_description_detail.insert("0.0", self.description)
         self.text_win_description_detail.configure(state="disabled")
 
         # Descrizione dettagliata della soluzione
         self.label_win_solution = ctk.CTkLabel(master=self.win_frame, text="Descrizione della soluzione", font=("Roboto", 18, "bold"))
-        self.label_win_solution.grid(row=2, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
+        self.label_win_solution.grid(row=3, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
         self.text_win_solution_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=color)
-        self.text_win_solution_detail.grid(row=3, column=0, columnspan=2, padx=0, pady=(0, 10), sticky="nsew")
+        self.text_win_solution_detail.grid(row=4, column=0, columnspan=2, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_solution_detail.insert("0.0", self.solution)
         self.text_win_description_detail.configure(state="disabled")
 
         # Pulsante visualizza documento, edita record e chiudi finestra
         if self.document == "Si":
             self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Apri allegato 📄", font=("Roboto", 15), command=self.view_document)
-            self.button_view_doc.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+            self.button_view_doc.grid(row=5, column=0, padx=10, pady=10, sticky="new")
             self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
-            self.button_edit.grid(row=4, column=1, padx=10, pady=10, sticky="new")
+            self.button_edit.grid(row=5, column=1, padx=10, pady=10, sticky="new")
             self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Cambia allegato 🆕", font=("Roboto", 15), command=self.add_document)
-            self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
+            self.button_add_doc.grid(row=5, column=2, padx=10, pady=10, sticky="new")
             self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
-            self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+            self.button_close_win.grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
         else:
             self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
-            self.button_edit.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+            self.button_edit.grid(row=5, column=0, padx=10, pady=10, sticky="new")
             self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi allegato 🆕", font=("Roboto", 15), command=self.add_document)
-            self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
+            self.button_add_doc.grid(row=5, column=2, padx=10, pady=10, sticky="new")
             self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
-            self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+            self.button_close_win.grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
 
 
         # Necessario per portare la finestra in primo piano
@@ -91,14 +100,14 @@ class DetailWindow(ctk.CTkToplevel):
                 print("File non trovato - Modifica document=No")
                 self.document = "No"
                 self.root = None
-                query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root)
+                query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 self.master.load_data()
                 return
 
 
     # Funzione per aggiungere un documento
     def add_document(self):
-        current_data = (self.id, self.component, self.problem, self.solution, self.document, self.root)
+        current_data = (self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
         if self.document == "Si":
             DocumentExistAllert(self, current_data)
         else:
@@ -107,6 +116,11 @@ class DetailWindow(ctk.CTkToplevel):
     # Funzione per editare il record
     def edit_record(self):
         self.master.record_edit_id = self.id
+
+        self.master.editing_actual_record = query.set_editing(self.id)
+        self.master.show_edit_warning(self.id)
+
+        
         self.master.record_edit_document = self.document
         self.master.record_edit_root = self.root
         component = self.component

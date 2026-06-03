@@ -10,7 +10,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 
-        self.id, self.component, self.description, self.solution, self.document, self.root = data
+        self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
 
         self.title("Documento non esistente")
@@ -65,7 +65,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
             shutil.copy(selected_file, documents_root)
             self.document = "Si"
             self.root = destination_path
-            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root)
+            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
             self.master.master.load_data()
             return
         
@@ -87,6 +87,6 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
             print("File sovrascritto")
             self.document = "Si"
             self.root = destination_path
-            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root)
+            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
             self.master.master.load_data()
             return

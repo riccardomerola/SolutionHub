@@ -36,7 +36,7 @@ def search(text):
 def delete_record(id):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM archivio_errori WHERE id=?", (id, ))
+        cursor.execute("DELETE FROM archivio_errori WHERE id=?;", (id, ))
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
@@ -52,29 +52,52 @@ def get_max_id():
 
 
 # Inserisci record nel database
-def insert_record(id, componente, problema, soluzione, documento, percorso):
+def insert_record(id, componente, problema, soluzione, documento, percorso, editazione, user, data):
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        query = "INSERT INTO archivio_errori VALUES (?, ?, ?, ?, ?, ?);"
+        query = "INSERT INTO archivio_errori VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
 
-        cursor.execute(query, (id, componente, problema, soluzione, documento, percorso))
+        cursor.execute(query, (id, componente, problema, soluzione, documento, percorso, editazione, user, data))
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
     
 
 # Modifica un record già presente nel database
-def edit_record(id, componente, problema, soluzione, documento, percorso):
+def edit_record(id, componente, problema, soluzione, documento, percorso, editazione, user, data):
     with get_connection() as conn:
         cursor = conn.cursor()
 
         query = """
         UPDATE archivio_errori
-        SET Componente=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?
+        SET Componente=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?, Editazione=?, User=?, Data=?
         WHERE ID=?;
         """
 
-        cursor.execute(query, (componente, problema, soluzione, documento, percorso, id))
+        cursor.execute(query, (componente, problema, soluzione, documento, percorso, editazione, user, data, id))
+        result = cursor.fetchall()
+        return [dict(row) for row in result]
+    
+
+# Impostazione campo Editazione = 1
+def set_editing(id):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        query = """
+        UPDATE archivio_errori SET Editazione=1 WHERE ID=?;
+        """
+
+        cursor.execute(query, (id, ))
+        result = cursor.fetchall()
+        return [dict(row) for row in result]
+    
+
+# Recupero dell'ID del record in editazione
+def get_id_editing_record():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT ID FROM archivio_errori WHERE Editazione=1;")
         result = cursor.fetchall()
         return [dict(row) for row in result]

@@ -25,7 +25,10 @@ def create_table():
     Problema TEXT NOT NULL,
     Soluzione TEXT NOT NULL,
     Documentazione TEXT,
-    Percorso TEXT DEFAULT NULL);
+    Percorso TEXT DEFAULT NULL,
+    Editazione INTEGER DEFAULT 0,
+    User TEXT NOT NULL,
+    Data TEXT NOT NULL);
     """
     cursor.execute(query)
 

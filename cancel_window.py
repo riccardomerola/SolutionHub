@@ -8,7 +8,7 @@ class CancelConfirm(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
         
-        self.id, self.component, self.problem, self.solution, self.document, self.root = data
+        self.id, self.component, self.problem, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
 
         self.title("Conferma cancellazione")

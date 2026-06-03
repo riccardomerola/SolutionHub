@@ -7,6 +7,7 @@ import shutil
 import db
 import query
 import os
+from datetime import datetime
 from detail_window import DetailWindow
 from cancel_window import CancelConfirm
 
@@ -85,13 +86,13 @@ class App(ctk.CTk):
         self.text_solution = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
         self.text_solution.grid(column=0, row=5, padx=10, pady=(0, 10), sticky="nsew")
 
-        # Pulsanti per allegare documenti, salvare il db, chiudere il programma
-        #self.button_allega = ctk.CTkButton(master=self.left_frame, text="Allega documento 📁", font=("Roboto", 15), command=self.add_document)
-        #self.button_allega.grid(column=0, row=6, padx=10, pady=10, sticky="ew")
+        # Pulsanti per salvare il db e chiudere il programma
         self.button_save = ctk.CTkButton(master=self.left_frame, text="Salva in database 💾", font=("Roboto", 15), fg_color="green", hover_color="#218838", command=self.insert_record)
         self.button_save.grid(column=0, row=7, padx=10, pady=10, sticky="ew")
         self.button_exit = ctk.CTkButton(master=self.left_frame, text="Esci dal programma ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.quit)
         self.button_exit.grid(column=0, row=8 , padx=10, pady=10, sticky="sew")
+
+        self.label_warning_edit = None
 
         # ======================= FRAME DI DESTRA =======================
         self.right_frame = ctk.CTkFrame(self.frame, corner_radius=4)
@@ -130,12 +131,16 @@ class App(ctk.CTk):
         self.value_table.bind("<Double-1>", self.handle_double_click)
         self.selected_row_data = None
         self.record_edit_id = None
+        self.editing_actual_record = None
         self.record_edit_document = None
         self.record_edit_root = None
 
         # Pulsante per rimuovere il record selezionato della tabella
         self.button_remove = ctk.CTkButton(master=self.right_frame, text="Elimina record 🗑️", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.open_delete_window)
         self.button_remove.grid(column=0, row=2, padx=10, pady=10, sticky="ew")
+
+        # Verifica se ci sono record in editazione
+        self.show_edit_warning(self.record_edit_id)
 
     # Funzione per aprire finestra di conferma cancellazione record
     def open_delete_window(self):
@@ -204,7 +209,10 @@ class App(ctk.CTk):
                                   row['Problema'], 
                                   row['Soluzione'], 
                                   row['Documentazione'],
-                                  row['Percorso']])
+                                  row['Percorso'],
+                                  row['Editazione'],
+                                  row['User'],
+                                  row['Data']])
         
         return formatted_data
 
@@ -227,7 +235,7 @@ class App(ctk.CTk):
 
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
     def insert_record(self):
-        # self.load_data()
+        self.update_idletasks()
         raw_row = query.get_max_id()
         current_id = raw_row[0]["ID"]
 
@@ -236,18 +244,28 @@ class App(ctk.CTk):
         document = ""
         solution = self.text_solution.get("1.0", "end-1c").strip()
         root = None
+        user = os.getlogin()
+        data = datetime.now().strftime("%d-%m-%Y")
+        edit = 0
 
         if self.record_edit_id is not None:
             id = self.record_edit_id
             document = self.record_edit_document
             root = self.record_edit_root
-            query.edit_record(id, component, description, solution, document, root)
+            user = os.getlogin()
+            data = datetime.now().strftime("%d-%m-%Y")
+            edit = 0
+            query.edit_record(id, component, description, solution, document, root, edit, user, data)
             self.record_edit_id = None
+            self.editing_actual_record = None
+            self.editing_id = None
             self.load_data()
 
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
+            self.label_warning_edit.destroy()
+            self.label_warning_edit = None
         else:
             # Calcola ID del nuovo record e legge le entry
             id = int(current_id) + 1
@@ -266,7 +284,7 @@ class App(ctk.CTk):
             if msg.get() == "No":
                 print("Non voglio aggiungere")
                 document = "No"
-                query.insert_record(id, component, description, solution, document, root)
+                query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -280,7 +298,7 @@ class App(ctk.CTk):
             if not selected_file:
                 print("File non selezionato")
                 document = "No"
-                query.insert_record(id, component, description, solution, document, root)
+                query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -296,11 +314,12 @@ class App(ctk.CTk):
                 shutil.copy(selected_file, documents_root)  # copia file al percorso
                 document = "Si"
                 root = destination_path
-                query.insert_record(id, component, description, solution, document, root)
+                query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
+                self.update()
                 return
             
             # Messaggio che avvisa di file con stesso nome già presente
@@ -316,7 +335,7 @@ class App(ctk.CTk):
             if msg_exist.get() == "No":
                 print("Non voglio sovrascrivere")
                 document = "No"
-                query.insert_record(id, component, description, solution, document, root)
+                query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -328,7 +347,7 @@ class App(ctk.CTk):
             print("File sovrascritto")
             document = "Si"
             root = destination_path
-            query.insert_record(id, component, description, solution, document, root)
+            query.insert_record(id, component, description, solution, document, root, edit, user, data)
             self.load_data()
 
             self.entry_component.delete("0", "end")
@@ -355,6 +374,19 @@ class App(ctk.CTk):
         # reset del timer pronto per la prossima ricerca
         self.search_timer = None
 
+    # Verifica se è presente un record in editazione nel database all'apertura dell'app
+    def show_edit_warning(self, record_id):
+        if self.label_warning_edit is None:
+            try:
+                record_id = query.get_id_editing_record()[0]['ID']
+                self.label_warning_edit = ctk.CTkLabel(self.left_frame, text=f"ATTENZIONE!\nRecord {record_id} in editazione!", font=("Roboto", 15), text_color="red")
+                self.label_warning_edit.grid(column=0, row=8, padx=10, pady=10, sticky="new")
+                self.button_exit.grid(column=0, row=9, padx=10, pady=10, sticky="sew")
+            except IndexError as err:
+                print("Nessun record in editazione all'apertura del software")
+            except Exception as err:
+                print(f"Errore in show_edit_warning: {err}")
+                return
 
 
 if __name__ == "__main__":
