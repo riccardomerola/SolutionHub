@@ -1,0 +1,109 @@
+import customtkinter as ctk
+import os
+from replace_doc_window import DocumentExistAllert
+from new_doc_window import DocumentNotExistAllert
+
+mode = ctk.get_appearance_mode()
+
+# Classe della finestra di dettaglio
+class DetailWindow(ctk.CTkToplevel):
+    def __init__(self, master, data):
+        super().__init__(master)
+
+        self.id, self.component, self.problem, self.solution, self.document, self.root = data
+        print("id: ", self.id)
+        print("component: ", self.component)
+        print("problem: ", self.problem)
+        print("solution: ", self.solution)
+        print("document: ", self.document)
+        print("root: ", self.root)
+
+        self.title(f"Dettaglio problema # {self.id}")
+        self.center_win_detail(500, 450)
+        self.resizable(False, False)
+
+        # Configurazione griglia principale
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        # ======================= FRAME =======================
+        self.win_frame = ctk.CTkFrame(self, corner_radius=4)
+        self.win_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.win_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        self.win_frame.grid_rowconfigure((1, 3), weight=1)
+
+        # Descrizione dettagliata del problema
+        color = "#DBDBDB" if mode == 'Light'else "#2B2B2B"
+        self.label_win_description = ctk.CTkLabel(master=self.win_frame, text="Descrizione del problema", font=("Roboto", 18, "bold"))
+        self.label_win_description.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
+        self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=color)
+        self.text_win_description_detail.grid(row=1, column=0, columnspan=2, padx=0, pady=(0, 10), sticky="nsew")
+        self.text_win_description_detail.insert("0.0", self.problem)
+        self.text_win_description_detail.configure(state="disabled")
+
+        # Descrizione dettagliata della soluzione
+        self.label_win_solution = ctk.CTkLabel(master=self.win_frame, text="Descrizione della soluzione", font=("Roboto", 18, "bold"))
+        self.label_win_solution.grid(row=2, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
+        self.text_win_solution_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=color)
+        self.text_win_solution_detail.grid(row=3, column=0, columnspan=2, padx=0, pady=(0, 10), sticky="nsew")
+        self.text_win_solution_detail.insert("0.0", self.solution)
+        self.text_win_description_detail.configure(state="disabled")
+
+        # Pulsante visualizza documento, edita record e chiudi finestra
+        if self.document == "Si":
+            self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Apri allegato 📄", font=("Roboto", 15), command=self.view_document)
+            self.button_view_doc.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+            self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
+            self.button_edit.grid(row=4, column=1, padx=10, pady=10, sticky="new")
+            self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Cambia allegato 🆕", font=("Roboto", 15), command=self.add_document)
+            self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
+            self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
+            self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+        else:
+            self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
+            self.button_edit.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+            self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi allegato 🆕", font=("Roboto", 15), command=self.add_document)
+            self.button_add_doc.grid(row=4, column=2, padx=10, pady=10, sticky="new")
+            self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
+            self.button_close_win.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+
+
+        # Necessario per portare la finestra in primo piano
+        self.after(100, self.lift)
+
+    # Funzione per visualizzare il documento allegato
+    def view_document(self):
+        if self.root != None:
+            os.startfile(self.root)
+
+    # Funzione per aggiungere un documento
+    def add_document(self):
+        current_data = (self.id, self.component, self.problem, self.solution, self.document, self.root)
+        if self.document == "Si":
+            DocumentExistAllert(self, current_data)
+        else:
+            DocumentNotExistAllert(self, current_data)
+
+    # Funzione per editare il record
+    def edit_record(self):
+        self.master.record_edit_id = self.id
+        self.master.record_edit_document = self.document
+        self.master.record_edit_root = self.root
+        component = self.component
+        self.master.entry_component.insert("0", component)
+        description = self.text_win_description_detail.get("1.0", "end-1c")
+        self.master.text_description.insert("0.0", description)
+        solution = self.text_win_solution_detail.get("1.0", "end-1c")
+        self.master.text_solution.insert("0.0", solution)
+        self.destroy()
+    
+    # Funzione per centrare la finestra di dettaglio all'apertura
+    def center_win_detail(self, width, height):
+        self.update_idletasks()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        scale = self._get_window_scaling()
+
+        x = int(((screen_width / 2) - (width / 2)) * scale)
+        y = int(((screen_height / 2) - (height / 2)) * scale)
+        self.geometry(f"{width}x{height}+{x}+{y}")

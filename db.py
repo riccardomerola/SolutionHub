@@ -27,7 +27,11 @@ def create_table():
     Documentazione TEXT,
     Percorso TEXT DEFAULT NULL);
     """
-
     cursor.execute(query)
+
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_componente ON archivio_errori(Componente COLLATE NOCASE);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_problema ON archivio_errori(Problema COLLATE NOCASE);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_soluzione ON archivio_errori(Soluzione COLLATE NOCASE);")
+
     connection.commit()
     connection.close()
