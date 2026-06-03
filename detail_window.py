@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
+import query
 import os
 from replace_doc_window import DocumentExistAllert
 from new_doc_window import DocumentNotExistAllert
@@ -10,10 +12,10 @@ class DetailWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 
-        self.id, self.component, self.problem, self.solution, self.document, self.root = data
+        self.id, self.component, self.description, self.solution, self.document, self.root = data
         print("id: ", self.id)
         print("component: ", self.component)
-        print("problem: ", self.problem)
+        print("problem: ", self.description)
         print("solution: ", self.solution)
         print("document: ", self.document)
         print("root: ", self.root)
@@ -38,7 +40,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.label_win_description.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
         self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=color)
         self.text_win_description_detail.grid(row=1, column=0, columnspan=2, padx=0, pady=(0, 10), sticky="nsew")
-        self.text_win_description_detail.insert("0.0", self.problem)
+        self.text_win_description_detail.insert("0.0", self.description)
         self.text_win_description_detail.configure(state="disabled")
 
         # Descrizione dettagliata della soluzione
@@ -73,8 +75,26 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per visualizzare il documento allegato
     def view_document(self):
-        if self.root != None:
-            os.startfile(self.root)
+        try:
+            if self.root != None:
+                os.startfile(self.root)
+        except FileNotFoundError as err:
+            print(f"File non trovato!\n[Error]: {err}")
+            msg = CTkMessagebox(
+                title="File non trovato!",
+                message="File non trovato!\nPotrebbe essere stato rinominato o eliminato dalla cartella",
+                icon="cancel",
+                option_1="Ok",
+            )
+
+            if msg.get() == "Ok":
+                print("File non trovato - Modifica document=No")
+                self.document = "No"
+                self.root = None
+                query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root)
+                self.master.load_data()
+                return
+
 
     # Funzione per aggiungere un documento
     def add_document(self):

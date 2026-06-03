@@ -1,4 +1,4 @@
-from tkinter import filedialog#, Menu
+from tkinter import filedialog
 from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 import customtkinter as ctk
