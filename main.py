@@ -1,6 +1,6 @@
-from tkinter import filedialog, TclError
+from tkinter import filedialog#, Menu
 from CTkMessagebox import CTkMessagebox
-from CTkMenuBarPlus import ContextMenu
+from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 import customtkinter as ctk
 from CTkTable import *
 import shutil
@@ -29,8 +29,40 @@ class App(ctk.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
+        # ======================= MENU APPLICAZIONE =======================
+        menu_bar = CTkMenuBar(master=self)
+
+        file_button = menu_bar.add_cascade("File")
+        help_button = menu_bar.add_cascade("Help")
+        info_button = menu_bar.add_cascade("?")
+
+        file_dropdown = CustomDropdownMenu(widget=file_button)
+        file_dropdown.add_option(option="Cambia database", command=None)
+        file_dropdown.add_option(option="Terminale", command=None)
+        file_dropdown.add_separator()
+        file_dropdown.add_option(option="Cambia tema", command=None)
+        file_dropdown.add_separator()
+        file_dropdown.add_option(option="Esci", command=self.quit)
+        
+        help_button = CustomDropdownMenu(widget=help_button)
+        help_button.add_option(option="Istruzioni per l'utilizzo", command=None)
+
+        info_button = CustomDropdownMenu(widget=info_button)
+        info_button.add_option(option="Debug", command=None)
+        info_button.add_option(option="Info", command=None)
+
+        # ======================= FRAME CONTENENTE TUTTA LA PAGINA ======== 
+        # Necessario perché CTkMenuBar usa .pack() e non .grid(): i due non possono coesistere sulla stessa finestra
+        self.frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.frame.pack(fill="both", expand=True)
+        
+        # configurazione griglia principale
+        self.frame.grid_columnconfigure(0, weight=0)
+        self.frame.grid_columnconfigure(1, weight=1)
+        self.frame.grid_rowconfigure(0, weight=1)
+
         # ======================= FRAME DI SINISTRA =======================
-        self.left_frame = ctk.CTkFrame(self, width=350, corner_radius=4)
+        self.left_frame = ctk.CTkFrame(self.frame, width=350, corner_radius=4)
         self.left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.left_frame.grid_rowconfigure(8, weight=1)
         self.left_frame.grid_columnconfigure(0, weight=1)
@@ -62,7 +94,7 @@ class App(ctk.CTk):
         self.button_exit.grid(column=0, row=8 , padx=10, pady=10, sticky="sew")
 
         # ======================= FRAME DI DESTRA =======================
-        self.right_frame = ctk.CTkFrame(self, corner_radius=4)
+        self.right_frame = ctk.CTkFrame(self.frame, corner_radius=4)
         self.right_frame.grid(row=0, padx=10, pady=10, column=1, sticky="nsew")
         self.right_frame.grid_rowconfigure(1, weight=1)
         self.right_frame.grid_columnconfigure(0, weight=1)
