@@ -1,6 +1,7 @@
 from tkinter import filedialog, ttk
 from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
+from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 from CTkTable import *
 import shutil
@@ -23,7 +24,7 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Archivio Errori")
-        self.center_win_app(1500, 830)
+        self.center_win_app(1550, 850)
         self.resizable(True, True)
 
         # configurazione griglia principale
@@ -73,25 +74,41 @@ class App(ctk.CTk):
         self.label_component = ctk.CTkLabel(self.left_frame, text="Componente", font=("Roboto", 16, "bold"))
         self.label_component.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
         self.entry_component = ctk.CTkEntry(self.left_frame, placeholder_text="Es. KEBA, B&R, Siemens...", corner_radius=4, font=("Roboto", 15))
-        self.entry_component.grid(column=0, row=1, padx=10, pady=(0, 10), sticky="ew")
+        self.entry_component.grid(column=0, row=1, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
 
-        # Label e Textbox per inserimento descrizione problema
+        # Impostazione colori in base al tema
+        if mode == "Dark":
+            self.button_fg_color = "#2b2b2b"
+            self.button_hover_color = "#3a3d3e"
+            self.button_color = "white"
+        elif mode == "Light":
+            self.button_fg_color = "#dbdbdb"
+            self.button_hover_color = "#cfcfcf"
+            self.button_color = "black"
+
+        # Label e Textbox per inserimento descrizione problema + pulsante ingrandimento testo
         self.label_description = ctk.CTkLabel(self.left_frame, text="Descrizione problema", font=("Roboto", 16, "bold"))
         self.label_description.grid(column=0, row=2, padx=10, pady=10, sticky="nsw")
+        self.button_expand_description = ctk.CTkButton(self.left_frame, text="📝", width=20, height=20, text_color=self.button_color, fg_color=self.button_fg_color, hover_color=self.button_hover_color, command=self.expand_textbox_description)
+        self.button_expand_description.grid(column=1, row=2, padx=10, pady=10, sticky="nse")
+        CTkToolTip(self.button_expand_description, message="Clicca per ingrandire l'area di testo")
         self.text_description = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
-        self.text_description.grid(column=0, row=3, padx=10, pady=(0, 10), sticky="nsew")
+        self.text_description.grid(column=0, row=3, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
         
-        # Label e Textbox per inserimento soluzione problema
+        # Label e Textbox per inserimento soluzione problema + pulsante ingrandimento testo
         self.label_solution = ctk.CTkLabel(self.left_frame, text="Soluzione e note", font=("Roboto", 16, "bold"))
         self.label_solution.grid(column=0, row=4, padx=10, pady=10, sticky="nsw")
+        self.button_expand_problem = ctk.CTkButton(self.left_frame, text="📝", width=20, height=20, text_color=self.button_color, fg_color=self.button_fg_color, hover_color=self.button_hover_color, command=self.expand_textbox_solution)
+        self.button_expand_problem.grid(column=1, row=4, padx=10, pady=10, sticky="nse")
+        CTkToolTip(self.button_expand_problem, message="Clicca per ingrandire l'area di testo")
         self.text_solution = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
-        self.text_solution.grid(column=0, row=5, padx=10, pady=(0, 10), sticky="nsew")
+        self.text_solution.grid(column=0, row=5, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
 
         # Pulsanti per salvare il db e chiudere il programma
         self.button_save = ctk.CTkButton(master=self.left_frame, text="Salva in database 💾", font=("Roboto", 15), fg_color="green", hover_color="#218838", command=self.insert_record)
-        self.button_save.grid(column=0, row=7, padx=10, pady=10, sticky="ew")
+        self.button_save.grid(column=0, row=7, columnspan=2, padx=10, pady=10, sticky="ew")
         self.button_exit = ctk.CTkButton(master=self.left_frame, text="Esci dal programma ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.quit)
-        self.button_exit.grid(column=0, row=8 , padx=10, pady=10, sticky="sew")
+        self.button_exit.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky="sew")
 
         self.label_warning_edit = None
 
@@ -428,7 +445,72 @@ class App(ctk.CTk):
             except Exception as err:
                 print(f"Errore in show_edit_warning: {err}")
                 return
+    
+    # Funzione che espande i textbox per inserimento di problema
+    def expand_textbox_description(self):
+        LargeTextEditor(self, self.text_description)
+    
+    # Funzione che espande i textbox per inserimento disoluzione
+    def expand_textbox_solution(self):
+        LargeTextEditor(self, self.text_solution)
 
+
+# Classe per l'espansione dei textbox
+class LargeTextEditor(ctk.CTkToplevel):
+    def __init__(self, master, source_textbox):
+        super().__init__(master)
+
+        self.source_textbox = source_textbox
+
+        self.grab_set()
+        self.title("Text editor")
+        self.center_win_editor(1000, 700)
+        self.resizable(True, True)
+
+        # Configurazione griglia principale
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        # ======================= FRAME =======================
+        self.text_frame = ctk.CTkFrame(self, corner_radius=4)
+        self.text_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.text_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        self.text_frame.grid_rowconfigure(1, weight=1)
+
+        # Creazione nuovo Textbox più grande + pulsanti salvataggio
+        self.label_editor = ctk.CTkLabel(self.text_frame, text="Text Editor", font=("Roboto", 15, "bold"))
+        self.label_editor.grid(column=0, row=0, padx=10, pady=10, sticky="nw")
+        self.large_textbox = ctk.CTkTextbox(self.text_frame, height=500, width=800, font=("Roboto", 12))
+        self.large_textbox.grid(column=0, row=1, columnspan=3, padx=10, pady=10, sticky="nsew")
+        self.save_button = ctk.CTkButton(self.text_frame, text="Salva 💾", font=("Roboto", 15), command=self.save_text)
+        self.save_button.grid(column=0, row=2, padx=10, pady=10, sticky="ew")
+        self.exit_button = ctk.CTkButton(self.text_frame, text="Chiudi ❌", font=("Roboto", 15), command=self.destroy)
+        self.exit_button.grid(column=2, row=2, padx=10, pady=10, sticky="ew")
+
+        # Inserimento del testo della textbox piccola nell'editor
+        text = self.source_textbox.get("1.0", "end-1c").strip()
+        self.large_textbox.insert("1.0", text)
+
+        # Necessario per portare la finestra in primo piano
+        self.after(100, self.lift)
+
+    # Funzione per riportare il testo nel textbox piccolo pronto per essere salvato
+    def save_text(self):
+        text = self.large_textbox.get("0.0", "end-1c").strip()
+        self.source_textbox.delete("1.0", "end")
+        self.source_textbox.insert("1.0", text)
+        self.destroy()
+
+    # Funzione per centrare la finestra di dettaglio all'apertura
+    def center_win_editor(self, width, height):
+        self.update_idletasks()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        scale = self._get_window_scaling()
+
+        x = int(((screen_width / 2) - (width / 2)) * scale)
+        y = int(((screen_height / 2) - (height / 2)) * scale)
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
 if __name__ == "__main__":
     db.create_table()
