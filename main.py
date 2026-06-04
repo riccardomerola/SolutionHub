@@ -107,7 +107,7 @@ class App(ctk.CTk):
         self.search_entry.bind("<KeyRelease>", self.dynamic_search)
 
         # Frame in cui inserire la tabella
-        self.table_frame = ctk.CTkFrame(self.right_frame, corner_radius=4, fg_color="red")
+        self.table_frame = ctk.CTkFrame(self.right_frame, corner_radius=4, fg_color="transparent")
         self.table_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         self.table_frame.grid_columnconfigure((0, 1), weight=1)
         self.table_frame.grid_rowconfigure((0, 1), weight=1)
@@ -116,12 +116,11 @@ class App(ctk.CTk):
         self.style = ttk.Style()
         self.style.theme_use("winnative")
         # configurazione stile della heading e delle celle della tabella
-        self.style.configure("Treeview.Heading", background="#3a3d3e", foreground="white", relief="SOLID", rowheight=35, font=("Roboto", 15, "bold"))
-        self.style.map("Treeview.Heading", backround=[("selected", "#1f538d")])
-        self.style.configure("Treeview", background="#2b2b2b", foreground="white", rowheight=25, fieldbackground="#2b2b2b", relief="SOLID", font=("Roboto", 11))
+        self.style.configure("Treeview.Heading", background="#3a3d3e", foreground="white", relief="SOLID", padding=(0, 8, 0, 8), font=("Roboto", 15, "bold"))
+        self.style.configure("Treeview", background="#2b2b2b", foreground="white", rowheight=25, fieldbackground="#2b2b2b", relief="SOLID", font=("Roboto", 10))
         self.style.map("Treeview", background=[("selected", "#1f538d")])
         # creazione tabella
-        self.value_table = ttk.Treeview(self.table_frame, columns=("id", "component", "problem", "solution", "doc"), show="headings", height=25)
+        self.value_table = ttk.Treeview(self.table_frame, columns=("id", "component", "problem", "solution", "doc"), show="headings", height=45)
         # heading delle colonne
         self.value_table.heading("id", text="ID")
         self.value_table.heading("component", text="Componente")
@@ -140,7 +139,7 @@ class App(ctk.CTk):
 
         self.load_data()
 
-#        self.value_table.bind("<Double-1>", self.handle_double_click)
+        self.value_table.bind("<Double-1>", self.handle_double_click)
         self.selected_row_data = None
         self.record_edit_id = None
         self.editing_actual_record = None
@@ -194,7 +193,7 @@ class App(ctk.CTk):
             # Selezione della riga corrente
             self.value_table.select_row(row)
             # Salva i dati della riga selezionata
-            self.selected_row_data = self.full_data[row]
+            self.selected_row_data = self.formatted_data[row]
         except:
             return
     
@@ -225,26 +224,28 @@ class App(ctk.CTk):
                                   row['Editazione'],
                                   row['User'],
                                   row['Data']])
-        
         return formatted_data
 
     # Funzione per caricare i dati del database dentro alla tabella
     def load_data(self, search_text=None):
+        # pulizia della tabella per inserimento dei dati aggiornati (per evitare duplicati)
+        for item in self.value_table.get_children():
+            self.value_table.delete(item)
+
         # se viene scritto qualcosa nella barra si carica la tabella di ricerca
         if search_text and search_text.strip() != "":
             raw_rows = query.search(search_text)
         else:
             raw_rows = query.get_database()                  # lista di dizionari (coppie key-value)
-            #values = self.format_data(raw_rows)             # lista di liste (solo valori)
 
-        self.full_data = self.format_data(raw_rows)
-        # Solo prime 5 colonne per la tabella
-        visible_values = [row[:5] for row in self.full_data]
-#        self.value_table.values = visible_values
-#        self.value_table.update_values(visible_values)
+        self.formatted_data = self.format_data(raw_rows)
+
+        # popolazione della tabella
+        for row in self.formatted_data:
+            self.value_table.insert("", "end", values=row[:5], tags=("riga_colore", ))
+            
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
-        print(self.full_data)
 
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
     def insert_record(self):
