@@ -106,29 +106,15 @@ class App(ctk.CTk):
 
         self.search_entry.bind("<KeyRelease>", self.dynamic_search)
 
-        # Frame con scroll-bar in cui inserire la tabella
-        self.scrollable_frame = ctk.CTkScrollableFrame(self.right_frame, corner_radius=4)
-        self.scrollable_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
-        self.scrollable_frame.grid_columnconfigure((0, 1), weight=1)
-        self.scrollable_frame.grid_rowconfigure((0, 1), weight=1)
-
-        # Definizione della tabella, della sua header e delle dimensioni delle colonne
-        headers = "      ID\t      Componente\t\t                 Problema\t\t\t\t                    Soluzione\t\t          Documento"
-        self.header_table = ctk.CTkLabel(master=self.scrollable_frame, width=1150, corner_radius=4, text=headers, anchor="w",  font=("Roboto", 18, "bold"))
-        self.header_table.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
-
-        values = []
-        self.value_table = CTkTable(master=self.scrollable_frame, row=100, column=5, width=1150, corner_radius=4, values=values, hover=True, command=self.handle_table_click)
-        self.value_table.edit_column(0, width=100)
-        self.value_table.edit_column(1, width=200)
-        self.value_table.edit_column(2, width=350)
-        self.value_table.edit_column(3, width=350)
-        self.value_table.edit_column(4, width=150)
-        self.value_table.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+        # Frame in cui inserire la tabella
+        self.table_frame = ctk.CTkFrame(self.right_frame, corner_radius=4, fg_color="red")
+        self.table_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.table_frame.grid_columnconfigure((0, 1), weight=1)
+        self.table_frame.grid_rowconfigure((0, 1), weight=1)
 
         self.load_data()
 
-        self.value_table.bind("<Double-1>", self.handle_double_click)
+#        self.value_table.bind("<Double-1>", self.handle_double_click)
         self.selected_row_data = None
         self.record_edit_id = None
         self.editing_actual_record = None
@@ -228,10 +214,11 @@ class App(ctk.CTk):
         self.full_data = self.format_data(raw_rows)
         # Solo prime 5 colonne per la tabella
         visible_values = [row[:5] for row in self.full_data]
-        self.value_table.values = visible_values
-        self.value_table.update_values(visible_values)
+#        self.value_table.values = visible_values
+#        self.value_table.update_values(visible_values)
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
+        print(self.full_data)
 
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
     def insert_record(self):
