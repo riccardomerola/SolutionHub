@@ -1,4 +1,4 @@
-from tkinter import filedialog
+from tkinter import filedialog, ttk
 from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 import customtkinter as ctk
@@ -111,6 +111,32 @@ class App(ctk.CTk):
         self.table_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         self.table_frame.grid_columnconfigure((0, 1), weight=1)
         self.table_frame.grid_rowconfigure((0, 1), weight=1)
+
+        # CREAZIONE TABELLA TreeView E Stile ttk
+        self.style = ttk.Style()
+        self.style.theme_use("winnative")
+        # configurazione stile della heading e delle celle della tabella
+        self.style.configure("Treeview.Heading", background="#3a3d3e", foreground="white", relief="SOLID", rowheight=35, font=("Roboto", 15, "bold"))
+        self.style.map("Treeview.Heading", backround=[("selected", "#1f538d")])
+        self.style.configure("Treeview", background="#2b2b2b", foreground="white", rowheight=25, fieldbackground="#2b2b2b", relief="SOLID", font=("Roboto", 11))
+        self.style.map("Treeview", background=[("selected", "#1f538d")])
+        # creazione tabella
+        self.value_table = ttk.Treeview(self.table_frame, columns=("id", "component", "problem", "solution", "doc"), show="headings", height=25)
+        # heading delle colonne
+        self.value_table.heading("id", text="ID")
+        self.value_table.heading("component", text="Componente")
+        self.value_table.heading("problem", text="Problema")
+        self.value_table.heading("solution", text="Soluzione")
+        self.value_table.heading("doc", text="Documento")
+        # impostazione delle colonne
+        self.value_table.column("id", width=100, stretch=True, anchor="center")
+        self.value_table.column("component", width=200, stretch=True, anchor="center")
+        self.value_table.column("problem", width=350, stretch=True, anchor="w")
+        self.value_table.column("solution", width=350, stretch=True, anchor="w")
+        self.value_table.column("doc", width=150, stretch=True, anchor="center")
+        # posizionamento della tabella
+        self.value_table.tag_configure("riga_colore", background="#2b2b2b")
+        self.value_table.pack(padx=10, pady=10, fill="both", expand=True)
 
         self.load_data()
 
