@@ -16,6 +16,7 @@ ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
 documents_root = r"C:\BRETON\Appunti\Programmazione\Archivio Errori\documents"
 
+
 # Classe della finestra principale
 class App(ctk.CTk):
     def __init__(self):
@@ -179,17 +180,20 @@ class App(ctk.CTk):
         y = int(((screen_height / 2) - (height / 2)) * scale)
         self.geometry(f"{width}x{height}+{x}+{y}")
 
-    # Funzione "intelligente" per gestire i click sui record della tabella
+    # Funzione per gestire la selezione di una riga nella tabella
     def handle_table_click(self, event):
+        # recupera l'elemento selezionato
         selected = self.value_table.selection()
 
         if not selected:
             return
         
+        # si prende il primo elemento selezionato, si estrapolano i valori in una lista e si seleziona l'id
         item = selected[0]
         values = self.value_table.item(item)["values"]
         record_id = values[0]
 
+        # cerca nella lista completa il record con quell'id e lo salva in self.selected_row_data
         for row in self.formatted_data:
             if row[0] == record_id:
                 self.selected_row_data = row
@@ -197,16 +201,22 @@ class App(ctk.CTk):
     
     # Funzione per l'apertura della finestra al doppio click
     def handle_double_click(self, event):
-        # Recupera riga seleizonata
-        if not self.selected_row_data:
+        # recupera l'elemento selezionato
+        selected = self.value_table.selection()
+        
+        if not selected:
             return
         
-        # Se la riga è vuota non compare la finestra
-        if self.selected_row_data[0] == ' ':
-            print("Riga vuota")
-            return
-        
-        DetailWindow(self, self.selected_row_data)
+        # si prende il primo elemento selezionato, si estrapolano i valori in una lista e si seleziona l'id
+        item = selected[0]
+        values = self.value_table.item(item)["values"]
+        record_id = values[0]
+
+        # cerca nella lista completa il record con quell'id e apre la finestra DetailWindow passando le informazioni
+        for row in self.formatted_data:
+            if row[0] == record_id:
+                DetailWindow(self, self.selected_row_data)
+                break
 
     # Funzione per formattare i dati del database in liste di liste per la CTkTable
     def format_data(self, rows):
