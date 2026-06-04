@@ -119,7 +119,6 @@ class DetailWindow(ctk.CTkToplevel):
 
         self.master.editing_actual_record = query.set_editing(self.id)
         self.master.show_edit_warning(self.id)
-
         
         self.master.record_edit_document = self.document
         self.master.record_edit_root = self.root

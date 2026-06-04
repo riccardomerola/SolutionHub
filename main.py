@@ -1,4 +1,4 @@
-from tkinter import filedialog
+from tkinter import filedialog, ttk
 from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 import customtkinter as ctk
@@ -15,6 +15,7 @@ ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
 documents_root = r"C:\BRETON\Appunti\Programmazione\Archivio Errori\documents"
+
 
 # Classe della finestra principale
 class App(ctk.CTk):
@@ -106,29 +107,61 @@ class App(ctk.CTk):
 
         self.search_entry.bind("<KeyRelease>", self.dynamic_search)
 
-        # Frame con scroll-bar in cui inserire la tabella
-        self.scrollable_frame = ctk.CTkScrollableFrame(self.right_frame, corner_radius=4)
-        self.scrollable_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
-        self.scrollable_frame.grid_columnconfigure((0, 1), weight=1)
-        self.scrollable_frame.grid_rowconfigure((0, 1), weight=1)
+        # ----------- Frame, stile, gestione click della Tabella ttk.TreeView -----------
+        # Frame in cui inserire la tabella
+        self.table_frame = ctk.CTkFrame(self.right_frame, corner_radius=4)
+        self.table_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.table_frame.grid_columnconfigure((0, 1), weight=1)
+        self.table_frame.grid_rowconfigure((0, 1), weight=1)
 
-        # Definizione della tabella, della sua header e delle dimensioni delle colonne
-        headers = "      ID\t      Componente\t\t                 Problema\t\t\t\t                    Soluzione\t\t          Documento"
-        self.header_table = ctk.CTkLabel(master=self.scrollable_frame, width=1150, corner_radius=4, text=headers, anchor="w",  font=("Roboto", 18, "bold"))
-        self.header_table.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
+        # CREAZIONE TABELLA TreeView E Stile ttk
+        self.style = ttk.Style()
+        self.style.theme_use("winnative")
 
-        values = []
-        self.value_table = CTkTable(master=self.scrollable_frame, row=100, column=5, width=1150, corner_radius=4, values=values, hover=True, command=self.handle_table_click)
-        self.value_table.edit_column(0, width=100)
-        self.value_table.edit_column(1, width=200)
-        self.value_table.edit_column(2, width=350)
-        self.value_table.edit_column(3, width=350)
-        self.value_table.edit_column(4, width=150)
-        self.value_table.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+        # gestione dei colori con tema chiaro/scuro
+        if mode == "Dark":
+            self.bg_color_heading = "#3a3d3e"
+            self.bg_color_treeview = "#2b2b2b"
+            self.fg_color = "white"
+        elif mode == "Light":
+            self.bg_color_heading = "#dbdbdb"
+            self.bg_color_treeview = "#cfcfcf"
+            self.fg_color = "black"
+
+        # creazione della scrollbar_y per la tabella TreeView
+        self.scrollbar_y = ctk.CTkScrollbar(self.table_frame, orientation="vertical")
+
+        # configurazione stile della heading e delle celle della tabella
+        self.style.configure("Treeview.Heading", background=self.bg_color_heading, foreground=self.fg_color, borderwidth=0, relief="flat", padding=(0, 8, 0, 8), font=("Roboto", 15, "bold"))
+        self.style.configure("Treeview", background=self.bg_color_treeview, foreground=self.fg_color, rowheight=25, fieldbackground=self.bg_color_treeview, borderwidth=0, relief="flat", font=("Roboto", 10))
+        self.style.map("Treeview", background=[("selected", "#3b8ed0")])
+        # creazione tabella
+        self.value_table = ttk.Treeview(self.table_frame, columns=("id", "component", "problem", "solution", "doc"), show="headings", yscrollcommand=self.scrollbar_y.set)
+        # heading delle colonne
+        self.value_table.heading("id", text="ID")
+        self.value_table.heading("component", text="Componente")
+        self.value_table.heading("problem", text="Problema")
+        self.value_table.heading("solution", text="Soluzione")
+        self.value_table.heading("doc", text="Documento")
+        # impostazione delle colonne
+        self.value_table.column("id", width=100, stretch=True, anchor="center")
+        self.value_table.column("component", width=200, stretch=True, anchor="center")
+        self.value_table.column("problem", width=350, stretch=True, anchor="w")
+        self.value_table.column("solution", width=350, stretch=True, anchor="w")
+        self.value_table.column("doc", width=150, stretch=True, anchor="center")
+        # posizionamento della tabella e della scrollbar
+        self.value_table.tag_configure("riga_colore", background=self.bg_color_treeview)
+        self.scrollbar_y.configure(command=self.value_table.yview)
+        self.scrollbar_y.pack(side="right", fill="y")
+        self.value_table.pack(padx=0, pady=0, fill="both", expand=True)
 
         self.load_data()
 
+        # Eventi per la gestione dei click
+        self.value_table.bind("<<TreeviewSelect>>", self.handle_table_click)
         self.value_table.bind("<Double-1>", self.handle_double_click)
+
+        # Azzeramento attributi
         self.selected_row_data = None
         self.record_edit_id = None
         self.editing_actual_record = None
@@ -166,38 +199,43 @@ class App(ctk.CTk):
         y = int(((screen_height / 2) - (height / 2)) * scale)
         self.geometry(f"{width}x{height}+{x}+{y}")
 
-    # Funzione "intelligente" per gestire i click sui record della tabella
+    # Funzione per gestire la selezione di una riga nella tabella
     def handle_table_click(self, event):
-        try:
-            row = event["row"]
-            # se il click è sulla riga 0 di indice si ignora
-            if row < 0:
-                return
-            
-            # Deseleziona tutto prima di una nuova selezione, ciclo che evita l'accumulo di selezioni
-            for i in range(self.value_table.rows):
-                self.value_table.deselect_row(i)
+        # recupera l'elemento selezionato
+        selected = self.value_table.selection()
 
-            self.selected_row_data = None
-            # Selezione della riga corrente
-            self.value_table.select_row(row)
-            # Salva i dati della riga selezionata
-            self.selected_row_data = self.full_data[row]
-        except:
+        if not selected:
             return
+        
+        # si prende il primo elemento selezionato, si estrapolano i valori in una lista e si seleziona l'id
+        item = selected[0]
+        values = self.value_table.item(item)["values"]
+        record_id = values[0]
+
+        # cerca nella lista completa il record con quell'id e lo salva in self.selected_row_data
+        for row in self.formatted_data:
+            if row[0] == record_id:
+                self.selected_row_data = row
+                break
     
     # Funzione per l'apertura della finestra al doppio click
     def handle_double_click(self, event):
-        # Recupera riga seleizonata
-        if not self.selected_row_data:
+        # recupera l'elemento selezionato
+        selected = self.value_table.selection()
+        
+        if not selected:
             return
         
-        # Se la riga è vuota non compare la finestra
-        if self.selected_row_data[0] == ' ':
-            print("Riga vuota")
-            return
-        
-        DetailWindow(self, self.selected_row_data)
+        # si prende il primo elemento selezionato, si estrapolano i valori in una lista e si seleziona l'id
+        item = selected[0]
+        values = self.value_table.item(item)["values"]
+        record_id = values[0]
+
+        # cerca nella lista completa il record con quell'id e apre la finestra DetailWindow passando le informazioni
+        for row in self.formatted_data:
+            if row[0] == record_id:
+                DetailWindow(self, self.selected_row_data)
+                break
 
     # Funzione per formattare i dati del database in liste di liste per la CTkTable
     def format_data(self, rows):
@@ -213,23 +251,26 @@ class App(ctk.CTk):
                                   row['Editazione'],
                                   row['User'],
                                   row['Data']])
-        
         return formatted_data
 
     # Funzione per caricare i dati del database dentro alla tabella
     def load_data(self, search_text=None):
+        # pulizia della tabella per inserimento dei dati aggiornati (per evitare duplicati)
+        for item in self.value_table.get_children():
+            self.value_table.delete(item)
+
         # se viene scritto qualcosa nella barra si carica la tabella di ricerca
         if search_text and search_text.strip() != "":
             raw_rows = query.search(search_text)
         else:
             raw_rows = query.get_database()                  # lista di dizionari (coppie key-value)
-            #values = self.format_data(raw_rows)             # lista di liste (solo valori)
 
-        self.full_data = self.format_data(raw_rows)
-        # Solo prime 5 colonne per la tabella
-        visible_values = [row[:5] for row in self.full_data]
-        self.value_table.values = visible_values
-        self.value_table.update_values(visible_values)
+        self.formatted_data = self.format_data(raw_rows)
+
+        # popolazione della tabella
+        for row in self.formatted_data:
+            self.value_table.insert("", "end", values=row[:5], tags=("riga_colore", ))
+            
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
 
