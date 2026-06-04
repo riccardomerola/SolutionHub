@@ -11,6 +11,7 @@ class CancelConfirm(ctk.CTkToplevel):
         self.id, self.component, self.problem, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
 
+        self.grab_set()
         self.title("Conferma cancellazione")
         self.center_cancell_win(400, 350)
 

@@ -437,8 +437,8 @@ class App(ctk.CTk):
         if self.label_warning_edit is None:
             try:
                 record_id = query.get_id_editing_record()[0]['ID']
-                self.label_warning_edit = ctk.CTkLabel(self.left_frame, text=f"ATTENZIONE!\nRecord {record_id} in editazione!", font=("Roboto", 15), text_color="red")
-                self.label_warning_edit.grid(column=0, row=8, padx=10, pady=10, sticky="new")
+                self.label_warning_edit = ctk.CTkLabel(self.left_frame, text=f"ATTENZIONE!\n\nRecord {record_id} in editazione!", font=("Roboto", 15, "bold"), text_color="red")
+                self.label_warning_edit.grid(column=0, columnspan=2, row=8, padx=10, pady=10, sticky="new")
                 self.button_exit.grid(column=0, row=9, padx=10, pady=10, sticky="sew")
             except IndexError as err:
                 print("Nessun record in editazione all'apertura del software")

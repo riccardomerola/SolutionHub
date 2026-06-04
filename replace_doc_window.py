@@ -14,6 +14,7 @@ class DocumentExistAllert(ctk.CTkToplevel):
         self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
 
+        self.grab_set()
         self.title("Documento già esistente")
         self.center_document_exist_win(450, 250)
         self.resizable(False, False)
