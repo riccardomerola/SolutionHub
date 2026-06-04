@@ -139,7 +139,9 @@ class App(ctk.CTk):
 
         self.load_data()
 
+        self.value_table.bind("<<TreeviewSelect>>", self.handle_table_click)
         self.value_table.bind("<Double-1>", self.handle_double_click)
+        
         self.selected_row_data = None
         self.record_edit_id = None
         self.editing_actual_record = None
@@ -179,23 +181,19 @@ class App(ctk.CTk):
 
     # Funzione "intelligente" per gestire i click sui record della tabella
     def handle_table_click(self, event):
-        try:
-            row = event["row"]
-            # se il click è sulla riga 0 di indice si ignora
-            if row < 0:
-                return
-            
-            # Deseleziona tutto prima di una nuova selezione, ciclo che evita l'accumulo di selezioni
-            for i in range(self.value_table.rows):
-                self.value_table.deselect_row(i)
+        selected = self.value_table.selection()
 
-            self.selected_row_data = None
-            # Selezione della riga corrente
-            self.value_table.select_row(row)
-            # Salva i dati della riga selezionata
-            self.selected_row_data = self.formatted_data[row]
-        except:
+        if not selected:
             return
+        
+        item = selected[0]
+        values = self.value_table.item(item)["values"]
+        record_id = values[0]
+
+        for row in self.formatted_data:
+            if row[0] == record_id:
+                self.selected_row_data = row
+                break
     
     # Funzione per l'apertura della finestra al doppio click
     def handle_double_click(self, event):
