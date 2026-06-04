@@ -107,6 +107,7 @@ class App(ctk.CTk):
 
         self.search_entry.bind("<KeyRelease>", self.dynamic_search)
 
+        # ----------- Frame, stile, gestione click della Tabella ttk.TreeView -----------
         # Frame in cui inserire la tabella
         self.table_frame = ctk.CTkFrame(self.right_frame, corner_radius=4)
         self.table_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
@@ -115,7 +116,8 @@ class App(ctk.CTk):
 
         # CREAZIONE TABELLA TreeView E Stile ttk
         self.style = ttk.Style()
-        self.style.theme_use("clam")
+        self.style.theme_use("winnative")
+
         # gestione dei colori con tema chiaro/scuro
         if mode == "Dark":
             self.bg_color_heading = "#3a3d3e"
@@ -125,12 +127,16 @@ class App(ctk.CTk):
             self.bg_color_heading = "#dbdbdb"
             self.bg_color_treeview = "#cfcfcf"
             self.fg_color = "black"
+
+        # creazione della scrollbar_y per la tabella TreeView
+        self.scrollbar_y = ctk.CTkScrollbar(self.table_frame, orientation="vertical")
+
         # configurazione stile della heading e delle celle della tabella
-        self.style.configure("Treeview.Heading", background=self.bg_color_heading, foreground=self.fg_color, borderwidth=0, relief="SOLID", padding=(0, 8, 0, 8), font=("Roboto", 15, "bold"))
-        self.style.configure("Treeview", background=self.bg_color_treeview, foreground=self.fg_color, rowheight=25, fieldbackground=self.bg_color_treeview, borderwidth=0, relief="SOLID", font=("Roboto", 10))
+        self.style.configure("Treeview.Heading", background=self.bg_color_heading, foreground=self.fg_color, borderwidth=0, relief="flat", padding=(0, 8, 0, 8), font=("Roboto", 15, "bold"))
+        self.style.configure("Treeview", background=self.bg_color_treeview, foreground=self.fg_color, rowheight=25, fieldbackground=self.bg_color_treeview, borderwidth=0, relief="flat", font=("Roboto", 10))
         self.style.map("Treeview", background=[("selected", "#3b8ed0")])
         # creazione tabella
-        self.value_table = ttk.Treeview(self.table_frame, columns=("id", "component", "problem", "solution", "doc"), show="headings", height=45)
+        self.value_table = ttk.Treeview(self.table_frame, columns=("id", "component", "problem", "solution", "doc"), show="headings", yscrollcommand=self.scrollbar_y.set)
         # heading delle colonne
         self.value_table.heading("id", text="ID")
         self.value_table.heading("component", text="Componente")
@@ -143,15 +149,19 @@ class App(ctk.CTk):
         self.value_table.column("problem", width=350, stretch=True, anchor="w")
         self.value_table.column("solution", width=350, stretch=True, anchor="w")
         self.value_table.column("doc", width=150, stretch=True, anchor="center")
-        # posizionamento della tabella
+        # posizionamento della tabella e della scrollbar
         self.value_table.tag_configure("riga_colore", background=self.bg_color_treeview)
+        self.scrollbar_y.configure(command=self.value_table.yview)
+        self.scrollbar_y.pack(side="right", fill="y")
         self.value_table.pack(padx=0, pady=0, fill="both", expand=True)
 
         self.load_data()
 
+        # Eventi per la gestione dei click
         self.value_table.bind("<<TreeviewSelect>>", self.handle_table_click)
         self.value_table.bind("<Double-1>", self.handle_double_click)
 
+        # Azzeramento attributi
         self.selected_row_data = None
         self.record_edit_id = None
         self.editing_actual_record = None
