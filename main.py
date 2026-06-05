@@ -3,7 +3,6 @@ from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 from CTkToolTip import CTkToolTip
 import customtkinter as ctk
-from CTkTable import *
 import shutil
 import db
 import query
@@ -11,6 +10,7 @@ import os
 from datetime import datetime
 from detail_window import DetailWindow
 from cancel_window import CancelConfirm
+from drop_menu import MenuBar
 
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
@@ -34,25 +34,25 @@ class App(ctk.CTk):
 
         # ======================= MENU APPLICAZIONE =======================
         menu_bar = CTkMenuBar(master=self)
+        self.action_menu = MenuBar()
 
         file_button = menu_bar.add_cascade("File")
         help_button = menu_bar.add_cascade("Help")
         info_button = menu_bar.add_cascade("?")
 
         file_dropdown = CustomDropdownMenu(widget=file_button)
-        file_dropdown.add_option(option="Cambia database", command=None)
-        file_dropdown.add_option(option="Terminale", command=None)
+        file_dropdown.add_option(option="Cambia database", command=self.action_menu.change_database)
         file_dropdown.add_separator()
-        file_dropdown.add_option(option="Cambia tema", command=None)
+        file_dropdown.add_option(option="Cambia tema", command=self.action_menu.change_theme)
         file_dropdown.add_separator()
         file_dropdown.add_option(option="Esci", command=self.quit)
         
         help_button = CustomDropdownMenu(widget=help_button)
-        help_button.add_option(option="Istruzioni per l'utilizzo", command=None)
+        help_button.add_option(option="Debug", command=self.action_menu.open_debug)
+        help_button.add_option(option="Istruzioni per l'utilizzo", command=self.action_menu.open_instruction)
 
         info_button = CustomDropdownMenu(widget=info_button)
-        info_button.add_option(option="Debug", command=None)
-        info_button.add_option(option="Info", command=None)
+        info_button.add_option(option="Info", command=self.action_menu.open_info)
 
         # ======================= FRAME CONTENENTE TUTTA LA PAGINA ======== 
         # Necessario perché CTkMenuBar usa .pack() e non .grid(): i due non possono coesistere sulla stessa finestra
@@ -161,11 +161,11 @@ class App(ctk.CTk):
         self.value_table.heading("solution", text="Soluzione")
         self.value_table.heading("doc", text="Documento")
         # impostazione delle colonne
-        self.value_table.column("id", width=100, stretch=True, anchor="center")
+        self.value_table.column("id", width=50, stretch=True, anchor="center")
         self.value_table.column("component", width=200, stretch=True, anchor="center")
         self.value_table.column("problem", width=350, stretch=True, anchor="w")
         self.value_table.column("solution", width=350, stretch=True, anchor="w")
-        self.value_table.column("doc", width=150, stretch=True, anchor="center")
+        self.value_table.column("doc", width=100, stretch=True, anchor="center")
         # posizionamento della tabella e della scrollbar
         self.value_table.tag_configure("riga_colore", background=self.bg_color_treeview)
         self.scrollbar_y.configure(command=self.value_table.yview)
