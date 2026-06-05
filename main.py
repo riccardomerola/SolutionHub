@@ -309,6 +309,16 @@ class App(ctk.CTk):
         data = datetime.now().strftime("%d-%m-%Y")
         edit = 0
         
+        # controllo se i campi non sono vuoti
+        if component.strip() == "" or description.strip() == "" or solution.strip() == "":
+            msg_empty = CTkMessagebox(
+                title="Campi vuoti",
+                message='Prima di salvare è necessario riempire i campi "Componente", "Descrizione" e "Soluzione"',
+                icon="warning",
+                option_1="Ok"
+            )
+            return
+        
         if self.record_edit_id is not None:
             id = self.record_edit_id
             document = self.record_edit_document
