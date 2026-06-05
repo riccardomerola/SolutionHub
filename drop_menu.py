@@ -8,17 +8,75 @@ import os
 
 # Classe della barra di menu
 class MenuBar():
-    def __init__(self):
+    def __init__(self, master):
         super().__init__()
+
+        self.app = master
 
 
     def change_database(self):
         print("Cambio database")
 
+    # Cambio del tema dell'app
+    def view_theme_option(self):
+        print("Cambio tema")
+        self.theme_window = ctk.CTkToplevel()
+        self.theme_window.grab_set()
+        self.theme_window.title("Modifica il tema del software")
+        self.theme_window.resizable(False, False)
+
+        # Centraggio della finestra di info
+        self.center_win_detail(self.theme_window, 160, 150)
+
+        # ---------------- Grafica della finestra ---------------- 
+        frame_theme = ctk.CTkFrame(self.theme_window, corner_radius=4)
+        frame_theme.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        # Tema iniziale dell'app
+        original_theme = ctk.get_appearance_mode()
+        self.radio_var = ctk.StringVar(master=frame_theme, value=original_theme)
+
+        # radio button per selezione tema
+        button_dark_theme = ctk.CTkRadioButton(frame_theme, text="Tema scuro", variable=self.radio_var, value="Dark", command=self.change_theme)
+        button_dark_theme.pack(padx=20, pady=20)
+        button_light_theme = ctk.CTkRadioButton(frame_theme, text="Tema chiaro", variable=self.radio_var, value="Light", command=self.change_theme)
+        button_light_theme.pack(padx=20, pady=20)
 
     def change_theme(self):
-        print("Cambio tema")
+        new_theme = self.radio_var.get()
+        ctk.set_appearance_mode(new_theme)
 
+        if new_theme == "Dark":
+            self.app.bg_color_heading = "#2b2b2b"
+            self.app.bg_color_treeview = "#2b2b2b"
+            self.app.bg_color_treeview_alternate = "#343434"
+            self.app.fg_color = "white"
+            self.app.button_fg_color = "#2b2b2b"
+            self.app.button_hover_color = "#3a3d3e"
+            self.app.button_color = "white"
+        else:
+            self.app.bg_color_heading = "#e5e5e5"
+            self.app.bg_color_treeview = "#f9f9f9"
+            self.app.bg_color_treeview_alternate = "#f0f0f0"
+            self.app.fg_color = "black"
+            self.app.button_fg_color = "#dbdbdb"
+            self.app.button_hover_color = "#cfcfcf"
+            self.app.button_color = "black"
+        
+        self.app.style.configure("Treeview.Heading", background=self.app.bg_color_heading if hasattr(self.app, 'right_frame') else self.app.bg_color_heading, foreground=self.app.fg_color)
+        self.app.style.configure("Treeview", background=self.app.bg_color_treeview, foreground=self.app.fg_color, fieldbackground=self.app.bg_color_treeview)
+        
+        # Aggiorna i tag e ricarica i dati della TreeView (anch'essa sulla classe principale)
+        self.app.value_table.tag_configure("pari", background=self.app.bg_color_treeview)
+        self.app.value_table.tag_configure("dispari", background=self.app.bg_color_treeview_alternate)
+
+        self.app.button_expand_description.configure(text_color=self.app.button_color, fg_color=self.app.button_fg_color, hover_color=self.app.button_hover_color)
+        self.app.button_expand_problem.configure(text_color=self.app.button_color, fg_color=self.app.button_fg_color, hover_color=self.app.button_hover_color)
+        
+        # Forza il rinfresco visivo della tabella
+        self.app.load_data()
+        
+        print(f"Tema aggiornato a {new_theme} dall'interno della classe secondaria")
 
     # Apertura del file .pdf con le istruzioni di utilizzo
     def open_instruction(self):
@@ -46,22 +104,16 @@ class MenuBar():
     # Apertura label con informazioni versione e autore
     def open_info(self):
         print("Info")
-        info_window = ctk.CTkToplevel()
-        info_window.grab_set()
-        info_window.title("Informazioni sul software")
-        info_window.resizable(False, False)
+        self.info_window = ctk.CTkToplevel()
+        self.info_window.grab_set()
+        self.info_window.title("Informazioni sul software")
+        self.info_window.resizable(False, False)
 
         # Centraggio della finestra di info
-        info_window.update_idletasks()
-        screen_width = info_window.winfo_screenwidth()
-        screen_height = info_window.winfo_screenheight()
-        scale = info_window._get_window_scaling()
-        x = int(((screen_width / 2) - (350 / 2)) * scale)
-        y = int(((screen_height / 2) - (210 / 2)) * scale)
-        info_window.geometry(f"350x210+{x}+{y}")
+        self.center_win_detail(self.info_window, 350, 210)
 
         # ---------------- Grafica della finestra ---------------- 
-        frame_info = ctk.CTkFrame(info_window, corner_radius=4)
+        frame_info = ctk.CTkFrame(self.info_window, corner_radius=4)
         frame_info.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # info
@@ -81,5 +133,16 @@ class MenuBar():
         label_autor_name.grid(row=2, column=1, padx=10, pady=10, sticky="nsw")
 
         # pulsante ok
-        button_ok = ctk.CTkButton(frame_info, text="Ok", font=("Roboto", 13), command=info_window.destroy)
+        button_ok = ctk.CTkButton(frame_info, text="Ok", font=("Roboto", 13), command=self.info_window.destroy)
         button_ok.grid(row=3, column=1, padx=10, pady=10, sticky="nse")
+
+    # Funzione per centrare la finestra di dettaglio all'apertura
+    def center_win_detail(self, window, width, height):
+        window.update_idletasks()
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+        scale = window._get_window_scaling()
+
+        x = int(((screen_width / 2) - (width / 2)) * scale)
+        y = int(((screen_height / 2) - (height / 2)) * scale)
+        window.geometry(f"{width}x{height}+{x}+{y}")

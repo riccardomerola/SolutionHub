@@ -45,10 +45,9 @@ class DetailWindow(ctk.CTkToplevel):
         self.data_label.grid(row=0, column=1, padx=10, pady=10, sticky="nw")
 
         # Descrizione dettagliata del problema
-        color = "#DBDBDB" if mode == 'Light'else "#2B2B2B"
         self.label_win_description = ctk.CTkLabel(master=self.win_frame, text="Descrizione del problema", font=("Roboto", 18, "bold"))
         self.label_win_description.grid(row=1, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
-        self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=color)
+        self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=self.master.button_fg_color)
         self.text_win_description_detail.grid(row=2, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_description_detail.insert("0.0", self.description)
         self.text_win_description_detail.configure(state="disabled")
@@ -56,7 +55,7 @@ class DetailWindow(ctk.CTkToplevel):
         # Descrizione dettagliata della soluzione
         self.label_win_solution = ctk.CTkLabel(master=self.win_frame, text="Descrizione della soluzione", font=("Roboto", 18, "bold"))
         self.label_win_solution.grid(row=3, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
-        self.text_win_solution_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=color)
+        self.text_win_solution_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=self.master.button_fg_color)
         self.text_win_solution_detail.grid(row=4, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_solution_detail.insert("0.0", self.solution)
         self.text_win_description_detail.configure(state="disabled")

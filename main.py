@@ -37,7 +37,7 @@ class App(ctk.CTk):
 
         # ======================= MENU APPLICAZIONE =======================
         menu_bar = CTkMenuBar(master=self)
-        self.action_menu = MenuBar()
+        self.action_menu = MenuBar(master=self)
 
         file_button = menu_bar.add_cascade("File")
         help_button = menu_bar.add_cascade("Help")
@@ -46,7 +46,7 @@ class App(ctk.CTk):
         file_dropdown = CustomDropdownMenu(widget=file_button)
         file_dropdown.add_option(option="Cambia database", command=self.action_menu.change_database)
         file_dropdown.add_separator()
-        file_dropdown.add_option(option="Cambia tema", command=self.action_menu.change_theme)
+        file_dropdown.add_option(option="Cambia tema", command=self.action_menu.view_theme_option)
         file_dropdown.add_separator()
         file_dropdown.add_option(option="Esci", command=self.close_program)
         
