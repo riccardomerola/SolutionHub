@@ -48,7 +48,7 @@ class App(ctk.CTk):
         file_dropdown.add_separator()
         file_dropdown.add_option(option="Cambia tema", command=self.action_menu.change_theme)
         file_dropdown.add_separator()
-        file_dropdown.add_option(option="Esci", command=self.quit)
+        file_dropdown.add_option(option="Esci", command=self.close_program)
         
         help_button = CustomDropdownMenu(widget=help_button)
         help_button.add_option(option="Debug", command=self.action_menu.open_debug)
@@ -194,6 +194,15 @@ class App(ctk.CTk):
 
         # Verifica se ci sono record in editazione
         self.show_edit_warning(self.record_edit_id)
+
+        # Permette di visualizzare un'immagine durante il caricamento dell'app .exe
+        self.update()
+        try:
+            import pyi_splash   # type: ignore
+            pyi_splash.close()
+        except ImportError:
+            pass
+
 
     # Funzione per aprire finestra di conferma cancellazione record
     def open_delete_window(self):
