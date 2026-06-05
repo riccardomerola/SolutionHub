@@ -27,6 +27,9 @@ class App(ctk.CTk):
         self.center_win_app(1550, 850)
         self.resizable(True, True)
 
+        # Controllo chiusura del programma tramite "X" della finestra
+        self.protocol("WM_DELETE_WINDOW", self.close_program)
+
         # configurazione griglia principale
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
@@ -107,7 +110,7 @@ class App(ctk.CTk):
         # Pulsanti per salvare il db e chiudere il programma
         self.button_save = ctk.CTkButton(master=self.left_frame, text="Salva in database 💾", font=("Roboto", 15), fg_color="green", hover_color="#218838", command=self.insert_record)
         self.button_save.grid(column=0, row=7, columnspan=2, padx=10, pady=10, sticky="ew")
-        self.button_exit = ctk.CTkButton(master=self.left_frame, text="Esci dal programma ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.quit)
+        self.button_exit = ctk.CTkButton(master=self.left_frame, text="Esci dal programma ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.close_program)
         self.button_exit.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky="sew")
 
         self.label_warning_edit = None
@@ -305,7 +308,7 @@ class App(ctk.CTk):
         user = os.getlogin()
         data = datetime.now().strftime("%d-%m-%Y")
         edit = 0
-
+        
         if self.record_edit_id is not None:
             id = self.record_edit_id
             document = self.record_edit_document
@@ -313,6 +316,7 @@ class App(ctk.CTk):
             user = os.getlogin()
             data = datetime.now().strftime("%d-%m-%Y")
             edit = 0
+
             query.edit_record(id, component, description, solution, document, root, edit, user, data)
             self.record_edit_id = None
             self.editing_actual_record = None
@@ -342,6 +346,7 @@ class App(ctk.CTk):
             if msg.get() == "No":
                 print("Non voglio aggiungere")
                 document = "No"
+
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
@@ -356,6 +361,7 @@ class App(ctk.CTk):
             if not selected_file:
                 print("File non selezionato")
                 document = "No"
+                
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
@@ -372,6 +378,7 @@ class App(ctk.CTk):
                 shutil.copy(selected_file, documents_root)  # copia file al percorso
                 document = "Si"
                 root = destination_path
+                
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
@@ -379,7 +386,7 @@ class App(ctk.CTk):
                 self.text_solution.delete("0.0", "end")
                 self.update()
                 return
-            
+
             # Messaggio che avvisa di file con stesso nome già presente
             msg_exist = CTkMessagebox(
                 title="File esistente", 
@@ -393,6 +400,7 @@ class App(ctk.CTk):
             if msg_exist.get() == "No":
                 print("Non voglio sovrascrivere")
                 document = "No"
+                
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
                 self.entry_component.delete("0", "end")
@@ -405,6 +413,7 @@ class App(ctk.CTk):
             print("File sovrascritto")
             document = "Si"
             root = destination_path
+            
             query.insert_record(id, component, description, solution, document, root, edit, user, data)
             self.load_data()
 
@@ -453,6 +462,19 @@ class App(ctk.CTk):
     # Funzione che espande i textbox per inserimento disoluzione
     def expand_textbox_solution(self):
         LargeTextEditor(self, self.text_solution)
+
+    # Funzione che chiude il programma
+    def close_program(self):
+        if self.record_edit_id != None:
+            msg = CTkMessagebox(
+                title="Record in editazione!",
+                message=f"Prima di chiudere l'app è necessario terminare l'editazione del record {self.record_edit_id}",
+                icon="warning",
+                option_1="Ok"
+            )
+            return
+        else:
+            self.destroy()
 
 
 # Classe per l'espansione dei textbox
