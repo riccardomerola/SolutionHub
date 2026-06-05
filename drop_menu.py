@@ -4,24 +4,46 @@
 
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
+import os
 
 # Classe della barra di menu
 class MenuBar():
     def __init__(self):
         super().__init__()
 
+
     def change_database(self):
         print("Cambio database")
+
 
     def change_theme(self):
         print("Cambio tema")
 
+
+    # Apertura del file .pdf con le istruzioni di utilizzo
     def open_instruction(self):
         print("Apertura istruzioni")
+        root = r"C:\BRETON\Appunti\Programmazione\Archivio Errori\documents\Guida all'utilizzo.pdf"
+        try:
+            os.startfile(root)
+        except FileNotFoundError as err:
+            print(f"Guida all'utilizzo non trovato!\n[Error]: {err}")
+            msg = CTkMessagebox(
+                title="File non trovato!",
+                message="Guida all'utilizzo non trovata!\nContatta l'amministratore",
+                icon="cancel",
+                option_1="Ok"
+            )
+
+            if msg.get() == "Ok":
+                msg.destroy()
+
 
     def open_debug(self):
         print("Apertura debug")
 
+
+    # Apertura label con informazioni versione e autore
     def open_info(self):
         print("Info")
         info_window = ctk.CTkToplevel()
