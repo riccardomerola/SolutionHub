@@ -141,11 +141,13 @@ class App(ctk.CTk):
         # gestione dei colori con tema chiaro/scuro
         if mode == "Dark":
             self.bg_color_heading = "#3a3d3e"
-            self.bg_color_treeview = "#2b2b2b"
+            self.bg_color_treeview = "#202020"
+            self.bg_color_treeview_alternate = "#2b2b2b"
             self.fg_color = "white"
         elif mode == "Light":
-            self.bg_color_heading = "#dbdbdb"
-            self.bg_color_treeview = "#cfcfcf"
+            self.bg_color_heading = "#e5e5e5"
+            self.bg_color_treeview = "#f9f9f9"
+            self.bg_color_treeview_alternate = "#f0f0f0"
             self.fg_color = "black"
 
         # creazione della scrollbar_y per la tabella TreeView
@@ -170,7 +172,8 @@ class App(ctk.CTk):
         self.value_table.column("solution", width=350, stretch=True, anchor="w")
         self.value_table.column("doc", width=100, stretch=True, anchor="center")
         # posizionamento della tabella e della scrollbar
-        self.value_table.tag_configure("riga_colore", background=self.bg_color_treeview)
+        self.value_table.tag_configure("pari", background=self.bg_color_treeview)
+        self.value_table.tag_configure("dispari", background=self.bg_color_treeview_alternate)
         self.scrollbar_y.configure(command=self.value_table.yview)
         self.scrollbar_y.pack(side="right", fill="y")
         self.value_table.pack(padx=0, pady=0, fill="both", expand=True)
@@ -297,8 +300,9 @@ class App(ctk.CTk):
         self.formatted_data = self.format_data(raw_rows)
 
         # popolazione della tabella
-        for row in self.formatted_data:
-            self.value_table.insert("", "end", values=row[:5], tags=("riga_colore", ))
+        for i, row in enumerate(self.formatted_data):
+            tag_row = "pari" if i % 2 == 0 else "dispari"
+            self.value_table.insert("", "end", values=row[:5], tags=(tag_row, ))
             
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
