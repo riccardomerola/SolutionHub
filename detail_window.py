@@ -93,6 +93,8 @@ class DetailWindow(ctk.CTkToplevel):
                 title="File non trovato!",
                 message="File non trovato!\nPotrebbe essere stato rinominato o eliminato dalla cartella",
                 icon="cancel",
+                border_width=2,
+                border_color="red",
                 option_1="Ok",
             )
 
@@ -116,11 +118,23 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per editare il record
     def edit_record(self):
+        number_editing_record = query.get_id_editing_record()
+        if len(number_editing_record) >= 1:
+            msg_edit_not_possible = CTkMessagebox(
+                title="Editazione non possibile",
+                message="Editazione non possibile: è già presente un record aperto in editazione",
+                icon="warning",
+                border_width=2,
+                border_color="orange",
+                option_1="Ok",
+            )
+            return
+        
         self.master.record_edit_id = self.id
 
         self.master.editing_actual_record = query.set_editing(self.id)
         self.master.show_edit_warning(self.id)
-        
+
         self.master.record_edit_document = self.document
         self.master.record_edit_root = self.root
         component = self.component
@@ -128,7 +142,7 @@ class DetailWindow(ctk.CTkToplevel):
         description = self.text_win_description_detail.get("1.0", "end-1c")
         self.master.text_description.insert("0.0", description)
         solution = self.text_win_solution_detail.get("1.0", "end-1c")
-        self.master.text_solution.insert("0.0", solution)
+        self.master.text_solution.insert("0.0", solution) 
         self.destroy()
     
     # Funzione per centrare la finestra di dettaglio all'apertura

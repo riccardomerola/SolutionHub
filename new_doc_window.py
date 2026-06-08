@@ -75,6 +75,8 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
             title="File esistente",
             message=f'Esiste già un file "{filename}".\nVuoi sovrascriverlo?',
             icon="warning",
+            border_width=2,
+            border_color="orange",
             option_1="Si",
             option_2="No",
             justify="center"

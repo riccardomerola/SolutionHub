@@ -74,6 +74,8 @@ class CancelConfirm(ctk.CTkToplevel):
         msg = CTkMessagebox(title="Not found",
                             message="Documento non trovato",
                             icon="warning",
+                            border_width=2,
+                            border_color="orange",
                             option_1="Ok",
                             justify="center")
         print("Documento non trovato")

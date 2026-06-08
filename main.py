@@ -217,12 +217,12 @@ class App(ctk.CTk):
     # Funzione per aprire finestra di conferma cancellazione record
     def open_delete_window(self):
         if not self.selected_row_data:
-            print("Nessuna riga selezionata")
+#            print("Nessuna riga selezionata")
             return
         
         # Se la riga è vuota non compare la finestra
         if self.selected_row_data[0] == ' ':
-            print("Riga vuota")
+#            print("Riga vuota")
             return
         
         self.debug_message("Apertura finestra di eliminazione record")
@@ -337,6 +337,8 @@ class App(ctk.CTk):
                 title="Campi vuoti",
                 message='Prima di salvare è necessario riempire i campi "Componente", "Descrizione" e "Soluzione"',
                 icon="warning",
+                border_width=2,
+                border_color="orange",
                 option_1="Ok"
             )
             return
@@ -370,6 +372,8 @@ class App(ctk.CTk):
                 title="Allega file",
                 message="Vuoi allegare un file al record?",
                 icon="info",
+                border_width=2,
+                border_color="#0061ff",
                 option_1="Si",
                 option_2="No",
                 justify="center"
@@ -377,7 +381,7 @@ class App(ctk.CTk):
 
             # Se non si vuole aggiungere un file
             if msg.get() == "No":
-                print("Non voglio aggiungere")
+#                print("Non voglio aggiungere")
                 document = "No"
 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
@@ -393,7 +397,7 @@ class App(ctk.CTk):
 
             # Se si clicca "Si" ma non si seleziona nessun file
             if not selected_file:
-                print("File non selezionato")
+#                print("File non selezionato")
                 document = "No"
                 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
@@ -409,7 +413,7 @@ class App(ctk.CTk):
             
             # Verifica se il percorso esiste, restituisce True o False
             if not os.path.isfile(destination_path):
-                print("File nuovo")
+#                print("File nuovo")
                 shutil.copy(selected_file, documents_root)  # copia file al percorso
                 document = "Si"
                 root = destination_path
@@ -427,14 +431,16 @@ class App(ctk.CTk):
             msg_exist = CTkMessagebox(
                 title="File esistente", 
                 message=f'Esiste già un file "{filename}".\nVuoi sovrascriverlo?', 
-                icon="warning", 
+                icon="warning",
+                border_width=2,
+                border_color="orange",
                 option_1="Si", 
                 option_2="No",
                 justify="center"
             )
 
             if msg_exist.get() == "No":
-                print("Non voglio sovrascrivere")
+#                print("Non voglio sovrascrivere")
                 document = "No"
                 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
@@ -447,7 +453,7 @@ class App(ctk.CTk):
             
             # Se si vuole sovrascrivere
             shutil.copy(selected_file, destination_path)    # copia file al percorso
-            print("File sovrascritto")
+#            print("File sovrascritto")
             document = "Si"
             root = destination_path
             
@@ -507,11 +513,21 @@ class App(ctk.CTk):
         if self.record_edit_id != None:
             msg = CTkMessagebox(
                 title="Record in editazione!",
-                message=f"Prima di chiudere l'app è necessario terminare l'editazione del record {self.record_edit_id}",
+                message=f"Prima di chiudere l'app è necessario terminare l'editazione del record ID{self.record_edit_id}",
                 icon="warning",
-                option_1="Ok"
+                border_width=2,
+                border_color="orange",
+                option_1="Esci senza salvare",
+                option_2="Salva ed esci"
             )
             self.debug_message("Terminare l'editazione del record in corso prima di chiudere l'applicazione")
+
+            if msg.get() == "Salva ed esci":
+                self.insert_record()
+                self.destroy()
+            elif msg.get() == "Esci senza salvare":
+                query.close_editing(self.record_edit_id)
+                self.destroy()
             return
         else:
             self.destroy()

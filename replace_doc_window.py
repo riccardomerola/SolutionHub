@@ -64,6 +64,8 @@ class DocumentExistAllert(ctk.CTkToplevel):
             title="ATTENZIONE",
             message="Questa oprazione elimina il file attuale\nVuoi sostituire il file attuale?",
             icon="warning",
+            border_width=2,
+            border_color="orange",
             option_1="Si",
             option_2="No",
             justify="center"
@@ -92,6 +94,8 @@ class DocumentExistAllert(ctk.CTkToplevel):
             title="File esistete",
             message=f'Esiste già un file "{filename}".\nVuoi sovrascriverlo?',
             icon="warning",
+            border_width=2,
+            border_color="orange",
             option_1="Si", 
             option_2="No",
             justify="center"

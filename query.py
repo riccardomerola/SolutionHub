@@ -92,7 +92,20 @@ def set_editing(id):
         cursor.execute(query, (id, ))
         result = cursor.fetchall()
         return [dict(row) for row in result]
-    
+
+# Impostazione campo Editazione = 0 (chiusura editazione)
+def close_editing(id):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        query = """
+        UPDATE archivio_errori SET Editazione=0 WHERE ID=?;
+        """
+
+        cursor.execute(query, (id, ))
+        result = cursor.fetchall()
+        return [dict(row) for row in result]
+
 
 # Recupero dell'ID del record in editazione
 def get_id_editing_record():

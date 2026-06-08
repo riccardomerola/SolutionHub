@@ -90,6 +90,8 @@ class MenuBar():
                 title="File non trovato!",
                 message="Guida all'utilizzo non trovata!\nContatta l'amministratore",
                 icon="cancel",
+                border_width=2,
+                border_color="red",
                 option_1="Ok"
             )
 
