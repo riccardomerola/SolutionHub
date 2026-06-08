@@ -15,7 +15,7 @@ from drop_menu import MenuBar
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
-documents_root = r"C:\BRETON\Appunti\Programmazione\Archivio Errori\documents"
+documents_root = r"\\bretonfs1\REL\00_Relsoft\Archivio errori\documents"
 
 
 # Classe della finestra principale
@@ -350,7 +350,7 @@ class App(ctk.CTk):
             edit = 0
 
             query.edit_record(id, component, description, solution, document, root, edit, user, data)
-            self.debug_message(f'Salvata modifica su record [{id}]')
+            self.debug_message(f'Salvata modifica su record ID[{id}]')
             self.record_edit_id = None
             self.editing_actual_record = None
             self.editing_id = None
@@ -382,7 +382,7 @@ class App(ctk.CTk):
 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
-                self.debug_message(f'Aggiunto un nuovo record [{id}] senza allegare un documento')
+                self.debug_message(f'Aggiunto un nuovo record ID[{id}] senza allegare un documento')
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -398,7 +398,7 @@ class App(ctk.CTk):
                 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
-                self.debug_message(f'Attenzione: nessun file allegato al record "{id}" appena inserito')
+                self.debug_message(f'Attenzione: nessun file allegato al record ID[{id}] appena inserito')
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -415,7 +415,7 @@ class App(ctk.CTk):
                 root = destination_path
                 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
-                self.debug_message(f'Aggiunto nuovo record [{id}] con documento allegato')
+                self.debug_message(f'Aggiunto nuovo record ID[{id}] con documento allegato')
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -452,7 +452,7 @@ class App(ctk.CTk):
             root = destination_path
             
             query.insert_record(id, component, description, solution, document, root, edit, user, data)
-            self.debug_message(f'Aggiunto record [{id}] con documento allegato (sovrasctitto documento già presente con lo stesso nome)')
+            self.debug_message(f'Aggiunto record ID[{id}] con documento allegato (sovrasctitto documento già presente con lo stesso nome)')
             self.load_data()
 
             self.entry_component.delete("0", "end")
@@ -484,7 +484,7 @@ class App(ctk.CTk):
         if self.label_warning_edit is None:
             try:
                 record_id = query.get_id_editing_record()[0]['ID']
-                self.debug_message(f'Aperto record "{record_id}" in editazione')
+                self.debug_message(f'Aperto record ID[{record_id}] in editazione')
                 self.label_warning_edit = ctk.CTkLabel(self.left_frame, text=f"ATTENZIONE!\n\nRecord {record_id} in editazione!", font=("Roboto", 15, "bold"), text_color="red")
                 self.label_warning_edit.grid(column=0, columnspan=2, row=8, padx=10, pady=10, sticky="new")
                 self.button_exit.grid(column=0, row=9, padx=10, pady=10, sticky="sew")

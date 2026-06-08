@@ -108,7 +108,7 @@ class DetailWindow(ctk.CTkToplevel):
     # Funzione per aggiungere un documento
     def add_document(self):
         current_data = (self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-        self.master.debug_message(f'Aperta finestra per aggiunta di allegato al record [{self.id}]')
+        self.master.debug_message(f'Aperta finestra per aggiunta di allegato al record ID[{self.id}]')
         if self.document == "Si":
             DocumentExistAllert(self, current_data)
         else:

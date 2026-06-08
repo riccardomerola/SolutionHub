@@ -61,7 +61,7 @@ class CancelConfirm(ctk.CTkToplevel):
         
         query.delete_record(self.id)
         self.master.load_data()
-        self.master.debug_message(f'Record [{self.id}] e relativi documenti allegati eliminati')
+        self.master.debug_message(f'Record ID[{self.id}] e relativi documenti allegati eliminati')
         self.destroy()
     
     # Funzione per eliminare il documento allegato
@@ -80,5 +80,5 @@ class CancelConfirm(ctk.CTkToplevel):
 
     # Fimzopme per annullare la cancellazione (necessaria per messaggi di debug)
     def cancel_deletion(self):
-        self.master.debug_message(f'Cancellazione del record [{self.id}] annullata')
+        self.master.debug_message(f'Cancellazione del record ID[{self.id}] annullata')
         self.destroy()
