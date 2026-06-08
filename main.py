@@ -50,6 +50,13 @@ class App(ctk.CTk):
         file_dropdown.add_separator()
         file_dropdown.add_option(option="Esci", command=self.close_program)
         
+        # creazione senza posizione di schermata di debug
+        self.frame_textbox = ctk.CTkFrame(self)
+        self.textbox_debug = ctk.CTkTextbox(self.frame_textbox, height=300, width=500, state="disabled")
+        self.button_close_debug = ctk.CTkButton(self.frame_textbox, text="Chiudi debug", command=self.action_menu.close_debug)
+        self.button_close_debug.pack(pady=10, side="left")
+        self.textbox_debug.pack(pady=10, padx=10, fill="both", expand=True)
+
         help_button = CustomDropdownMenu(widget=help_button)
         help_button.add_option(option="Debug", command=self.action_menu.open_debug)
         help_button.add_option(option="Istruzioni per l'utilizzo", command=self.action_menu.open_instruction)
