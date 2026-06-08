@@ -73,7 +73,7 @@ class DocumentExistAllert(ctk.CTkToplevel):
 
         if msg_warning.get() == "No":
             print("Non voglio cambiare il file")
-            self.master.debug_message(f'Sostituzione del documento allegato al record ID[{self.id}] annullata')
+            self.master.master.debug_message(f'Sostituzione del documento allegato al record ID[{self.id}] annullata')
             self.destroy
             return
         
@@ -86,7 +86,7 @@ class DocumentExistAllert(ctk.CTkToplevel):
             shutil.copy(selected_file, documents_root)
             self.root = destination_path
             query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-            self.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
+            self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
             self.master.master.load_data()
             return
         
@@ -103,13 +103,13 @@ class DocumentExistAllert(ctk.CTkToplevel):
 
         if msg_exist.get() == "No":
             print("Non voglio sovrascrivere")
-            self.master.debug_message(f'Documento allegato al record ID[{self.id}] non inserito')
+            self.master.master.debug_message(f'Documento allegato al record ID[{self.id}] non inserito')
             self.destroy
         else:
             shutil.copy(selected_file, destination_path)
             print("File sovrascritto")
             self.root = destination_path
             query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-            self.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
+            self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
             self.master.master.load_data()
             return

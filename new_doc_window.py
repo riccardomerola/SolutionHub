@@ -67,7 +67,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
             self.document = "Si"
             self.root = destination_path
             query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-            self.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
+            self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
             self.master.master.load_data()
             return
         
@@ -92,6 +92,6 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
             self.document = "Si"
             self.root = destination_path
             query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-            self.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
+            self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
             self.master.master.load_data()
             return
