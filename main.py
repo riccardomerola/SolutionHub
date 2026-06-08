@@ -225,6 +225,7 @@ class App(ctk.CTk):
             print("Riga vuota")
             return
         
+        self.debug_message("Apertura finestra di eliminazione record")
         CancelConfirm(self, self.selected_row_data)
 
     # Funzione per centrare la finestra nello schermo
@@ -313,6 +314,7 @@ class App(ctk.CTk):
             
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
+        self.debug_message(f"Rcord trovati: {len(raw_rows)}")
 
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
     def insert_record(self):
@@ -348,6 +350,7 @@ class App(ctk.CTk):
             edit = 0
 
             query.edit_record(id, component, description, solution, document, root, edit, user, data)
+            self.debug_message(f'Salvata modifica su record [{id}]')
             self.record_edit_id = None
             self.editing_actual_record = None
             self.editing_id = None
@@ -379,6 +382,7 @@ class App(ctk.CTk):
 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
+                self.debug_message(f'Aggiunto un nuovo record [{id}] senza allegare un documento')
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -394,6 +398,7 @@ class App(ctk.CTk):
                 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
                 self.load_data()
+                self.debug_message(f'Attenzione: nessun file allegato al record "{id}" appena inserito')
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -410,6 +415,7 @@ class App(ctk.CTk):
                 root = destination_path
                 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
+                self.debug_message(f'Aggiunto nuovo record [{id}] con documento allegato')
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -432,6 +438,7 @@ class App(ctk.CTk):
                 document = "No"
                 
                 query.insert_record(id, component, description, solution, document, root, edit, user, data)
+                self.debug_message(f'Aggiunto record [{id}] senza documento allegato (esiste già un documento con il nome scelto)')
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -445,6 +452,7 @@ class App(ctk.CTk):
             root = destination_path
             
             query.insert_record(id, component, description, solution, document, root, edit, user, data)
+            self.debug_message(f'Aggiunto record [{id}] con documento allegato (sovrasctitto documento già presente con lo stesso nome)')
             self.load_data()
 
             self.entry_component.delete("0", "end")
@@ -476,6 +484,7 @@ class App(ctk.CTk):
         if self.label_warning_edit is None:
             try:
                 record_id = query.get_id_editing_record()[0]['ID']
+                self.debug_message(f'Aperto record "{record_id}" in editazione')
                 self.label_warning_edit = ctk.CTkLabel(self.left_frame, text=f"ATTENZIONE!\n\nRecord {record_id} in editazione!", font=("Roboto", 15, "bold"), text_color="red")
                 self.label_warning_edit.grid(column=0, columnspan=2, row=8, padx=10, pady=10, sticky="new")
                 self.button_exit.grid(column=0, row=9, padx=10, pady=10, sticky="sew")
@@ -502,9 +511,17 @@ class App(ctk.CTk):
                 icon="warning",
                 option_1="Ok"
             )
+            self.debug_message("Terminare l'editazione del record in corso prima di chiudere l'applicazione")
             return
         else:
             self.destroy()
+    
+    # Funzione per inserire messaggi nella textbox di debug
+    def debug_message(self, message):
+        self.textbox_debug.configure(state="normal")
+        self.textbox_debug.insert("end", f"-> {message}\n")
+        self.textbox_debug.see("end")
+        self.textbox_debug.configure(state="disabled")
 
 
 # Classe per l'espansione dei textbox

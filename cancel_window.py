@@ -34,7 +34,7 @@ class CancelConfirm(ctk.CTkToplevel):
         # Pulsanti di conferma cancellazione o chiudi finestra (senza cancellare record)
         self.button_delete_record = ctk.CTkButton(master=self.cancel_win_frame, text="      Cancella record 🗑️", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.delete_record)
         self.button_delete_record.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-        self.button_back = ctk.CTkButton(master=self.cancel_win_frame, text="Annulla operazione ↩️", font=("Roboto", 15), command=self.destroy)
+        self.button_back = ctk.CTkButton(master=self.cancel_win_frame, text="Annulla operazione ↩️", font=("Roboto", 15), command=self.cancel_deletion)
         self.button_back.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
 
         self.attributes("-topmost", True)
@@ -61,6 +61,7 @@ class CancelConfirm(ctk.CTkToplevel):
         
         query.delete_record(self.id)
         self.master.load_data()
+        self.master.debug_message(f'Record [{self.id}] e relativi documenti allegati eliminati')
         self.destroy()
     
     # Funzione per eliminare il documento allegato
@@ -76,3 +77,8 @@ class CancelConfirm(ctk.CTkToplevel):
                             option_1="Ok",
                             justify="center")
         print("Documento non trovato")
+
+    # Fimzopme per annullare la cancellazione (necessaria per messaggi di debug)
+    def cancel_deletion(self):
+        self.master.debug_message(f'Cancellazione del record [{self.id}] annullata')
+        self.destroy()
