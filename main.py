@@ -41,11 +41,11 @@ class App(ctk.CTk):
 
         file_button = menu_bar.add_cascade("File")
         help_button = menu_bar.add_cascade("Help")
-        info_button = menu_bar.add_cascade("?")
+        info_button = menu_bar.add_cascade("Info")
 
         file_dropdown = CustomDropdownMenu(widget=file_button)
-        file_dropdown.add_option(option="Cambia database", command=self.action_menu.change_database)
-        file_dropdown.add_separator()
+        #file_dropdown.add_option(option="Cambia database", command=self.action_menu.change_database)
+        #file_dropdown.add_separator()
         file_dropdown.add_option(option="Cambia tema", command=self.action_menu.view_theme_option)
         file_dropdown.add_separator()
         file_dropdown.add_option(option="Esci", command=self.close_program)
@@ -62,7 +62,8 @@ class App(ctk.CTk):
         help_button.add_option(option="Istruzioni per l'utilizzo", command=self.action_menu.open_instruction)
 
         info_button = CustomDropdownMenu(widget=info_button)
-        info_button.add_option(option="Info", command=self.action_menu.open_info)
+        info_button.add_option(option="Versione software", command=self.action_menu.open_info)
+        info_button.add_option(option="Segnala problemi o bug", command=self.action_menu.signal_problem)
 
         # ======================= FRAME CONTENENTE TUTTA LA PAGINA ======== 
         # Necessario perché CTkMenuBar usa .pack() e non .grid(): i due non possono coesistere sulla stessa finestra

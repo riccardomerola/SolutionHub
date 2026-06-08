@@ -5,6 +5,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 import os
+import win32com.client as win32
 
 # Classe della barra di menu
 class MenuBar():
@@ -144,6 +145,23 @@ class MenuBar():
         # pulsante ok
         button_ok = ctk.CTkButton(frame_info, text="Ok", font=("Roboto", 13), command=self.info_window.destroy)
         button_ok.grid(row=3, column=1, padx=10, pady=10, sticky="nse")
+
+    # Funzione per segnalazione di problemi o bug
+    def signal_problem(self):
+        try:
+            # collegamento all'applicazione outlook installata
+            outlook = win32.Dispatch('outlook.application')
+            # creazione della mail (0 indica oggetto di tipo "mail")
+            mail = outlook.CreateItem(0)
+
+            mail.To = "Merola.Riccardo@breton.it"
+            mail.CC = "Martini.Enrico@breton.it"
+            mail.Subject = "Archivio Errori: Segnalazione di problema o bug"
+            # mostra la finestra di outlook all'utente senza inviare la mail
+            mail.Display(True)
+        except Exception as err:
+            print(f"Impossibile aprire Outlook. Assicurarsi che sia installato: {err}")
+            self.master.debug_message(f"Impossibile aprire Outlook. Assicurarsi che sia installato: {err}")
 
     # Funzione per centrare la finestra di dettaglio all'apertura
     def center_win_detail(self, window, width, height):
