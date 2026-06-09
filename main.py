@@ -15,7 +15,7 @@ from drop_menu import MenuBar
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
-documents_root = r"\\bretonfs1\REL\00_Relsoft\Archivio errori\documents"
+documents_root = r"C:\BRETON\Appunti\Programmazione\Archivio Errori\documents"
 
 
 # Classe della finestra principale
@@ -149,21 +149,21 @@ class App(ctk.CTk):
         # gestione dei colori con tema chiaro/scuro
         if mode == "Dark":
             self.bg_color_heading = "#3a3d3e"
-            self.bg_color_treeview = "#202020"
-            self.bg_color_treeview_alternate = "#2b2b2b"
+            self.bg_color_treeview = "#2b2b2b"
+            self.bg_color_treeview_alternate = "#202020"
             self.fg_color = "white"
         elif mode == "Light":
             self.bg_color_heading = "#e5e5e5"
-            self.bg_color_treeview = "#f9f9f9"
-            self.bg_color_treeview_alternate = "#f0f0f0"
+            self.bg_color_treeview = "#f0f0f0"
+            self.bg_color_treeview_alternate = "#f9f9f9"
             self.fg_color = "black"
 
         # creazione della scrollbar_y per la tabella TreeView
         self.scrollbar_y = ctk.CTkScrollbar(self.table_frame, orientation="vertical")
 
         # configurazione stile della heading e delle celle della tabella
-        self.style.configure("Treeview.Heading", background=self.bg_color_heading, foreground=self.fg_color, borderwidth=0, relief="flat", padding=(0, 8, 0, 8), font=("Roboto", 15, "bold"))
-        self.style.configure("Treeview", background=self.bg_color_treeview, foreground=self.fg_color, rowheight=25, fieldbackground=self.bg_color_treeview, borderwidth=0, relief="flat", font=("Roboto", 10))
+        self.style.configure("Treeview.Heading", background=self.bg_color_heading, foreground=self.fg_color, borderwidth=1, relief="solid", padding=(0, 8, 0, 8), font=("Roboto", 15, "bold"))
+        self.style.configure("Treeview", background=self.bg_color_treeview, foreground=self.fg_color, rowheight=40, fieldbackground=self.bg_color_treeview, borderwidth=1, relief="flat", font=("Roboto", 10))
         self.style.map("Treeview", background=[("selected", "#3b8ed0")])
         # creazione tabella
         self.value_table = ttk.Treeview(self.table_frame, columns=("id", "component", "problem", "solution", "doc"), show="headings", yscrollcommand=self.scrollbar_y.set)
@@ -174,11 +174,11 @@ class App(ctk.CTk):
         self.value_table.heading("solution", text="Soluzione")
         self.value_table.heading("doc", text="Documento")
         # impostazione delle colonne
-        self.value_table.column("id", width=50, stretch=True, anchor="center")
-        self.value_table.column("component", width=200, stretch=True, anchor="center")
-        self.value_table.column("problem", width=350, stretch=True, anchor="w")
-        self.value_table.column("solution", width=350, stretch=True, anchor="w")
-        self.value_table.column("doc", width=100, stretch=True, anchor="center")
+        self.value_table.column("id", width=20, stretch=True, anchor="center")
+        self.value_table.column("component", width=100, stretch=True, anchor="center")
+        self.value_table.column("problem", width=400, stretch=True, anchor="w")
+        self.value_table.column("solution", width=400, stretch=True, anchor="w")
+        self.value_table.column("doc", width=90, stretch=True, anchor="center")
         # posizionamento della tabella e della scrollbar
         self.value_table.tag_configure("pari", background=self.bg_color_treeview)
         self.value_table.tag_configure("dispari", background=self.bg_color_treeview_alternate)
@@ -307,11 +307,16 @@ class App(ctk.CTk):
             raw_rows = query.get_database()                  # lista di dizionari (coppie key-value)
 
         self.formatted_data = self.format_data(raw_rows)
+        print(self.formatted_data)
 
         # popolazione della tabella
         for i, row in enumerate(self.formatted_data):
             tag_row = "pari" if i % 2 == 0 else "dispari"
-            self.value_table.insert("", "end", values=row[:5], tags=(tag_row, ))
+            # modifica per visualizzare una sola riga per ogni colonna (rende ordine nella visualizzazione della tabella)
+            viewed_columns = list(row[:5])
+            viewed_columns[2] = f"       {str(viewed_columns[2]).split('\n')[0]}     "
+            viewed_columns[3] = f"       {str(viewed_columns[3]).split('\n')[0]}     "
+            self.value_table.insert("", "end", values=viewed_columns, tags=(tag_row, ))
             
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
