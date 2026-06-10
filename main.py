@@ -116,10 +116,11 @@ class App(ctk.CTk):
         self.text_solution.grid(column=0, row=5, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
 
         # Pulsanti per salvare il db e chiudere il programma
+        self.button_cancel_editing = ctk.CTkButton(master=self.left_frame, text="Annulla editazione ↩️", font=("Roboto", 15), command=self.cancel_editing)
         self.button_save = ctk.CTkButton(master=self.left_frame, text="Salva in database 💾", font=("Roboto", 15), fg_color="green", hover_color="#218838", command=self.insert_record)
-        self.button_save.grid(column=0, row=7, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.button_save.grid(column=0, row=7, columnspan=2,padx=10, pady=10, sticky="ew")
         self.button_exit = ctk.CTkButton(master=self.left_frame, text="Esci dal programma ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.close_program)
-        self.button_exit.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky="sew")
+        self.button_exit.grid(column=0, row=9, columnspan=2, padx=10, pady=10, sticky="sew")
 
         self.label_warning_edit = None
 
@@ -314,6 +315,7 @@ class App(ctk.CTk):
             tag_row = "pari" if i % 2 == 0 else "dispari"
             # modifica per visualizzare una sola riga per ogni colonna (rende ordine nella visualizzazione della tabella)
             viewed_columns = list(row[:5])
+            viewed_columns[1] = f"       {str(viewed_columns[1]).split('\n')[0]}     "
             viewed_columns[2] = f"       {str(viewed_columns[2]).split('\n')[0]}     "
             viewed_columns[3] = f"       {str(viewed_columns[3]).split('\n')[0]}     "
             self.value_table.insert("", "end", values=viewed_columns, tags=(tag_row, ))
@@ -364,6 +366,9 @@ class App(ctk.CTk):
             self.editing_id = None
             self.load_data()
 
+            self.label_warning_edit.grid_remove()
+            self.button_cancel_editing.grid_remove()
+            self.button_save.grid(columnspan=2)
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
@@ -499,7 +504,6 @@ class App(ctk.CTk):
                 self.debug_message(f'Aperto record ID[{record_id}] in editazione')
                 self.label_warning_edit = ctk.CTkLabel(self.left_frame, text=f"ATTENZIONE!\n\nRecord {record_id} in editazione!", font=("Roboto", 15, "bold"), text_color="red")
                 self.label_warning_edit.grid(column=0, columnspan=2, row=8, padx=10, pady=10, sticky="new")
-                self.button_exit.grid(column=0, row=9, padx=10, pady=10, sticky="sew")
             except IndexError as err:
                 print("Nessun record in editazione all'apertura del software")
             except Exception as err:
@@ -544,6 +548,24 @@ class App(ctk.CTk):
         self.textbox_debug.insert("end", f"-> {message}\n")
         self.textbox_debug.see("end")
         self.textbox_debug.configure(state="disabled")
+    
+    # Funzione per annullare l'editing in corso
+    def cancel_editing(self):
+        # settaggio a 0 del valore di editazione
+        query.close_editing(self.record_edit_id)
+        # rimozione dalla griglia del label di avviso e del pulsante "Annulla"
+        self.label_warning_edit.grid_remove()
+        self.button_cancel_editing.grid_remove()
+        self.button_save.grid(columnspan=2)
+        # settaggio a None di tutte le flag relative all'edit
+        self.record_edit_id = None
+        self.editing_actual_record = None
+        self.editing_id = None
+        self.label_warning_edit = None
+        # rimozione del testo nei campi
+        self.entry_component.delete("0", "end")
+        self.text_description.delete("0.0", "end")
+        self.text_solution.delete("0.0", "end")
 
 
 # Classe per l'espansione dei textbox
