@@ -1,5 +1,14 @@
 from db import get_connection
 
+# Controllo integrità del database
+def check_db_integrity():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA integrity_check;")
+        result = cursor.fetchone()[0]   # primo risultato della riga
+        return result
+
+
 # Visualizza tutto il contenuto del db
 def get_database():
     with get_connection() as conn:

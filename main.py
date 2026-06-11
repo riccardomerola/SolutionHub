@@ -720,6 +720,26 @@ class LargeTextEditor(ctk.CTkToplevel):
         self.geometry(f"{width}x{height}+{x}+{y}")
 
 if __name__ == "__main__":
+    db_integrity = query.check_db_integrity()
+    print(db_integrity)
+    
+    if db_integrity == "ok":
+        db_path = r"Database\breton_solutionhub.db"
+        # creazione cartella di backup
+        bck_folder = r"Database\backup"
+        if not os.path.exists(bck_folder):
+            os.makedirs(bck_folder)
+
+        # creazione file di backup
+        bck_name = f"backup_{datetime.now().strftime('%Y_%m_%d')}.db"
+        bck_path = os.path.join(bck_folder, bck_name)
+
+        if not os.path.exists(bck_path):
+            try:
+                shutil.copy2(db_path, bck_path)
+            except Exception:
+                pass
+
     db.create_table()
     app = App()
     app.mainloop()

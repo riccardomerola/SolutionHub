@@ -2,13 +2,14 @@ import sqlite3
 import os
 
 def get_connection():
-    folder = "DataBase"
+    folder = "Database"
 
+    # creazione cartella e file db
     if not os.path.exists(folder):
         os.makedirs(folder)
 
     db_path = os.path.join(folder, "breton_solutionhub.db")
-
+    
     connection = sqlite3.connect(db_path)
     connection.row_factory = sqlite3.Row
     return connection
