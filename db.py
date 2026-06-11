@@ -2,12 +2,12 @@ import sqlite3
 import os
 
 def get_connection():
-    folder = "DB"
+    folder = "DataBase"
 
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-    db_path = os.path.join(folder, "archivio_errori.db")
+    db_path = os.path.join(folder, "breton_solutionhub.db")
 
     connection = sqlite3.connect(db_path)
     connection.row_factory = sqlite3.Row
@@ -19,7 +19,7 @@ def create_table():
     cursor = connection.cursor()
 
     query = """
-    CREATE TABLE IF NOT EXISTS archivio_errori(
+    CREATE TABLE IF NOT EXISTS breton_solutionhub(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Componente TEXT NOT NULL,
     Problema TEXT NOT NULL,
@@ -32,9 +32,9 @@ def create_table():
     """
     cursor.execute(query)
 
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_componente ON archivio_errori(Componente COLLATE NOCASE);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_problema ON archivio_errori(Problema COLLATE NOCASE);")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_soluzione ON archivio_errori(Soluzione COLLATE NOCASE);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_componente ON breton_solutionhub(Componente COLLATE NOCASE);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_problema ON breton_solutionhub(Problema COLLATE NOCASE);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_soluzione ON breton_solutionhub(Soluzione COLLATE NOCASE);")
 
     connection.commit()
     connection.close()

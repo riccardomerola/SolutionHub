@@ -38,9 +38,19 @@ class MenuBar():
         self.radio_var = ctk.StringVar(master=frame_theme, value=original_theme)
 
         # radio button per selezione tema
-        button_dark_theme = ctk.CTkRadioButton(frame_theme, text="Tema scuro", variable=self.radio_var, value="Dark", command=self.change_theme)
+        button_dark_theme = ctk.CTkRadioButton(frame_theme, 
+                                               text="Tema scuro", 
+                                               variable=self.radio_var, 
+                                               value="Dark", 
+                                               command=self.change_theme
+                                               )
         button_dark_theme.pack(padx=20, pady=20)
-        button_light_theme = ctk.CTkRadioButton(frame_theme, text="Tema chiaro", variable=self.radio_var, value="Light", command=self.change_theme)
+        button_light_theme = ctk.CTkRadioButton(frame_theme, 
+                                                text="Tema chiaro", 
+                                                variable=self.radio_var, 
+                                                value="Light", 
+                                                command=self.change_theme
+                                                )
         button_light_theme.pack(padx=20, pady=20)
 
     def change_theme(self):
@@ -64,15 +74,24 @@ class MenuBar():
             self.master.button_hover_color = "#cfcfcf"
             self.master.button_color = "black"
         
-        self.master.style.configure("Treeview.Heading", background=self.master.bg_color_heading if hasattr(self.master, 'right_frame') else self.master.bg_color_heading, foreground=self.master.fg_color)
-        self.master.style.configure("Treeview", background=self.master.bg_color_treeview, foreground=self.master.fg_color, fieldbackground=self.master.bg_color_treeview)
+        self.master.style.configure("Treeview.Heading", 
+                                    background=self.master.bg_color_heading if hasattr(self.master, 'right_frame') else self.master.bg_color_heading, 
+                                    foreground=self.master.fg_color)
+        self.master.style.configure("Treeview", 
+                                    background=self.master.bg_color_treeview, 
+                                    foreground=self.master.fg_color, 
+                                    fieldbackground=self.master.bg_color_treeview)
         
         # Aggiorna i tag e ricarica i dati della TreeView (anch'essa sulla classe principale)
         self.master.value_table.tag_configure("pari", background=self.master.bg_color_treeview)
         self.master.value_table.tag_configure("dispari", background=self.master.bg_color_treeview_alternate)
 
-        self.master.button_expand_description.configure(text_color=self.master.button_color, fg_color=self.master.button_fg_color, hover_color=self.master.button_hover_color)
-        self.master.button_expand_problem.configure(text_color=self.master.button_color, fg_color=self.master.button_fg_color, hover_color=self.master.button_hover_color)
+        self.master.button_expand_description.configure(text_color=self.master.button_color, 
+                                                        fg_color=self.master.button_fg_color, 
+                                                        hover_color=self.master.button_hover_color)
+        self.master.button_expand_problem.configure(text_color=self.master.button_color, 
+                                                    fg_color=self.master.button_fg_color, 
+                                                    hover_color=self.master.button_hover_color)
         
         # Forza il rinfresco visivo della tabella
         self.master.load_data()
@@ -127,7 +146,10 @@ class MenuBar():
         frame_info.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # info
-        label_info = ctk.CTkLabel(frame_info, text="Software sviluppato per l'archiviazione tecnica", font=("Roboto", 15))
+        label_info = ctk.CTkLabel(frame_info, 
+                                  text="Software sviluppato per l'archiviazione tecnica", 
+                                  font=("Roboto", 15)
+                                  )
         label_info.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="nsw")
 
         # versione

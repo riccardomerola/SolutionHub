@@ -38,44 +38,99 @@ class DetailWindow(ctk.CTkToplevel):
         self.win_frame.grid_columnconfigure((0, 1, 2), weight=1)
         self.win_frame.grid_rowconfigure((2, 4), weight=1)
 
-        # Utente e data di rilevazione del problema
-        self.user_label = ctk.CTkLabel(master=self.win_frame, text=f"Utente: {self.user}", font=("Roboto", 13))
-        self.user_label.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
-        self.data_label = ctk.CTkLabel(master=self.win_frame, text=f"Data: {self.data}", font=("Roboto", 13))
-        self.data_label.grid(row=0, column=1, padx=10, pady=10, sticky="nw")
+        # Componente, utente e data di rilevazione del problema
+        self.label_component_description = ctk.CTkLabel(master=self.win_frame, 
+                                                        text=f"Componente: {self.component}", 
+                                                        font=("Roboto", 18, "bold")
+                                                        )
+        self.label_component_description.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
+        self.user_label = ctk.CTkLabel(master=self.win_frame, 
+                                       text=f"Utente: {self.user}", 
+                                       font=("Roboto", 14, "bold")
+                                       )
+        self.user_label.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+        self.data_label = ctk.CTkLabel(master=self.win_frame, 
+                                       text=f"Data: {self.data}", 
+                                       font=("Roboto", 14, "bold")
+                                       )
+        self.data_label.grid(row=0, column=2, padx=10, pady=10, sticky="we")
 
         # Descrizione dettagliata del problema
-        self.label_win_description = ctk.CTkLabel(master=self.win_frame, text="Descrizione del problema", font=("Roboto", 18, "bold"))
+        self.label_win_description = ctk.CTkLabel(master=self.win_frame, 
+                                                  text="Descrizione del problema", 
+                                                  font=("Roboto", 18, "bold")
+                                                  )
         self.label_win_description.grid(row=1, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
-        self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=self.master.button_fg_color)
+        self.text_win_description_detail = ctk.CTkTextbox(master=self.win_frame, 
+                                                          font=("Roboto", 15), 
+                                                          fg_color=self.master.button_fg_color
+                                                          )
         self.text_win_description_detail.grid(row=2, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_description_detail.insert("0.0", self.description)
         self.text_win_description_detail.configure(state="disabled")
 
         # Descrizione dettagliata della soluzione
-        self.label_win_solution = ctk.CTkLabel(master=self.win_frame, text="Descrizione della soluzione", font=("Roboto", 18, "bold"))
+        self.label_win_solution = ctk.CTkLabel(master=self.win_frame, 
+                                               text="Soluzione e note", 
+                                               font=("Roboto", 18, "bold")
+                                               )
         self.label_win_solution.grid(row=3, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nw")
-        self.text_win_solution_detail = ctk.CTkTextbox(master=self.win_frame, font=("Roboto", 15), fg_color=self.master.button_fg_color)
+        self.text_win_solution_detail = ctk.CTkTextbox(master=self.win_frame, 
+                                                       font=("Roboto", 15), 
+                                                       fg_color=self.master.button_fg_color
+                                                       )
         self.text_win_solution_detail.grid(row=4, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_solution_detail.insert("0.0", self.solution)
         self.text_win_description_detail.configure(state="disabled")
 
         # Pulsante visualizza documento, edita record e chiudi finestra
         if self.document == "Si":
-            self.button_view_doc = ctk.CTkButton(master=self.win_frame, text="Apri allegato 📄", font=("Roboto", 15), command=self.view_document)
+            self.button_view_doc = ctk.CTkButton(master=self.win_frame, 
+                                                 text="Apri allegato 📄", 
+                                                 font=("Roboto", 15), 
+                                                 command=self.view_document
+                                                 )
             self.button_view_doc.grid(row=5, column=0, padx=10, pady=10, sticky="new")
-            self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
+            self.button_edit = ctk.CTkButton(master=self.win_frame, 
+                                             text="Edita record 📝", 
+                                             font=("Roboto", 15), 
+                                             command=self.edit_record
+                                             )
             self.button_edit.grid(row=5, column=1, padx=10, pady=10, sticky="new")
-            self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Cambia allegato 🆕", font=("Roboto", 15), command=self.add_document)
+            self.button_add_doc = ctk.CTkButton(master=self.win_frame, 
+                                                text="Cambia allegato 🆕", 
+                                                font=("Roboto", 15), 
+                                                command=self.add_document
+                                                )
             self.button_add_doc.grid(row=5, column=2, padx=10, pady=10, sticky="new")
-            self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
+            self.button_close_win = ctk.CTkButton(master=self.win_frame, 
+                                                  text="Chiudi la finestra ❌", 
+                                                  font=("Roboto", 15), 
+                                                  fg_color="red", 
+                                                  hover_color="#C82333", 
+                                                  command=self.destroy
+                                                  )
             self.button_close_win.grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
         else:
-            self.button_edit = ctk.CTkButton(master=self.win_frame, text="Edita record 📝", font=("Roboto", 15), command=self.edit_record)
+            self.button_edit = ctk.CTkButton(master=self.win_frame, 
+                                             text="Edita record 📝", 
+                                             font=("Roboto", 15), 
+                                             command=self.edit_record
+                                             )
             self.button_edit.grid(row=5, column=0, padx=10, pady=10, sticky="new")
-            self.button_add_doc = ctk.CTkButton(master=self.win_frame, text="Aggiungi allegato 🆕", font=("Roboto", 15), command=self.add_document)
+            self.button_add_doc = ctk.CTkButton(master=self.win_frame, 
+                                                text="Aggiungi allegato 🆕", 
+                                                font=("Roboto", 15), 
+                                                command=self.add_document
+                                                )
             self.button_add_doc.grid(row=5, column=2, padx=10, pady=10, sticky="new")
-            self.button_close_win = ctk.CTkButton(master=self.win_frame, text="Chiudi la finestra ❌", font=("Roboto", 15), fg_color="red", hover_color="#C82333", command=self.destroy)
+            self.button_close_win = ctk.CTkButton(master=self.win_frame, 
+                                                  text="Chiudi la finestra ❌", 
+                                                  font=("Roboto", 15), 
+                                                  fg_color="red", 
+                                                  hover_color="#C82333", 
+                                                  command=self.destroy
+                                                  )
             self.button_close_win.grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
 
 

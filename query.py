@@ -4,7 +4,7 @@ from db import get_connection
 def get_database():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM archivio_errori")
+        cursor.execute("SELECT * FROM breton_solutionhub")
         result = cursor.fetchall()
         return [dict(row) for row in result]
     
@@ -13,7 +13,7 @@ def get_database():
 def get_dettaglio(id):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM archivio_errori WHERE id=?;", (id, ))
+        cursor.execute("SELECT * FROM breton_solutionhub WHERE id=?;", (id, ))
         result = cursor.fetchall()
         return [dict(row) for row in result]
 
@@ -24,7 +24,7 @@ def search(text):
         cursor = conn.cursor()
         
         query = """
-        SELECT * FROM archivio_errori 
+        SELECT * FROM breton_solutionhub 
         WHERE Componente LIKE ? OR Problema LIKE ? OR Soluzione LIKE ?;"""
         
         cursor.execute(query, (f"%{text}%", f"%{text}%", f"%{text}%"))
@@ -36,7 +36,7 @@ def search(text):
 def delete_record(id):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM archivio_errori WHERE id=?;", (id, ))
+        cursor.execute("DELETE FROM breton_solutionhub WHERE id=?;", (id, ))
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
@@ -46,7 +46,7 @@ def delete_record(id):
 def get_max_id():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM archivio_errori ORDER BY ID DESC LIMIT 1;")
+        cursor.execute("SELECT * FROM breton_solutionhub ORDER BY ID DESC LIMIT 1;")
         result = cursor.fetchall()
         return [dict(row) for row in result]
 
@@ -56,7 +56,7 @@ def insert_record(id, componente, problema, soluzione, documento, percorso, edit
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        query = "INSERT INTO archivio_errori VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        query = "INSERT INTO breton_solutionhub VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
 
         cursor.execute(query, (id, componente, problema, soluzione, documento, percorso, editazione, user, data))
         conn.commit()
@@ -70,7 +70,7 @@ def edit_record(id, componente, problema, soluzione, documento, percorso, editaz
         cursor = conn.cursor()
 
         query = """
-        UPDATE archivio_errori
+        UPDATE breton_solutionhub
         SET Componente=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?, Editazione=?, User=?, Data=?
         WHERE ID=?;
         """
@@ -86,7 +86,7 @@ def set_editing(id):
         cursor = conn.cursor()
 
         query = """
-        UPDATE archivio_errori SET Editazione=1 WHERE ID=?;
+        UPDATE breton_solutionhub SET Editazione=1 WHERE ID=?;
         """
 
         cursor.execute(query, (id, ))
@@ -99,7 +99,7 @@ def close_editing(id):
         cursor = conn.cursor()
 
         query = """
-        UPDATE archivio_errori SET Editazione=0 WHERE ID=?;
+        UPDATE breton_solutionhub SET Editazione=0 WHERE ID=?;
         """
 
         cursor.execute(query, (id, ))
@@ -111,6 +111,6 @@ def close_editing(id):
 def get_id_editing_record():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT ID FROM archivio_errori WHERE Editazione=1;")
+        cursor.execute("SELECT ID FROM breton_solutionhub WHERE Editazione=1;")
         result = cursor.fetchall()
         return [dict(row) for row in result]
