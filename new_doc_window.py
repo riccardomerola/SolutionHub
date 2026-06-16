@@ -70,40 +70,45 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
         print(data)
         selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
 
-        filename = os.path.basename(selected_file)
+        file = os.path.basename(selected_file)
+        filename = f"{self.id}_{file}"
         destination_path = os.path.join(documents_root, filename)
 
-        if not os.path.isfile(destination_path):
-            print("File nuovo")
-            shutil.copy(selected_file, documents_root)
-            self.document = "Si"
-            self.root = destination_path
-            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-            self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
-            self.master.master.load_data()
-            return
-        
-        msg_exist = CTkMessagebox(
-            title="File esistente",
-            message=f'Esiste già un file "{filename}".\nVuoi sovrascriverlo?',
-            icon="warning",
-            border_width=2,
-            border_color="orange",
-            option_1="Si",
-            option_2="No",
-            justify="center"
-        )
-
-        if msg_exist.get() == "No":
-            print("Non voglio sovrascrivere")
-            self.destroy
-            return
-        else:
-            shutil.copy(selected_file, destination_path)
-            print("File sovrascritto")
-            self.document = "Si"
-            self.root = destination_path
-            query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-            self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
-            self.master.master.load_data()
-            return
+        try:
+            if not os.path.isfile(destination_path):
+                print("File nuovo")
+                shutil.copy(selected_file, destination_path)
+                self.document = "Si"
+                self.root = destination_path
+                query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
+                self.master.master.load_data()
+                return
+            
+            msg_exist = CTkMessagebox(
+                title="File esistente",
+                message=f'Esiste già un file "{filename}" relativo al record ID[{self.id}].\nVuoi sovrascriverlo?',
+                icon="warning",
+                border_width=2,
+                border_color="orange",
+                option_1="Si",
+                option_2="No",
+                justify="center"
+            )
+            print("messaggio cliccando x", msg_exist.get())
+            if msg_exist.get() == "No" or msg_exist.get() == None:
+                print("Non voglio sovrascrivere")
+                self.destroy
+                return
+            else:
+                shutil.copy(selected_file, destination_path)
+                print("File sovrascritto")
+                self.document = "Si"
+                self.root = destination_path
+                query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
+                self.master.master.load_data()
+                return
+        except FileNotFoundError as err:
+            print(f"ERRORE: {err}")
+            self.destroy()

@@ -386,7 +386,7 @@ class App(ctk.CTk):
             raw_rows = query.get_database()     # lista di dizionari (coppie key-value)
 
         self.formatted_data = self.format_data(raw_rows)
-        print(self.formatted_data)
+        # print(self.formatted_data)
 
         # popolazione della tabella
         for i, row in enumerate(self.formatted_data):
@@ -406,7 +406,7 @@ class App(ctk.CTk):
     def insert_record(self):
         self.update_idletasks()
         raw_row = query.get_max_id()
-        current_id = raw_row[0]["ID"]
+        current_id = raw_row[0]["ID"] if raw_row else 0
 
         component = self.entry_component.get().strip()
         description = self.text_description.get("1.0", "end-1c").strip()
@@ -496,12 +496,13 @@ class App(ctk.CTk):
                 self.text_solution.delete("0.0", "end")
                 return
             
-            filename = os.path.basename(selected_file)  # estrae l'ultimo componente da un percorso (qui è nome file)
-            destination_path = os.path.join(documents_root, filename)   # combina segmenti creando il percorso con separatori
+            file = os.path.basename(selected_file)                          # estrae l'ultimo componente da un percorso (qui è nome file)
+            filename = f"{record_id}_{file}"                                # modifica il nome del file aggiungendo ID all'inizio
+            destination_path = os.path.join(documents_root, filename)       # combina segmenti creando il percorso con separatori
             
             # Verifica se il percorso esiste, restituisce True o False
             if not os.path.isfile(destination_path):
-                shutil.copy(selected_file, documents_root)  # copia file al percorso
+                shutil.copy(selected_file, destination_path)  # copia file al percorso
                 document = "Si"
                 root = destination_path
                 
@@ -737,8 +738,8 @@ if __name__ == "__main__":
         if not os.path.exists(bck_path):
             try:
                 shutil.copy2(db_path, bck_path)
-            except Exception:
-                pass
+            except Exception as err:
+                print(f"ERRORE: {err}")
 
     db.create_table()
     app = App()
