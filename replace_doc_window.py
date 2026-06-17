@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from tkinter import filedialog
+from logger import log
 import query
 import os
 import shutil
@@ -100,6 +101,7 @@ class DocumentExistAllert(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 self.root = destination_path
                 query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID [{self.id}]')
                 self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
                 self.master.master.load_data()
                 return
@@ -124,7 +126,8 @@ class DocumentExistAllert(ctk.CTkToplevel):
                 print("File sovrascritto")
                 self.root = destination_path
                 query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-                self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
+                log("INFO", f'USER={self.user} Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
+                self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()
                 return
                

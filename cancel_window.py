@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 import os
+from logger import log
 import query
 
 # Classe per la finestra di conferma cancellazione record
@@ -76,6 +77,7 @@ class CancelConfirm(ctk.CTkToplevel):
         
         query.delete_record(self.id)
         self.master.load_data()
+        log("INFO", f"USER={self.master.user} Cancellato record ID[{self.id}] e relativi documenti allegati")
         self.master.debug_message(f'Record ID[{self.id}] e relativi documenti allegati eliminati')
         self.destroy()
     

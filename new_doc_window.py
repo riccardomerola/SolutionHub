@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from tkinter import filedialog
+from logger import log
 import query
 import shutil
 import os
@@ -67,7 +68,6 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
         self.master.destroy()
         self.destroy()
         data = query.get_dettaglio(self.id)
-        print(data)
         selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
 
         file = os.path.basename(selected_file)
@@ -81,7 +81,8 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
                 self.document = "Si"
                 self.root = destination_path
                 query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-                self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
+                log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID {self.id}')
+                self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID [{self.id}]')
                 self.master.master.load_data()
                 return
             
@@ -97,18 +98,18 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
             )
             print("messaggio cliccando x", msg_exist.get())
             if msg_exist.get() == "No" or msg_exist.get() == None:
-                print("Non voglio sovrascrivere")
                 self.destroy
                 return
             else:
                 shutil.copy(selected_file, destination_path)
-                print("File sovrascritto")
                 self.document = "Si"
                 self.root = destination_path
                 query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-                self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto documento con lo stesso nome già presente)')
+                log("INFO", f'Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
+                self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()
                 return
         except FileNotFoundError as err:
             print(f"ERRORE: {err}")
+            log("ERROR", f'Errore durante apertura del documento relativo a ID[{self.id}]. ERR: {err}')
             self.destroy()

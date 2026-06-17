@@ -4,6 +4,7 @@ from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 import shutil
+from logger import log
 import db
 import query
 import os
@@ -26,6 +27,8 @@ class App(ctk.CTk):
         self.title("Breton Solution Hub")
         self.center_win_app(1550, 850)
         self.resizable(True, True)
+        self.user = os.getlogin()
+        log("INFO", f"USER={self.user} Apertura dell'applicazione")
 
         # Controllo chiusura del programma tramite "X" della finestra
         self.protocol("WM_DELETE_WINDOW", self.close_program)
@@ -305,7 +308,7 @@ class App(ctk.CTk):
         if self.selected_row_data[0] == ' ':
             return
         
-        self.debug_message("Apertura finestra di eliminazione record")
+        self.debug_message(f"USER={self.user} Apertura finestra di eliminazione record")
         CancelConfirm(self, self.selected_row_data)
 
     # Funzione per centrare la finestra nello schermo
@@ -413,7 +416,7 @@ class App(ctk.CTk):
         document = ""
         solution = self.text_solution.get("1.0", "end-1c").strip()
         root = None
-        user = os.getlogin()
+        self.user = os.getlogin()
         data = datetime.now().strftime("%d-%m-%Y")
         edit = 0
         
@@ -433,11 +436,12 @@ class App(ctk.CTk):
             record_id = self.record_edit_id
             document = self.record_edit_document
             root = self.record_edit_root
-            user = os.getlogin()
+            self.user = os.getlogin()
             data = datetime.now().strftime("%d-%m-%Y")
             edit = 0
 
-            query.edit_record(record_id, component, description, solution, document, root, edit, user, data)
+            query.edit_record(record_id, component, description, solution, document, root, edit, self.user, data)
+            log("INFO", f"USER={self.user} Salvata modifica su record ID [{record_id}]")
             self.debug_message(f'Salvata modifica su record ID [{record_id}]')
             self.record_edit_id = None
             self.editing_actual_record = None
@@ -472,9 +476,10 @@ class App(ctk.CTk):
             if msg.get() == "No":
                 document = "No"
 
-                query.insert_record(record_id, component, description, solution, document, root, edit, user, data)
+                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
                 self.load_data()
-                self.debug_message(f'Aggiunto il nuovo record ID [{record_id}] senza file allegato')
+                log("INFO", f"USER={self.user} Aggiunto nuovo record ID [{record_id}] senza file allegato")
+                self.debug_message(f'Aggiunto nuovo record ID [{record_id}] senza file allegato')
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -488,8 +493,9 @@ class App(ctk.CTk):
             if not selected_file:
                 document = "No"
                 
-                query.insert_record(record_id, component, description, solution, document, root, edit, user, data)
+                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
                 self.load_data()
+                log("WARNING", f"USER={self.user} Nessun file allegato al record ID [{record_id}] appena inserito")
                 self.debug_message(f'Attenzione: nessun file allegato al record ID [{record_id}] appena inserito')
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -506,8 +512,9 @@ class App(ctk.CTk):
                 document = "Si"
                 root = destination_path
                 
-                query.insert_record(record_id, component, description, solution, document, root, edit, user, data)
-                self.debug_message(f'Aggiunto il nuovo record ID [{record_id}] con documento allegato')
+                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+                log("INFO", f'USER={self.user} Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
+                self.debug_message(f'Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -530,8 +537,9 @@ class App(ctk.CTk):
             if msg_exist.get() == "No":
                 document = "No"
                 
-                query.insert_record(record_id, component, description, solution, document, root, edit, user, data)
-                self.debug_message(f'Aggiunto record [{record_id}] senza documento allegato (esiste già un documento con il nome scelto)')
+                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+                log("INFO", f'USER={self.user} Aggiunto record [{record_id}] senza documento allegato (documento "{filename}" già esistente)')
+                self.debug_message(f'Aggiunto record [{record_id}] senza documento allegato (documento già esistente)')
                 self.load_data()
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
@@ -543,8 +551,9 @@ class App(ctk.CTk):
             document = "Si"
             root = destination_path
             
-            query.insert_record(record_id, component, description, solution, document, root, edit, user, data)
-            self.debug_message(f'Aggiunto record ID [{record_id}] con documento allegato (sovrasctitto documento già presente con lo stesso nome)')
+            query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+            log("INFO", f'USER={self.user} Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
+            self.debug_message(f'Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
             self.load_data()
 
             self.entry_component.delete("0", "end")
@@ -585,8 +594,11 @@ class App(ctk.CTk):
                 self.label_warning_edit.grid(column=0, columnspan=2, row=8, padx=10, pady=10, sticky="new")
             except IndexError as err:
                 print("Nessun record in editazione all'apertura del software")
+                log("INFO", "Nessun record aperto in editazione all'avviamento dell'applicazione")
+                self.debug_message("Nessun record aperto in editazione all'avviamento dell'applicazione")
             except Exception as err:
                 print(f"Errore in show_edit_warning: {err}")
+                log("ERROR", f"Err: {err}")
                 return
     
     # Funzione che espande i textbox per inserimento di problema
@@ -610,16 +622,20 @@ class App(ctk.CTk):
                 option_2="Salva ed esci", 
                 justify="center"
             )
+            log("WARNING", f"USER={self.user} Terminare editazione prima di chiudere l'applicazione")
             self.debug_message("Terminare l'editazione del record in corso prima di chiudere l'applicazione")
 
             if msg.get() == "Salva ed esci":
+                log("INFO", f"USER={self.user} Editazione salvata e chiusura dell'applicazione")
                 self.insert_record()
                 self.destroy()
             elif msg.get() == "Esci senza salvare":
                 query.close_editing(self.record_edit_id)
+                log("INFO", f"USER={self.user} Editazione annullata e chiusura dell'applicazione")
                 self.destroy()
             return
         else:
+            log("INFO", f"USER={self.user} Chiusura dell'applicazione")
             self.destroy()
     
     # Funzione per inserire messaggi nella textbox di debug
@@ -631,6 +647,7 @@ class App(ctk.CTk):
     
     # Funzione per annullare l'editing in corso
     def cancel_editing(self):
+        log("INFO", f"USER={self.user} Chiusura editazione del rercod ID [{self.record_edit_id}]")
         # settaggio a 0 del valore di editazione
         query.close_editing(self.record_edit_id)
         # rimozione dalla griglia del label di avviso e del pulsante "Annulla"
@@ -722,9 +739,9 @@ class LargeTextEditor(ctk.CTkToplevel):
 
 if __name__ == "__main__":
     db_integrity = query.check_db_integrity()
-    print(db_integrity)
     
     if db_integrity == "ok":
+        log("INFO", "Integrità database: OK")
         db_path = r"Database\breton_solutionhub.db"
         # creazione cartella di backup
         bck_folder = r"Database\backup"
@@ -738,9 +755,15 @@ if __name__ == "__main__":
         if not os.path.exists(bck_path):
             try:
                 shutil.copy2(db_path, bck_path)
+                log("INFO", f"Creato backup del database '{bck_name}'")
             except Exception as err:
-                print(f"ERRORE: {err}")
+                log("ERROR", str(err))
+        
+        db.create_table()
+        app = App()
+        app.mainloop()
+    else:
+        log("CRITICAL", f"Errore di integrità del database - ERR: {db_integrity}")
+        pass
 
-    db.create_table()
-    app = App()
-    app.mainloop()
+    pass

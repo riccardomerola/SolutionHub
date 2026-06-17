@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
+from logger import log
 import query
 import os
 from replace_doc_window import DocumentExistAllert
@@ -28,6 +29,8 @@ class DetailWindow(ctk.CTkToplevel):
         self.center_win_detail(1000, 800)
         self.resizable(False, False)
 
+        log("INFO", f"USER={self.user} Aperta finestra dettaglio del record ID[{self.id}]")
+
         # Configurazione griglia principale
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -36,7 +39,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.win_frame = ctk.CTkFrame(self, corner_radius=4)
         self.win_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.win_frame.grid_columnconfigure((0, 1, 2), weight=1)
-        self.win_frame.grid_rowconfigure((2, 4), weight=1)
+        self.win_frame.grid_rowconfigure((2, 4, 5), weight=1)
 
         # Componente, utente e data di rilevazione del problema
         self.label_component_description = ctk.CTkLabel(master=self.win_frame, 
@@ -90,7 +93,7 @@ class DetailWindow(ctk.CTkToplevel):
                                                  font=("Roboto", 15), 
                                                  command=self.view_document
                                                  )
-            self.button_view_doc.grid(row=5, column=0, padx=10, pady=10, sticky="new")
+            self.button_view_doc.grid(row=5, column=0, columnspan=1, padx=10, pady=10, sticky="new")
             self.button_edit = ctk.CTkButton(master=self.win_frame, 
                                              text="Edita record 📝", 
                                              font=("Roboto", 15), 
@@ -141,9 +144,13 @@ class DetailWindow(ctk.CTkToplevel):
     def view_document(self):
         try:
             if self.root != None:
+                log("INFO", f"USER={self.user} Aperto documento allegato al record ID [{self.id}]")
+                self.master.debug_message(f"Aperto documento allegato al record ID [{self.id}]")
                 os.startfile(self.root)
         except FileNotFoundError as err:
             print(f"File non trovato!\n[Error]: {err}")
+            log("WARNING", f"USER={self.user} Documento allegato al record ID [{self.id}] non trovato")
+            self.master.debug_message(f"USER={self.user} Documento allegato al record ID [{self.id}] non trovato")
             msg = CTkMessagebox(
                 title="File non trovato!",
                 message="File non trovato!\nPotrebbe essere stato rinominato o eliminato dalla cartella",
@@ -165,7 +172,6 @@ class DetailWindow(ctk.CTkToplevel):
     # Funzione per aggiungere un documento
     def add_document(self):
         current_data = (self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-        self.master.debug_message(f'Aperta finestra per aggiunta di allegato al record ID[{self.id}]')
         if self.document == "Si":
             DocumentExistAllert(self, current_data)
         else:
@@ -185,6 +191,7 @@ class DetailWindow(ctk.CTkToplevel):
             )
             return
         
+        log("INFO", f"USER={self.user} Apertura editazione del record ID [{self.id}]")
         self.master.button_save.grid(columnspan=1)
         self.master.button_cancel_editing.grid(column=1, row=7, padx=10, pady=10, sticky="ew")
 

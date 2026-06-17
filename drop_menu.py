@@ -1,9 +1,6 @@
-# qui si inseriranno le azioni della barra del menu (File, Help, ?) e poi verranno richiamate singolarmente attraveso il comando del singolo pulsante nella classe principale
-# poi all'inizio della classe principale basterà inserire qualcosa tipo (supponendo di creare in questo file la classe MenuActions()): self.azioni = MenuActions(self)
-# e poi ai pulsanti collegare il comando tipo (supponendo che nuova_azione sia un metodo della nuova vlasse): command = self.azioni.nuova_azione
-
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
+from logger import log
 import os
 import win32com.client as win32
 
@@ -20,7 +17,6 @@ class MenuBar():
 
     # Cambio del tema dell'app
     def view_theme_option(self):
-        print("Cambio tema")
         self.theme_window = ctk.CTkToplevel()
         self.theme_window.grab_set()
         self.theme_window.title("Modifica il tema del software")
@@ -96,15 +92,17 @@ class MenuBar():
         # Forza il rinfresco visivo della tabella
         self.master.load_data()
         
+        log("INFO", f"Tema dell'applicazione cambiato in {new_theme}")
         print(f"Tema aggiornato a {new_theme} dall'interno della classe secondaria")
 
     # Apertura del file .pdf con le istruzioni di utilizzo
     def open_instruction(self):
-        print("Apertura istruzioni")
         root = r"C:\BRETON\Appunti\Programmazione\Archivio Errori\documents\Guida all'utilizzo.pdf"
         try:
+            log("INFO", "Apertura file di Guida all'utilizzo")
             os.startfile(root)
         except FileNotFoundError as err:
+            log("ERROR", f"Errore all'apertura del file Guida all'utilizzo: {err}")
             print(f"Guida all'utilizzo non trovato!\n[Error]: {err}")
             msg = CTkMessagebox(
                 title="File non trovato!",
@@ -121,18 +119,21 @@ class MenuBar():
     # Apertura (e sotto chiusura) del frame di debug
     def open_debug(self):
         print("Apertura debug")
+        log("INFO", "Apertura finestra di debug")
         if not self.debug_console_visible:
             self.master.frame_textbox.pack(pady=(0, 10), fill="x", side="bottom")
             self.debug_console_visible = True
         
     def close_debug(self):
         print("Chiudi debug")
+        log("INFO", "Chiusura finestra di debug")
         self.master.frame_textbox.pack_forget()
         self.debug_console_visible = False
 
     # Apertura label con informazioni versione e autore
     def open_info(self):
         print("Info")
+        log("INFO", "Apertura finestra di informazioni del software")
         self.info_window = ctk.CTkToplevel()
         self.info_window.grab_set()
         self.info_window.title("Informazioni sul software")
@@ -180,8 +181,10 @@ class MenuBar():
             mail.CC = "Martini.Enrico@breton.it"
             mail.Subject = "Archivio Errori: Segnalazione di problema o bug"
             # mostra la finestra di outlook all'utente senza inviare la mail
+            log("INFO", "Apertura finestra di Outlook per segnalazione problemi")
             mail.Display(True)
         except Exception as err:
+            log("ERROR", f"Apertura Outlook fallita: {err}")
             print(f"Impossibile aprire Outlook. Assicurarsi che sia installato: {err}")
             self.master.debug_message(f"Impossibile aprire Outlook. Assicurarsi che sia installato: {err}")
 
