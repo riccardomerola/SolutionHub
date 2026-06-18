@@ -10,7 +10,6 @@ import query
 import os
 from datetime import datetime
 from detail_window import DetailWindow
-from cancel_window import CancelConfirm
 from drop_menu import MenuBar
 
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
@@ -285,14 +284,12 @@ class App(ctk.CTk):
         self.record_edit_root = None
 
         # Pulsante per rimuovere il record selezionato della tabella
-        self.button_remove = ctk.CTkButton(master=self.right_frame, 
-                                           text="Elimina record 🗑️", 
-                                           font=("Roboto", 15), 
-                                           fg_color="red", 
-                                           hover_color="#C82333", 
-                                           command=self.open_delete_window
+        self.open_detail = ctk.CTkButton(master=self.right_frame, 
+                                           text="Apri dettaglio del record selezionato ℹ️", 
+                                           font=("Roboto", 15),
+                                           command=self.handle_double_click
                                            )
-        self.button_remove.grid(column=0, row=2, padx=10, pady=10, sticky="ew")
+        self.open_detail.grid(column=0, row=2, padx=10, pady=10, sticky="ew")
 
         # Verifica se ci sono record in editazione
         self.show_edit_warning(self.record_edit_id)
@@ -306,17 +303,7 @@ class App(ctk.CTk):
             pass
 
 
-    # Funzione per aprire finestra di conferma cancellazione record
-    def open_delete_window(self):
-        if not self.selected_row_data:
-            return
-        
-        # Se la riga è vuota non compare la finestra
-        if self.selected_row_data[0] == ' ':
-            return
-        
-        self.debug_message(f"USER={self.user} Apertura finestra di eliminazione record")
-        CancelConfirm(self, self.selected_row_data)
+    
 
     # Funzione per centrare la finestra nello schermo
     def center_win_app(self, width, height):
@@ -330,7 +317,7 @@ class App(ctk.CTk):
         self.geometry(f"{width}x{height}+{x}+{y}")
 
     # Funzione per gestire la selezione di una riga nella tabella
-    def handle_table_click(self, event):
+    def handle_table_click(self, event=None):
         # recupera l'elemento selezionato
         selected = self.value_table.selection()
 
@@ -349,7 +336,7 @@ class App(ctk.CTk):
                 break
     
     # Funzione per l'apertura della finestra al doppio click
-    def handle_double_click(self, event):
+    def handle_double_click(self, event=None):
         # recupera l'elemento selezionato
         selected = self.value_table.selection()
         

@@ -76,9 +76,10 @@ class CancelConfirm(ctk.CTkToplevel):
             self.delete_document(document)
         
         query.delete_record(self.id)
-        self.master.load_data()
+        self.master.master.load_data()
         log("INFO", f"USER={self.master.user} Cancellato record ID[{self.id}] e relativi documenti allegati")
-        self.master.debug_message(f'Record ID[{self.id}] e relativi documenti allegati eliminati')
+        self.master.master.debug_message(f'Record ID[{self.id}] e relativi documenti allegati eliminati')
+        self.master.destroy()
         self.destroy()
     
     # Funzione per eliminare il documento allegato

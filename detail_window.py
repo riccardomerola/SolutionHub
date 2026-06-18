@@ -5,6 +5,7 @@ import query
 import os
 from replace_doc_window import DocumentExistAllert
 from new_doc_window import DocumentNotExistAllert
+from cancel_window import CancelConfirm
 
 mode = ctk.get_appearance_mode()
 
@@ -12,7 +13,7 @@ mode = ctk.get_appearance_mode()
 class DetailWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
-
+        self.selected_row_data = self.master.selected_row_data
         self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         print("id: ", self.id)
         print("component: ", self.component)
@@ -39,7 +40,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.win_frame = ctk.CTkFrame(self, corner_radius=4)
         self.win_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.win_frame.grid_columnconfigure((0, 1, 2), weight=1)
-        self.win_frame.grid_rowconfigure((2, 4, 5), weight=1)
+        self.win_frame.grid_rowconfigure((2, 4), weight=1)
 
         # Componente, utente e data di rilevazione del problema
         self.label_component_description = ctk.CTkLabel(master=self.win_frame, 
@@ -86,56 +87,55 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_solution_detail.insert("0.0", self.solution)
         self.text_win_description_detail.configure(state="disabled")
 
-        # Pulsante visualizza documento, edita record e chiudi finestra
-        if self.document == "Si":
-            self.button_view_doc = ctk.CTkButton(master=self.win_frame, 
+        # pulsante edita
+        self.button_edit = ctk.CTkButton(master=self.win_frame, 
+                                             text="Edita record 📝", 
+                                             font=("Roboto", 15), 
+                                             command=self.edit_record
+                                             )
+        self.button_edit.grid(row=5, column=0, padx=10, pady=10, sticky="new")
+
+        # pulsante per aprire il doc ma solo se presente (quindi non messo in grid)
+        self.button_view_doc = ctk.CTkButton(master=self.win_frame, 
                                                  text="Apri allegato 📄", 
                                                  font=("Roboto", 15), 
                                                  command=self.view_document
                                                  )
-            self.button_view_doc.grid(row=5, column=0, columnspan=1, padx=10, pady=10, sticky="new")
-            self.button_edit = ctk.CTkButton(master=self.win_frame, 
-                                             text="Edita record 📝", 
-                                             font=("Roboto", 15), 
-                                             command=self.edit_record
-                                             )
-            self.button_edit.grid(row=5, column=1, padx=10, pady=10, sticky="new")
-            self.button_add_doc = ctk.CTkButton(master=self.win_frame, 
+        
+        # pulsante per aggiungere/cambiare un documento solo se NON presente (quindi non messo in grid)
+        self.button_add_doc = ctk.CTkButton(master=self.win_frame, 
                                                 text="Cambia allegato 🆕", 
                                                 font=("Roboto", 15), 
                                                 command=self.add_document
                                                 )
-            self.button_add_doc.grid(row=5, column=2, padx=10, pady=10, sticky="new")
-            self.button_close_win = ctk.CTkButton(master=self.win_frame, 
-                                                  text="Chiudi la finestra ❌", 
-                                                  font=("Roboto", 15), 
-                                                  fg_color="red", 
-                                                  hover_color="#C82333", 
-                                                  command=self.destroy
-                                                  )
-            self.button_close_win.grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
-        else:
-            self.button_edit = ctk.CTkButton(master=self.win_frame, 
-                                             text="Edita record 📝", 
-                                             font=("Roboto", 15), 
-                                             command=self.edit_record
-                                             )
-            self.button_edit.grid(row=5, column=0, padx=10, pady=10, sticky="new")
-            self.button_add_doc = ctk.CTkButton(master=self.win_frame, 
-                                                text="Aggiungi allegato 🆕", 
-                                                font=("Roboto", 15), 
-                                                command=self.add_document
-                                                )
-            self.button_add_doc.grid(row=5, column=2, padx=10, pady=10, sticky="new")
-            self.button_close_win = ctk.CTkButton(master=self.win_frame, 
-                                                  text="Chiudi la finestra ❌", 
-                                                  font=("Roboto", 15), 
-                                                  fg_color="red", 
-                                                  hover_color="#C82333", 
-                                                  command=self.destroy
-                                                  )
-            self.button_close_win.grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+        self.button_add_doc.grid(row=5, column=2, padx=10, pady=10, sticky="new")
 
+        # pulsante elimina record
+        self.button_delete_record = ctk.CTkButton(master=self.win_frame, 
+                                                  text="Elimina record 🗑️", 
+                                                  font=("Roboto", 15), 
+                                                  fg_color="red", 
+                                                  hover_color="#C82333", 
+                                                  command=self.open_delete_window
+                                                  )
+        self.button_delete_record.grid(row=6, column=0, columnspan=1, padx=10, pady=10, sticky="sew")
+
+        # pulsante chiudi finestra
+        self.button_close_win = ctk.CTkButton(master=self.win_frame, 
+                                                  text="Chiudi la finestra ❌", 
+                                                  font=("Roboto", 15), 
+                                                  fg_color="red", 
+                                                  hover_color="#C82333", 
+                                                  command=self.destroy
+                                                  )
+        self.button_close_win.grid(row=6, column=2, columnspan=1, padx=10, pady=10, sticky="sew")
+
+        # Pulsante visualizza documento, edita record e chiudi finestra
+        if self.document == "Si":
+            self.button_view_doc.grid(row=5, column=1, columnspan=1, padx=10, pady=10, sticky="new")
+            self.button_add_doc.configure(text="Cambia allegato 🆕")
+        else:
+            self.button_add_doc.configure(text="Aggiungi allegato 🆕")
 
         # Necessario per portare la finestra in primo piano
         self.after(100, self.lift)
@@ -210,6 +210,18 @@ class DetailWindow(ctk.CTkToplevel):
         self.master.text_solution.insert("0.0", solution) 
         self.destroy()
     
+    # Funzione per aprire finestra di conferma cancellazione record
+    def open_delete_window(self):
+        if not self.master.selected_row_data:
+            return
+        
+        # Se la riga è vuota non compare la finestra
+        if self.selected_row_data[0] == ' ':
+            return
+        
+        self.master.debug_message(f"USER={self.user} Apertura finestra di eliminazione record")
+        CancelConfirm(self, self.master.selected_row_data)
+
     # Funzione per centrare la finestra di dettaglio all'apertura
     def center_win_detail(self, width, height):
         self.update_idletasks()
