@@ -263,7 +263,14 @@ class App(ctk.CTk):
         self.scrollbar_y.configure(command=self.value_table.yview)
         self.scrollbar_y.pack(side="right", fill="y")
         self.value_table.pack(padx=0, pady=0, fill="both", expand=True)
-
+        # tooltip per indicare che con doppio click si apre il dettaglio
+        CTkToolTip(self.value_table, 
+                   message="Doppio click sul recor per aprire il dettaglio",
+                   corner_radius=8,
+                   border_width=1,
+                   border_color="white"
+                   )
+         
         self.load_data()
 
         # Eventi per la gestione dei click
