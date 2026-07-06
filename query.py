@@ -123,3 +123,15 @@ def get_id_editing_record():
         cursor.execute("SELECT ID FROM breton_solutionhub WHERE Editazione=1;")
         result = cursor.fetchall()
         return [dict(row) for row in result]
+
+
+# Reset dei record in editazione, da usare in caso di chiusure forzate del programma
+def reset_editazione():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        query= """
+        UPDATE breton_solutionhub SET Editazione=0 WHERE Editazione=1;
+        """
+        cursor.execute(query, )
+        result = cursor.fetchall()
+        return [dict(row) for row in result]

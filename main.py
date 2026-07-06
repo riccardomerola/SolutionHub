@@ -69,6 +69,7 @@ class App(ctk.CTk):
         help_button = CustomDropdownMenu(widget=help_button)
         help_button.add_option(option="Debug", command=self.action_menu.open_debug)
         help_button.add_option(option="Istruzioni per l'utilizzo", command=self.action_menu.open_instruction)
+        help_button.add_option(option="Reset editazione", command=self.action_menu.reset_edit)
 
         info_button = CustomDropdownMenu(widget=info_button)
         info_button.add_option(option="Versione software", command=self.action_menu.open_info)

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from logger import log
+import query
 import os
 import win32com.client as win32
 
@@ -129,6 +130,81 @@ class MenuBar():
         log("INFO", "Chiusura finestra di debug")
         self.master.frame_textbox.pack_forget()
         self.debug_console_visible = False
+
+    # Apertura finestra in cui admin può resettare record in editazione in caso di chiusura forzata
+    def reset_edit(self):
+        self.reset_edit_window = ctk.CTkToplevel()
+        self.reset_edit_window.grab_set()
+        self.reset_edit_window.title("Reset dei record in editazione")
+        self.reset_edit_window.resizable(False, False)
+        self.center_win_detail(self.reset_edit_window, 350, 280)
+
+        self.reset_edit_window.grid_columnconfigure(0, weight=1)
+
+        # frame della finestra
+        frame_reset_edit = ctk.CTkFrame(self.reset_edit_window, corner_radius=4)
+        frame_reset_edit.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        frame_reset_edit.grid_columnconfigure(0, weight=1)
+
+        user_label = ctk.CTkLabel(frame_reset_edit, text="Username: ", font=("Roboto", 16, "bold"))
+        user_label.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsw")
+        self.user_entry = ctk.CTkEntry(frame_reset_edit, 
+                                  placeholder_text="Username...", 
+                                  corner_radius=4, 
+                                  font=("Roboto", 15)
+                                  )
+        self.user_entry.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        pwd_label = ctk.CTkLabel(frame_reset_edit, text="Password: ", font=("Roboto", 16, "bold"))
+        pwd_label.grid(row=2, column=0, padx=10, pady=(10, 0), sticky="nsw")
+        self.pwd_entry = ctk.CTkEntry(frame_reset_edit, 
+                                  placeholder_text="Password...", 
+                                  corner_radius=4, 
+                                  font=("Roboto", 15),
+                                  show="*"
+                                  )
+        self.pwd_entry.grid(row=3, column=0, padx=10, pady=10, sticky="nsew")
+        self.message_label = ctk.CTkLabel(frame_reset_edit, text="")
+        self.message_label.grid(row=4, column=0, padx=10, pady=10, sticky="nsew")
+        confirm_button = ctk.CTkButton(frame_reset_edit, text="Conferma", font=("Roboto", 15), command=self.check_login)
+        confirm_button.grid(row=5, column=0, padx=10, pady=10, sticky="nsew")
+
+    # Funzione per verificare username e pwd per reset record in editazione
+    def check_login(self):
+        username = self.user_entry.get()
+        password = self.pwd_entry.get()
+
+        if username == "Relsoft" and password == "R3l50ft":
+            self.message_label.configure(text="")
+            msg = CTkMessagebox(
+                title="Conferma di reset",
+                message="Vuoi procedere con il reset dei record in editazione?",
+                icon="warning",
+                border_width=2,
+                border_color="orange",
+                option_1="Si",
+                option_2="No",
+                justify="center"
+            ) 
+            if msg.get() == "No" or msg.get() == None:
+                self.reset_edit_window.destroy()
+            else:
+                query.reset_editazione()
+                confirm_msg = CTkMessagebox(
+                    title="Reset confermato",
+                    message="Reset dei record in editazione avvenuto con successo",
+                    icon="info",
+                    border_width=2,
+                    border_color="#0061FF",
+                    option_1="Ok",
+                    justify="center"
+                )
+                self.reset_edit_window.destroy()
+                self.master.label_warning_edit.destroy()
+                self.master.label_warning_edit = None
+                log("INFO" , "Reset dei record bloccati in editazione")
+                self.master.debug_message("Reset dei record bloccati in editazione")
+        else:
+            self.message_label.configure(text="Username o Password errati!",  text_color="red",font=("Roboto", 15, "bold"))
 
     # Apertura label con informazioni versione e autore
     def open_info(self):
