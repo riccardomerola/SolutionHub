@@ -51,16 +51,16 @@ class App(ctk.CTk):
         file_dropdown.add_option(option="Cambia tema", command=self.action_menu.view_theme_option)
         file_dropdown.add_separator()
         file_dropdown.add_option(option="Esci", command=self.close_program)
-        
+
         # creazione senza posizione di schermata di debug
         self.frame_textbox = ctk.CTkFrame(self)
-        self.textbox_debug = ctk.CTkTextbox(self.frame_textbox, 
-                                            height=300, 
-                                            width=500, 
+        self.textbox_debug = ctk.CTkTextbox(self.frame_textbox,
+                                            height=300,
+                                            width=500,
                                             state="disabled"
                                             )
-        self.button_close_debug = ctk.CTkButton(self.frame_textbox, 
-                                                text="Chiudi debug", 
+        self.button_close_debug = ctk.CTkButton(self.frame_textbox,
+                                                text="Chiudi debug",
                                                 command=self.action_menu.close_debug
                                                 )
         self.button_close_debug.pack(pady=10, side="left")
@@ -69,17 +69,17 @@ class App(ctk.CTk):
         help_button = CustomDropdownMenu(widget=help_button)
         help_button.add_option(option="Debug", command=self.action_menu.open_debug)
         help_button.add_option(option="Istruzioni per l'utilizzo", command=self.action_menu.open_instruction)
-        help_button.add_option(option="Reset editazione", command=self.action_menu.reset_edit)
+        help_button.add_option(option="Reset stato di modifica", command=self.action_menu.reset_edit)
 
         info_button = CustomDropdownMenu(widget=info_button)
         info_button.add_option(option="Versione software", command=self.action_menu.open_info)
         info_button.add_option(option="Segnala problemi o bug", command=self.action_menu.signal_problem)
 
-        # ======================= FRAME CONTENENTE TUTTA LA PAGINA ======== 
+        # ======================= FRAME CONTENENTE TUTTA LA PAGINA ========
         # Necessario perché CTkMenuBar usa .pack() e non .grid(): i due non possono coesistere sulla stessa finestra
         self.frame = ctk.CTkFrame(self, fg_color="transparent")
         self.frame.pack(fill="both", expand=True)
-        
+
         # configurazione griglia principale
         self.frame.grid_columnconfigure(0, weight=0)
         self.frame.grid_columnconfigure(1, weight=1)
@@ -92,13 +92,13 @@ class App(ctk.CTk):
         self.left_frame.grid_columnconfigure(0, weight=1)
 
         # Label e Entry per inserimento del componente
-        self.label_component = ctk.CTkLabel(self.left_frame, 
-                                            text="Componente", 
+        self.label_component = ctk.CTkLabel(self.left_frame,
+                                            text="Componente",
                                             font=("Roboto", 16, "bold")
                                             )
         self.label_component.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
-        self.entry_component = ctk.CTkEntry(self.left_frame, 
-                                            placeholder_text="Es. KEBA, B&R, Siemens...", 
+        self.entry_component = ctk.CTkEntry(self.left_frame,
+                                            placeholder_text="Es. KEBA, B&R, Siemens...",
                                             corner_radius=4, font=("Roboto", 15)
                                             )
         self.entry_component.grid(column=0, row=1, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
@@ -114,38 +114,38 @@ class App(ctk.CTk):
             self.button_color = "black"
 
         # Label e Textbox per inserimento descrizione problema + pulsante ingrandimento testo
-        self.label_description = ctk.CTkLabel(self.left_frame, 
-                                              text="Descrizione problema", 
+        self.label_description = ctk.CTkLabel(self.left_frame,
+                                              text="Descrizione problema",
                                               font=("Roboto", 16, "bold")
                                               )
         self.label_description.grid(column=0, row=2, padx=10, pady=10, sticky="nsw")
-        self.button_expand_description = ctk.CTkButton(self.left_frame, 
-                                                       text="📝", 
-                                                       width=20, 
-                                                       height=20, 
-                                                       text_color=self.button_color, 
-                                                       fg_color=self.button_fg_color, 
-                                                       hover_color=self.button_hover_color, 
+        self.button_expand_description = ctk.CTkButton(self.left_frame,
+                                                       text="📝",
+                                                       width=20,
+                                                       height=20,
+                                                       text_color=self.button_color,
+                                                       fg_color=self.button_fg_color,
+                                                       hover_color=self.button_hover_color,
                                                        command=self.expand_textbox_description
                                                        )
         self.button_expand_description.grid(column=1, row=2, padx=10, pady=10, sticky="nse")
         CTkToolTip(self.button_expand_description, message="Clicca per ingrandire l'area di testo")
         self.text_description = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
         self.text_description.grid(column=0, row=3, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
-        
+
         # Label e Textbox per inserimento soluzione problema + pulsante ingrandimento testo
-        self.label_solution = ctk.CTkLabel(self.left_frame, 
-                                           text="Soluzione e note", 
+        self.label_solution = ctk.CTkLabel(self.left_frame,
+                                           text="Soluzione e note",
                                            font=("Roboto", 16, "bold")
                                            )
         self.label_solution.grid(column=0, row=4, padx=10, pady=10, sticky="nsw")
-        self.button_expand_problem = ctk.CTkButton(self.left_frame, 
-                                                   text="📝", 
-                                                   width=20, 
-                                                   height=20, 
-                                                   text_color=self.button_color, 
-                                                   fg_color=self.button_fg_color, 
-                                                   hover_color=self.button_hover_color, 
+        self.button_expand_problem = ctk.CTkButton(self.left_frame,
+                                                   text="📝",
+                                                   width=20,
+                                                   height=20,
+                                                   text_color=self.button_color,
+                                                   fg_color=self.button_fg_color,
+                                                   hover_color=self.button_hover_color,
                                                    command=self.expand_textbox_solution
                                                    )
         self.button_expand_problem.grid(column=1, row=4, padx=10, pady=10, sticky="nse")
@@ -154,24 +154,24 @@ class App(ctk.CTk):
         self.text_solution.grid(column=0, row=5, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
 
         # Pulsanti per salvare il db e chiudere il programma
-        self.button_cancel_editing = ctk.CTkButton(master=self.left_frame, 
-                                                   text="Annulla editazione ⬅️", 
-                                                   font=("Roboto", 15), 
+        self.button_cancel_editing = ctk.CTkButton(master=self.left_frame,
+                                                   text="Annulla modifica ⬅️",
+                                                   font=("Roboto", 15),
                                                    command=self.cancel_editing
                                                    )
-        self.button_save = ctk.CTkButton(master=self.left_frame, 
-                                         text="Salva in database 💾", 
-                                         font=("Roboto", 15), 
-                                         fg_color="green", 
-                                         hover_color="#218838", 
+        self.button_save = ctk.CTkButton(master=self.left_frame,
+                                         text="Salva in database 💾",
+                                         font=("Roboto", 15),
+                                         fg_color="green",
+                                         hover_color="#218838",
                                          command=self.insert_record
                                          )
         self.button_save.grid(column=0, row=7, columnspan=2,padx=10, pady=10, sticky="ew")
-        self.button_exit = ctk.CTkButton(master=self.left_frame, 
-                                         text="Esci dal programma ❌", 
-                                         font=("Roboto", 15), 
-                                         fg_color="red", 
-                                         hover_color="#C82333", 
+        self.button_exit = ctk.CTkButton(master=self.left_frame,
+                                         text="Esci dal programma ❌",
+                                         font=("Roboto", 15),
+                                         fg_color="red",
+                                         hover_color="#C82333",
                                          command=self.close_program
                                          )
         self.button_exit.grid(column=0, row=9, columnspan=2, padx=10, pady=10, sticky="sew")
@@ -185,10 +185,10 @@ class App(ctk.CTk):
         self.right_frame.grid_columnconfigure(0, weight=1)
 
         # Entry della barra di ricerca
-        self.search_entry = ctk.CTkEntry(self.right_frame, 
-                                         placeholder_text="🔎 Cerca", 
-                                         height=40, 
-                                         corner_radius=4, 
+        self.search_entry = ctk.CTkEntry(self.right_frame,
+                                         placeholder_text="🔎 Cerca",
+                                         height=40,
+                                         corner_radius=4,
                                          font=("Roboto", 18)
                                          )
         self.search_entry.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
@@ -222,28 +222,28 @@ class App(ctk.CTk):
         self.scrollbar_y = ctk.CTkScrollbar(self.table_frame, orientation="vertical")
 
         # configurazione stile della heading e delle celle della tabella
-        self.style.configure("Treeview.Heading", 
-                             background=self.bg_color_heading, 
-                             foreground=self.fg_color, 
-                             borderwidth=1, 
-                             relief="solid", 
-                             padding=(0, 8, 0, 8), 
+        self.style.configure("Treeview.Heading",
+                             background=self.bg_color_heading,
+                             foreground=self.fg_color,
+                             borderwidth=1,
+                             relief="solid",
+                             padding=(0, 8, 0, 8),
                              font=("Roboto", 15, "bold")
                              )
-        self.style.configure("Treeview", 
-                             background=self.bg_color_treeview, 
-                             foreground=self.fg_color, 
-                             rowheight=40, 
-                             fieldbackground=self.bg_color_treeview, 
-                             borderwidth=1, 
-                             relief="flat", 
+        self.style.configure("Treeview",
+                             background=self.bg_color_treeview,
+                             foreground=self.fg_color,
+                             rowheight=40,
+                             fieldbackground=self.bg_color_treeview,
+                             borderwidth=1,
+                             relief="flat",
                              font=("Roboto", 10)
                              )
         self.style.map("Treeview", background=[("selected", "#3b8ed0")])
         # creazione tabella
-        self.value_table = ttk.Treeview(self.table_frame, 
-                                        columns=("id", "component", "problem", "solution", "doc"), 
-                                        show="headings", 
+        self.value_table = ttk.Treeview(self.table_frame,
+                                        columns=("id", "component", "problem", "solution", "doc"),
+                                        show="headings",
                                         yscrollcommand=self.scrollbar_y.set)
         # heading delle colonne
         self.value_table.heading("id", text="ID")
@@ -264,13 +264,13 @@ class App(ctk.CTk):
         self.scrollbar_y.pack(side="right", fill="y")
         self.value_table.pack(padx=0, pady=0, fill="both", expand=True)
         # tooltip per indicare che con doppio click si apre il dettaglio
-        CTkToolTip(self.value_table, 
+        CTkToolTip(self.value_table,
                    message="Doppio click sul recor per aprire il dettaglio",
                    corner_radius=8,
                    border_width=1,
                    border_color="white"
                    )
-         
+
         self.load_data()
 
         # Eventi per la gestione dei click
@@ -285,8 +285,8 @@ class App(ctk.CTk):
         self.record_edit_root = None
 
         # Pulsante per rimuovere il record selezionato della tabella
-        self.open_detail = ctk.CTkButton(master=self.right_frame, 
-                                           text="Apri dettaglio del record selezionato ℹ️", 
+        self.open_detail = ctk.CTkButton(master=self.right_frame,
+                                           text="Apri dettaglio del record selezionato ℹ️",
                                            font=("Roboto", 15),
                                            command=self.handle_double_click
                                            )
@@ -304,7 +304,7 @@ class App(ctk.CTk):
             pass
 
 
-    
+
 
     # Funzione per centrare la finestra nello schermo
     def center_win_app(self, width, height):
@@ -324,7 +324,7 @@ class App(ctk.CTk):
 
         if not selected:
             return
-        
+
         # si prende il primo elemento selezionato, si estrapolano i valori in una lista e si seleziona l'id
         item = selected[0]
         values = self.value_table.item(item)["values"]
@@ -335,15 +335,15 @@ class App(ctk.CTk):
             if row[0] == record_id:
                 self.selected_row_data = row
                 break
-    
+
     # Funzione per l'apertura della finestra al doppio click
     def handle_double_click(self, event=None):
         # recupera l'elemento selezionato
         selected = self.value_table.selection()
-        
+
         if not selected:
             return
-        
+
         # si prende il primo elemento selezionato, si estrapolano i valori in una lista e si seleziona l'id
         item = selected[0]
         values = self.value_table.item(item)["values"]
@@ -360,10 +360,10 @@ class App(ctk.CTk):
         formatted_data = []
 
         for row in rows:
-            formatted_data.append([row['ID'], 
-                                  row['Componente'], 
-                                  row['Problema'], 
-                                  row['Soluzione'], 
+            formatted_data.append([row['ID'],
+                                  row['Componente'],
+                                  row['Problema'],
+                                  row['Soluzione'],
                                   row['Documentazione'],
                                   row['Percorso'],
                                   row['Editazione'],
@@ -395,7 +395,7 @@ class App(ctk.CTk):
             viewed_columns[2] = f"       {str(viewed_columns[2]).split('\n')[0]}     "
             viewed_columns[3] = f"       {str(viewed_columns[3]).split('\n')[0]}     "
             self.value_table.insert("", "end", values=viewed_columns, tags=(tag_row, ))
-            
+
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
         self.debug_message(f"Record trovati: {len(raw_rows)}")
@@ -414,7 +414,7 @@ class App(ctk.CTk):
         self.user = os.getlogin()
         data = datetime.now().strftime("%d-%m-%Y")
         edit = 0
-        
+
         # controllo se i campi non sono vuoti
         if component.strip() == "" or description.strip() == "" or solution.strip() == "":
             msg_empty = CTkMessagebox(
@@ -426,7 +426,7 @@ class App(ctk.CTk):
                 option_1="Ok"
             )
             return
-        
+
         if self.record_edit_id is not None:
             record_id = self.record_edit_id
             document = self.record_edit_document
@@ -479,15 +479,15 @@ class App(ctk.CTk):
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
                 return
-            
-            # Apre file explorer: restituisce il percorso in stringa se seleziona file, altrimenti stringa vuota 
-            selected_file = filedialog.askopenfilename(title="Seleziona un file", 
+
+            # Apre file explorer: restituisce il percorso in stringa se seleziona file, altrimenti stringa vuota
+            selected_file = filedialog.askopenfilename(title="Seleziona un file",
                                                        filetypes=[("Tutti i file", "*.*")])
 
             # Se si clicca "Si" ma non si seleziona nessun file
             if not selected_file:
                 document = "No"
-                
+
                 query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
                 self.load_data()
                 log("WARNING", f"USER={self.user} Nessun file allegato al record ID [{record_id}] appena inserito")
@@ -496,17 +496,17 @@ class App(ctk.CTk):
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
                 return
-            
+
             file = os.path.basename(selected_file)                          # estrae l'ultimo componente da un percorso (qui è nome file)
             filename = f"{record_id}_{file}"                                # modifica il nome del file aggiungendo ID all'inizio
             destination_path = os.path.join(documents_root, filename)       # combina segmenti creando il percorso con separatori
-            
+
             # Verifica se il percorso esiste, restituisce True o False
             if not os.path.isfile(destination_path):
                 shutil.copy(selected_file, destination_path)  # copia file al percorso
                 document = "Si"
                 root = destination_path
-                
+
                 query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
                 self.debug_message(f'Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
@@ -519,19 +519,19 @@ class App(ctk.CTk):
 
             # Messaggio che avvisa di file con stesso nome già presente
             msg_exist = CTkMessagebox(
-                title="File esistente", 
-                message=f'Esiste già un file "{filename}" relativo al record ID[{record_id}].\nVuoi sovrascriverlo?', 
+                title="File esistente",
+                message=f'Esiste già un file "{filename}" relativo al record ID[{record_id}].\nVuoi sovrascriverlo?',
                 icon="warning",
                 border_width=2,
                 border_color="orange",
-                option_1="Si", 
+                option_1="Si",
                 option_2="No",
                 justify="center"
             )
 
             if msg_exist.get() == "No":
                 document = "No"
-                
+
                 query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
                 log("INFO", f'USER={self.user} Aggiunto record [{record_id}] senza documento allegato (documento "{filename}" già esistente)')
                 self.debug_message(f'Aggiunto record [{record_id}] senza documento allegato (documento già esistente)')
@@ -540,12 +540,12 @@ class App(ctk.CTk):
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
                 return
-            
+
             # Se si vuole sovrascrivere
             shutil.copy(selected_file, destination_path)    # copia file al percorso
             document = "Si"
             root = destination_path
-            
+
             query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
             log("INFO", f'USER={self.user} Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
             self.debug_message(f'Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
@@ -554,23 +554,23 @@ class App(ctk.CTk):
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
-    
+
     # Funzione per ricerca dinamica
     def dynamic_search(self, event=None):
         # reset timer precedente se l'utente clicca un pulsante prima di 400ms
         if hasattr(self, 'search_timer') and self.search_timer is not None:
             self.after_cancel(self.search_timer)
             self.search_timer = None
-        
+
         # event si attiva al rilascio di un tasto sulla tastiera
         if event is not None:
             # pianifica di richiamare la funzione forzando event=None per impostare tempo scaduto
             self.search_timer = self.after(300, lambda: self.dynamic_search(event=None))
             return              # interruzione di esecuzione
-        
+
         # event non è None, utente ha smesso di digitare e si cattura il testo
         text = self.search_entry.get().strip()
-        # aggiorna la tabella quando sono finiti altri processi 
+        # aggiorna la tabella quando sono finiti altri processi
         self.after_idle(lambda: self.load_data(search_text=text))
         # reset del timer pronto per la prossima ricerca
         self.search_timer = None
@@ -580,26 +580,26 @@ class App(ctk.CTk):
         if self.label_warning_edit is None:
             try:
                 record_id = query.get_id_editing_record()[0]['ID']
-                self.debug_message(f'Aperto record ID [{record_id}] in editazione')
-                self.label_warning_edit = ctk.CTkLabel(self.left_frame, 
-                                                       text=f"ATTENZIONE!\nAperto record con ID [{record_id}] in editazione!", 
-                                                       font=("Roboto", 15, "bold"), 
+                self.debug_message(f'Aperto record ID [{record_id}] in modifica')
+                self.label_warning_edit = ctk.CTkLabel(self.left_frame,
+                                                       text=f"ATTENZIONE!\nAperto record con ID [{record_id}] in modifica!",
+                                                       font=("Roboto", 15, "bold"),
                                                        text_color="red"
                                                        )
                 self.label_warning_edit.grid(column=0, columnspan=2, row=8, padx=10, pady=10, sticky="new")
             except IndexError as err:
-                print("Nessun record in editazione all'apertura del software")
-                log("INFO", "Nessun record aperto in editazione all'avviamento dell'applicazione")
-                self.debug_message("Nessun record aperto in editazione all'avviamento dell'applicazione")
+                print("Nessun record in modifica all'apertura del software")
+                log("INFO", "Nessun record aperto in modifica all'avviamento dell'applicazione")
+                self.debug_message("Nessun record aperto in modifica all'avviamento dell'applicazione")
             except Exception as err:
                 print(f"Errore in show_edit_warning: {err}")
                 log("ERROR", f"Err: {err}")
                 return
-    
+
     # Funzione che espande i textbox per inserimento di problema
     def expand_textbox_description(self):
         LargeTextEditor(self, self.text_description)
-    
+
     # Funzione che espande i textbox per inserimento disoluzione
     def expand_textbox_solution(self):
         LargeTextEditor(self, self.text_solution)
@@ -608,41 +608,41 @@ class App(ctk.CTk):
     def close_program(self):
         if self.record_edit_id != None:
             msg = CTkMessagebox(
-                title="Record in editazione!",
-                message=f"Prima di chiudere l'app è necessario terminare l'editazione del record ID [{self.record_edit_id}]",
+                title="Record in modifica!",
+                message=f"Prima di chiudere l'app è necessario terminare la modifica del record ID [{self.record_edit_id}]",
                 icon="warning",
                 border_width=2,
                 border_color="orange",
                 option_1="Esci senza salvare",
-                option_2="Salva ed esci", 
+                option_2="Salva ed esci",
                 justify="center"
             )
-            log("WARNING", f"USER={self.user} Terminare editazione prima di chiudere l'applicazione")
-            self.debug_message("Terminare l'editazione del record in corso prima di chiudere l'applicazione")
+            log("WARNING", f"USER={self.user} Terminare la modifica prima di chiudere l'applicazione")
+            self.debug_message("Terminare la modifica del record in corso prima di chiudere l'applicazione")
 
             if msg.get() == "Salva ed esci":
-                log("INFO", f"USER={self.user} Editazione salvata e chiusura dell'applicazione")
+                log("INFO", f"USER={self.user} Modifica salvata e chiusura dell'applicazione")
                 self.insert_record()
                 self.destroy()
             elif msg.get() == "Esci senza salvare":
                 query.close_editing(self.record_edit_id)
-                log("INFO", f"USER={self.user} Editazione annullata e chiusura dell'applicazione")
+                log("INFO", f"USER={self.user} Modifica annullata e chiusura dell'applicazione")
                 self.destroy()
             return
         else:
             log("INFO", f"USER={self.user} Chiusura dell'applicazione")
             self.destroy()
-    
+
     # Funzione per inserire messaggi nella textbox di debug
     def debug_message(self, message):
         self.textbox_debug.configure(state="normal")
         self.textbox_debug.insert("end", f"-> {message}\n")
         self.textbox_debug.see("end")
         self.textbox_debug.configure(state="disabled")
-    
+
     # Funzione per annullare l'editing in corso
     def cancel_editing(self):
-        log("INFO", f"USER={self.user} Chiusura editazione del rercod ID [{self.record_edit_id}]")
+        log("INFO", f"USER={self.user} Chiusura modifica del rercod ID [{self.record_edit_id}]")
         # settaggio a 0 del valore di editazione
         query.close_editing(self.record_edit_id)
         # rimozione dalla griglia del label di avviso e del pulsante "Annulla"
@@ -683,26 +683,26 @@ class LargeTextEditor(ctk.CTkToplevel):
         self.text_frame.grid_rowconfigure(1, weight=1)
 
         # Creazione nuovo Textbox più grande + pulsanti salvataggio
-        self.label_editor = ctk.CTkLabel(self.text_frame, 
-                                         text="Text Editor", 
+        self.label_editor = ctk.CTkLabel(self.text_frame,
+                                         text="Text Editor",
                                          font=("Roboto", 15, "bold")
                                          )
         self.label_editor.grid(column=0, row=0, padx=10, pady=10, sticky="nw")
-        self.large_textbox = ctk.CTkTextbox(self.text_frame, 
-                                            height=500, 
-                                            width=800, 
+        self.large_textbox = ctk.CTkTextbox(self.text_frame,
+                                            height=500,
+                                            width=800,
                                             font=("Roboto", 12)
                                             )
         self.large_textbox.grid(column=0, row=1, columnspan=3, padx=10, pady=10, sticky="nsew")
-        self.save_button = ctk.CTkButton(self.text_frame, 
-                                         text="Salva 💾", 
-                                         font=("Roboto", 15), 
+        self.save_button = ctk.CTkButton(self.text_frame,
+                                         text="Salva 💾",
+                                         font=("Roboto", 15),
                                          command=self.save_text
                                          )
         self.save_button.grid(column=0, row=2, padx=10, pady=10, sticky="ew")
-        self.exit_button = ctk.CTkButton(self.text_frame, 
-                                         text="Chiudi ❌", 
-                                         font=("Roboto", 15), 
+        self.exit_button = ctk.CTkButton(self.text_frame,
+                                         text="Chiudi ❌",
+                                         font=("Roboto", 15),
                                          command=self.destroy
                                          )
         self.exit_button.grid(column=2, row=2, padx=10, pady=10, sticky="ew")
@@ -734,7 +734,7 @@ class LargeTextEditor(ctk.CTkToplevel):
 
 if __name__ == "__main__":
     db_integrity = query.check_db_integrity()
-    
+
     if db_integrity == "ok":
         log("INFO", "Integrità database: OK")
         db_path = r"Database\breton_solutionhub.db"
@@ -753,7 +753,7 @@ if __name__ == "__main__":
                 log("INFO", f"Creato backup del database '{bck_name}'")
             except Exception as err:
                 log("ERROR", str(err))
-        
+
         db.create_table()
         app = App()
         app.mainloop()

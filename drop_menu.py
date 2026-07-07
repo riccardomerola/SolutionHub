@@ -26,7 +26,7 @@ class MenuBar():
         # Centraggio della finestra di info
         self.center_win_detail(self.theme_window, 160, 150)
 
-        # ---------------- Grafica della finestra ---------------- 
+        # ---------------- Grafica della finestra ----------------
         frame_theme = ctk.CTkFrame(self.theme_window, corner_radius=4)
         frame_theme.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
@@ -35,17 +35,17 @@ class MenuBar():
         self.radio_var = ctk.StringVar(master=frame_theme, value=original_theme)
 
         # radio button per selezione tema
-        button_dark_theme = ctk.CTkRadioButton(frame_theme, 
-                                               text="Tema scuro", 
-                                               variable=self.radio_var, 
-                                               value="Dark", 
+        button_dark_theme = ctk.CTkRadioButton(frame_theme,
+                                               text="Tema scuro",
+                                               variable=self.radio_var,
+                                               value="Dark",
                                                command=self.change_theme
                                                )
         button_dark_theme.pack(padx=20, pady=20)
-        button_light_theme = ctk.CTkRadioButton(frame_theme, 
-                                                text="Tema chiaro", 
-                                                variable=self.radio_var, 
-                                                value="Light", 
+        button_light_theme = ctk.CTkRadioButton(frame_theme,
+                                                text="Tema chiaro",
+                                                variable=self.radio_var,
+                                                value="Light",
                                                 command=self.change_theme
                                                 )
         button_light_theme.pack(padx=20, pady=20)
@@ -70,29 +70,29 @@ class MenuBar():
             self.master.button_fg_color = "#dbdbdb"
             self.master.button_hover_color = "#cfcfcf"
             self.master.button_color = "black"
-        
-        self.master.style.configure("Treeview.Heading", 
-                                    background=self.master.bg_color_heading if hasattr(self.master, 'right_frame') else self.master.bg_color_heading, 
+
+        self.master.style.configure("Treeview.Heading",
+                                    background=self.master.bg_color_heading if hasattr(self.master, 'right_frame') else self.master.bg_color_heading,
                                     foreground=self.master.fg_color)
-        self.master.style.configure("Treeview", 
-                                    background=self.master.bg_color_treeview, 
-                                    foreground=self.master.fg_color, 
+        self.master.style.configure("Treeview",
+                                    background=self.master.bg_color_treeview,
+                                    foreground=self.master.fg_color,
                                     fieldbackground=self.master.bg_color_treeview)
-        
+
         # Aggiorna i tag e ricarica i dati della TreeView (anch'essa sulla classe principale)
         self.master.value_table.tag_configure("pari", background=self.master.bg_color_treeview)
         self.master.value_table.tag_configure("dispari", background=self.master.bg_color_treeview_alternate)
 
-        self.master.button_expand_description.configure(text_color=self.master.button_color, 
-                                                        fg_color=self.master.button_fg_color, 
+        self.master.button_expand_description.configure(text_color=self.master.button_color,
+                                                        fg_color=self.master.button_fg_color,
                                                         hover_color=self.master.button_hover_color)
-        self.master.button_expand_problem.configure(text_color=self.master.button_color, 
-                                                    fg_color=self.master.button_fg_color, 
+        self.master.button_expand_problem.configure(text_color=self.master.button_color,
+                                                    fg_color=self.master.button_fg_color,
                                                     hover_color=self.master.button_hover_color)
-        
+
         # Forza il rinfresco visivo della tabella
         self.master.load_data()
-        
+
         log("INFO", f"Tema dell'applicazione cambiato in {new_theme}")
         print(f"Tema aggiornato a {new_theme} dall'interno della classe secondaria")
 
@@ -124,7 +124,7 @@ class MenuBar():
         if not self.debug_console_visible:
             self.master.frame_textbox.pack(pady=(0, 10), fill="x", side="bottom")
             self.debug_console_visible = True
-        
+
     def close_debug(self):
         print("Chiudi debug")
         log("INFO", "Chiusura finestra di debug")
@@ -135,7 +135,7 @@ class MenuBar():
     def reset_edit(self):
         self.reset_edit_window = ctk.CTkToplevel()
         self.reset_edit_window.grab_set()
-        self.reset_edit_window.title("Reset dei record in editazione")
+        self.reset_edit_window.title("Reset dei record in modifica")
         self.reset_edit_window.resizable(False, False)
         self.center_win_detail(self.reset_edit_window, 350, 280)
 
@@ -148,17 +148,17 @@ class MenuBar():
 
         user_label = ctk.CTkLabel(frame_reset_edit, text="Username: ", font=("Roboto", 16, "bold"))
         user_label.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsw")
-        self.user_entry = ctk.CTkEntry(frame_reset_edit, 
-                                  placeholder_text="Username...", 
-                                  corner_radius=4, 
+        self.user_entry = ctk.CTkEntry(frame_reset_edit,
+                                  placeholder_text="Username...",
+                                  corner_radius=4,
                                   font=("Roboto", 15)
                                   )
         self.user_entry.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         pwd_label = ctk.CTkLabel(frame_reset_edit, text="Password: ", font=("Roboto", 16, "bold"))
         pwd_label.grid(row=2, column=0, padx=10, pady=(10, 0), sticky="nsw")
-        self.pwd_entry = ctk.CTkEntry(frame_reset_edit, 
-                                  placeholder_text="Password...", 
-                                  corner_radius=4, 
+        self.pwd_entry = ctk.CTkEntry(frame_reset_edit,
+                                  placeholder_text="Password...",
+                                  corner_radius=4,
                                   font=("Roboto", 15),
                                   show="*"
                                   )
@@ -177,21 +177,21 @@ class MenuBar():
             self.message_label.configure(text="")
             msg = CTkMessagebox(
                 title="Conferma di reset",
-                message="Vuoi procedere con il reset dei record in editazione?",
+                message="Vuoi procedere con il reset dei record in modifica?",
                 icon="warning",
                 border_width=2,
                 border_color="orange",
                 option_1="Si",
                 option_2="No",
                 justify="center"
-            ) 
+            )
             if msg.get() == "No" or msg.get() == None:
                 self.reset_edit_window.destroy()
             else:
                 query.reset_editazione()
                 confirm_msg = CTkMessagebox(
                     title="Reset confermato",
-                    message="Reset dei record in editazione avvenuto con successo",
+                    message="Reset dei record in modifica avvenuto con successo",
                     icon="info",
                     border_width=2,
                     border_color="#0061FF",
@@ -201,8 +201,8 @@ class MenuBar():
                 self.reset_edit_window.destroy()
                 self.master.label_warning_edit.destroy()
                 self.master.label_warning_edit = None
-                log("INFO" , "Reset dei record bloccati in editazione")
-                self.master.debug_message("Reset dei record bloccati in editazione")
+                log("INFO" , "Reset dei record bloccati in modifica")
+                self.master.debug_message("Reset dei record bloccati in modifica")
         else:
             self.message_label.configure(text="Username o Password errati!",  text_color="red",font=("Roboto", 15, "bold"))
 
@@ -218,13 +218,13 @@ class MenuBar():
         # Centraggio della finestra di info
         self.center_win_detail(self.info_window, 350, 210)
 
-        # ---------------- Grafica della finestra ---------------- 
+        # ---------------- Grafica della finestra ----------------
         frame_info = ctk.CTkFrame(self.info_window, corner_radius=4)
         frame_info.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # info
-        label_info = ctk.CTkLabel(frame_info, 
-                                  text="Software sviluppato per l'archiviazione tecnica", 
+        label_info = ctk.CTkLabel(frame_info,
+                                  text="Software sviluppato per l'archiviazione tecnica",
                                   font=("Roboto", 15)
                                   )
         label_info.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="nsw")

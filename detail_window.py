@@ -96,7 +96,7 @@ class DetailWindow(ctk.CTkToplevel):
 
         # pulsante edita
         self.button_edit = ctk.CTkButton(master=self.bottom_frame,
-                                             text="Edita record 📝",
+                                             text="Modifica record 📝",
                                              font=("Roboto", 15),
                                              command=self.edit_record
                                              )
@@ -189,8 +189,8 @@ class DetailWindow(ctk.CTkToplevel):
         number_editing_record = query.get_id_editing_record()
         if len(number_editing_record) >= 1:
             msg_edit_not_possible = CTkMessagebox(
-                title="Editazione non possibile",
-                message="Editazione non possibile: è già presente un record aperto in editazione",
+                title="Modifica non possibile",
+                message="Modifica non possibile: è già presente un record aperto in modifica",
                 icon="warning",
                 border_width=2,
                 border_color="orange",
@@ -198,7 +198,7 @@ class DetailWindow(ctk.CTkToplevel):
             )
             return
 
-        log("INFO", f"USER={self.user} Apertura editazione del record ID [{self.id}]")
+        log("INFO", f"USER={self.user} Apertura modifica del record ID [{self.id}]")
         self.master.button_save.grid(columnspan=1)
         self.master.button_cancel_editing.grid(column=1, row=7, padx=10, pady=10, sticky="ew")
 
