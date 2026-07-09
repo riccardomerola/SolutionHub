@@ -98,7 +98,7 @@ class MenuBar():
 
     # Apertura del file .pdf con le istruzioni di utilizzo
     def open_instruction(self):
-        root = r"C:\BRETON\Appunti\Programmazione\Breton Solution Hub\Documents\Guida all'utilizzo.pdf"
+        root = r"Documents\Guida all'utilizzo.pdf"
         try:
             log("INFO", "Apertura file di Guida all'utilizzo")
             os.startfile(root)

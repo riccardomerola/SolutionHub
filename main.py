@@ -15,7 +15,7 @@ from drop_menu import MenuBar
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
-documents_root = r"C:\BRETON\Appunti\Programmazione\Breton Solution Hub\Documents"
+documents_root = r"Documents"
 
 
 # Classe della finestra principale
@@ -250,7 +250,7 @@ class App(ctk.CTk):
         self.value_table.heading("component", text="Componente")
         self.value_table.heading("problem", text="Problema")
         self.value_table.heading("solution", text="Soluzione")
-        self.value_table.heading("doc", text="Documento")
+        self.value_table.heading("doc", text="Allegato")
         # impostazione delle colonne
         self.value_table.column("id", width=20, stretch=True, anchor="center")
         self.value_table.column("component", width=100, stretch=True, anchor="center")

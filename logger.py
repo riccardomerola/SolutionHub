@@ -1,8 +1,8 @@
 import logging
 
-logging.basicConfig(filename=r"C:\BRETON\Appunti\Programmazione\Breton Solution Hub\Documents\00_logs.log", 
-                    level=logging.INFO, 
-                    format='%(asctime)s %(levelname)s - %(message)s', 
+logging.basicConfig(filename=r"Documents\00_logs.log",
+                    level=logging.INFO,
+                    format='%(asctime)s %(levelname)s - %(message)s',
                     datefmt='%Y-%m-%d - %H:%M:%S'
                     )
 
