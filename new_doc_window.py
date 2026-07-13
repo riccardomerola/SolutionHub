@@ -11,7 +11,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 
-        self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
+        self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
 
         self.grab_set()
@@ -80,7 +80,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 self.document = "Si"
                 self.root = destination_path
-                query.edit_record(self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID {self.id}')
                 self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID [{self.id}]')
                 self.master.master.load_data()
@@ -104,7 +104,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 self.document = "Si"
                 self.root = destination_path
-                query.edit_record(self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
                 self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()

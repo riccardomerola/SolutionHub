@@ -117,13 +117,13 @@ class App(ctk.CTk):
         self.combobox_family.set("Altro")
         # Label ed Entry per inserimento del componente
         self.label_component = ctk.CTkLabel(self.left_frame,
-                                            text="Componente",
+                                            text="Oggetto",
                                             font=("Roboto", 16, "bold")
                                             )
         self.label_component.grid(column=0, row=2, padx=10, pady=10, sticky="nsw")
         self.entry_component = ctk.CTkEntry(self.left_frame,
-                                            placeholder_text="Es. KEBA, B&R, Siemens...",
-                                            corner_radius=4, font=("Roboto", 15)
+                                            placeholder_text="Modello/commessa o oggetto",
+                                            corner_radius=4, font=("Roboto", 14)
                                             )
         self.entry_component.grid(column=0, row=3, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
         # Evento per tracciare la scrittura del componente e inserirlo in maiuscolo
@@ -268,20 +268,20 @@ class App(ctk.CTk):
         self.style.map("Treeview", background=[("selected", "#3b8ed0")])
         # creazione tabella
         self.value_table = ttk.Treeview(self.table_frame,
-                                        columns=("id", "machine", "component", "problem", "solution", "doc"),
+                                        columns=("id", "sector", "object", "problem", "solution", "doc"),
                                         show="headings",
                                         yscrollcommand=self.scrollbar_y.set)
         # heading delle colonne
         self.value_table.heading("id", text="ID")
-        self.value_table.heading("machine", text="Macchina")
-        self.value_table.heading("component", text="Componente")
+        self.value_table.heading("sector", text="Settore")
+        self.value_table.heading("object", text="Oggetto")
         self.value_table.heading("problem", text="Problema")
         self.value_table.heading("solution", text="Soluzione")
         self.value_table.heading("doc", text="Allegato")
         # impostazione delle colonne
         self.value_table.column("id", width=15, stretch=True, anchor="center")
-        self.value_table.column("machine", width=90, stretch=True, anchor="center")
-        self.value_table.column("component", width=100, stretch=True, anchor="center")
+        self.value_table.column("sector", width=90, stretch=True, anchor="center")
+        self.value_table.column("object", width=100, stretch=True, anchor="center")
         self.value_table.column("problem", width=400, stretch=True, anchor="w")
         self.value_table.column("solution", width=400, stretch=True, anchor="w")
         self.value_table.column("doc", width=80, stretch=True, anchor="center")
@@ -389,8 +389,8 @@ class App(ctk.CTk):
 
         for row in rows:
             formatted_data.append([row['ID'],
-                                  row['Macchina'],
-                                  row['Componente'],
+                                  row['Settore'],
+                                  row['Elemento'],
                                   row['Problema'],
                                   row['Soluzione'],
                                   row['Documentazione'],
@@ -435,8 +435,8 @@ class App(ctk.CTk):
         raw_row = query.get_max_id()
         current_id = raw_row[0]["ID"] if raw_row else 0
 
-        machine = self.combobox_family.get()
-        component = self.entry_component.get().strip()
+        sector = self.combobox_family.get()
+        element = self.entry_component.get().strip()
         description = self.text_description.get("1.0", "end-1c").strip()
         document = ""
         solution = self.text_solution.get("1.0", "end-1c").strip()
@@ -446,10 +446,10 @@ class App(ctk.CTk):
         edit = 0
 
         # controllo se i campi non sono vuoti
-        if component.strip() == "" or description.strip() == "" or solution.strip() == "":
+        if element.strip() == "" or description.strip() == "" or solution.strip() == "":
             msg_empty = CTkMessagebox(
                 title="Campi vuoti",
-                message='Prima di salvare è necessario riempire i campi "Componente", "Descrizione" e "Soluzione"',
+                message='Prima di salvare è necessario riempire i campi "Oggetto", "Descrizione" e "Soluzione"',
                 icon="warning",
                 border_width=2,
                 border_color="orange",
@@ -465,7 +465,7 @@ class App(ctk.CTk):
             data = datetime.now().strftime("%d-%m-%Y")
             edit = 0
 
-            query.edit_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
+            query.edit_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
             log("INFO", f"USER={self.user} Salvata modifica su record ID [{record_id}]")
             self.debug_message(f'Salvata modifica su record ID [{record_id}]')
             self.record_edit_id = None
@@ -502,7 +502,7 @@ class App(ctk.CTk):
             if msg.get() == "No":
                 document = "No"
 
-                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
                 self.load_data()
                 log("INFO", f"USER={self.user} Aggiunto nuovo record ID [{record_id}] senza file allegato")
                 self.debug_message(f'Aggiunto nuovo record ID [{record_id}] senza file allegato')
@@ -521,7 +521,7 @@ class App(ctk.CTk):
             if not selected_file:
                 document = "No"
 
-                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
                 self.load_data()
                 log("WARNING", f"USER={self.user} Nessun file allegato al record ID [{record_id}] appena inserito")
                 self.debug_message(f'Attenzione: nessun file allegato al record ID [{record_id}] appena inserito')
@@ -541,7 +541,7 @@ class App(ctk.CTk):
                 document = "Si"
                 root = destination_path
 
-                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
                 self.debug_message(f'Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
                 self.load_data()
@@ -567,7 +567,7 @@ class App(ctk.CTk):
             if msg_exist.get() == "No":
                 document = "No"
 
-                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
                 log("INFO", f'USER={self.user} Aggiunto record [{record_id}] senza documento allegato (documento "{filename}" già esistente)')
                 self.debug_message(f'Aggiunto record [{record_id}] senza documento allegato (documento già esistente)')
                 self.load_data()
@@ -582,7 +582,7 @@ class App(ctk.CTk):
             document = "Si"
             root = destination_path
 
-            query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
+            query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
             log("INFO", f'USER={self.user} Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
             self.debug_message(f'Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
             self.load_data()

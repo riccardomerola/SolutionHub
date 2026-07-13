@@ -14,10 +14,10 @@ class DetailWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
         self.selected_row_data = self.master.selected_row_data
-        self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
+        self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         print("id: ", self.id)
-        print("machine: ", self.machine)
-        print("component: ", self.component)
+        print("sector: ", self.sector)
+        print("element: ", self.element)
         print("problem: ", self.description)
         print("solution: ", self.solution)
         print("document: ", self.document)
@@ -45,13 +45,13 @@ class DetailWindow(ctk.CTkToplevel):
 
         # Componente, utente e data di rilevazione del problema
         self.label_family_description = ctk.CTkLabel(master=self.upper_frame,
-                                         text=f"Tipologia di macchina: {self.machine}",
+                                         text=f"Tipologia di macchina: {self.sector}",
                                          font=("Roboto", 18, "bold"),
                                          wraplength=1000
                                         )
         self.label_family_description.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
         self.label_component_description = ctk.CTkLabel(master=self.upper_frame,
-                                                        text=f"Componente: {self.component}",
+                                                        text=f"Oggetto: {self.element}",
                                                         font=("Roboto", 18, "bold"),
                                                         wraplength=600
                                                         )
@@ -178,14 +178,14 @@ class DetailWindow(ctk.CTkToplevel):
                 print("File non trovato - Modifica document=No")
                 self.document = "No"
                 self.root = None
-                query.edit_record(self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 self.master.load_data()
                 return
 
 
     # Funzione per aggiungere un documento
     def add_document(self):
-        current_data = (self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+        current_data = (self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
         if self.document == "Si":
             DocumentExistAllert(self, current_data)
         else:
@@ -216,10 +216,10 @@ class DetailWindow(ctk.CTkToplevel):
 
         self.master.record_edit_document = self.document
         self.master.record_edit_root = self.root
-        machine = str(self.machine)
-        self.master.combobox_family.set(machine)
-        component = self.component
-        self.master.entry_component.insert("0", component)
+        sector = str(self.sector)
+        self.master.combobox_family.set(sector)
+        element = self.element
+        self.master.entry_component.insert("0", element)
         description = self.text_win_description_detail.get("1.0", "end-1c")
         self.master.text_description.insert("0.0", description)
         solution = self.text_win_solution_detail.get("1.0", "end-1c")
