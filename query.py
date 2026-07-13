@@ -34,7 +34,7 @@ def search(text):
 
         query = """
         SELECT * FROM breton_solutionhub
-        WHERE Componente LIKE ? OR Problema LIKE ? OR Soluzione LIKE ?;"""
+        WHERE Elemento LIKE ? OR Problema LIKE ? OR Soluzione LIKE ?;"""
 
         cursor.execute(query, (f"%{text}%", f"%{text}%", f"%{text}%"))
         result = cursor.fetchall()
