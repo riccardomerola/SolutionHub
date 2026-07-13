@@ -122,7 +122,7 @@ class MenuBar():
         print("Apertura debug")
         log("INFO", "Apertura finestra di debug")
         if not self.debug_console_visible:
-            self.master.frame_textbox.pack(pady=(0, 10), fill="x", side="bottom")
+            self.master.frame_textbox.pack(padx=10, pady=(0, 10), fill="x", side="bottom")
             self.debug_console_visible = True
 
     def close_debug(self):
@@ -232,7 +232,7 @@ class MenuBar():
         # versione
         label_version = ctk.CTkLabel(frame_info, text="Versione:", font=("Roboto", 15, "bold"))
         label_version.grid(row=1, column=0, padx=10, pady=10, sticky="nsw")
-        label_version_number = ctk.CTkLabel(frame_info, text="v0.2.0", font=("Roboto", 15))
+        label_version_number = ctk.CTkLabel(frame_info, text="v1.0.0", font=("Roboto", 15))
         label_version_number.grid(row=1, column=1, padx=10, pady=10, sticky="nsw")
 
         # autore
@@ -268,7 +268,7 @@ class MenuBar():
     def center_win_detail(self, window, width, height):
         window.update_idletasks()
         screen_width = window.winfo_screenwidth()
-        screen_height = window.winfo_screenheight()
+        screen_height = window.winfo_screenheight() - 80
         scale = window._get_window_scaling()
 
         x = int(((screen_width / 2) - (width / 2)) * scale)

@@ -36,7 +36,7 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Breton Solution Hub")
-        self.center_win_app(1600, 900)
+        self.center_win_app(1600, 950)
         self.resizable(True, True)
         self.user = os.getlogin()
         log("INFO", f"USER={self.user} Apertura dell'applicazione")
@@ -312,7 +312,7 @@ class App(ctk.CTk):
         self.record_edit_document = None
         self.record_edit_root = None
 
-        # Pulsante per rimuovere il record selezionato della tabella
+        # Pulsante per visualizzare il dettaglio del record selezionato
         self.open_detail = ctk.CTkButton(master=self.right_frame,
                                            text="Apri dettaglio del record selezionato ℹ️",
                                            font=("Roboto", 15),
@@ -338,7 +338,7 @@ class App(ctk.CTk):
     def center_win_app(self, width, height):
         self.update_idletasks()
         screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+        screen_height = self.winfo_screenheight() - 80
         scale = self._get_window_scaling()
 
         x = int(((screen_width / 2) - (width / 2)) * scale)
@@ -775,7 +775,7 @@ class LargeTextEditor(ctk.CTkToplevel):
     def center_win_editor(self, width, height):
         self.update_idletasks()
         screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+        screen_height = self.winfo_screenheight() - 80
         scale = self._get_window_scaling()
 
         x = int(((screen_width / 2) - (width / 2)) * scale)

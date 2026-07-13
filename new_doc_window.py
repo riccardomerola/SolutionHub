@@ -55,7 +55,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
     def center_document_exist_win(self, width, height):
         self.update_idletasks()
         screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+        screen_height = self.winfo_screenheight() - 80
         scale = self._get_window_scaling()
 
         x = int(((screen_width / 2) - (width / 2)) * scale)
