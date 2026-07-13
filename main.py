@@ -268,21 +268,23 @@ class App(ctk.CTk):
         self.style.map("Treeview", background=[("selected", "#3b8ed0")])
         # creazione tabella
         self.value_table = ttk.Treeview(self.table_frame,
-                                        columns=("id", "component", "problem", "solution", "doc"),
+                                        columns=("id", "machine", "component", "problem", "solution", "doc"),
                                         show="headings",
                                         yscrollcommand=self.scrollbar_y.set)
         # heading delle colonne
         self.value_table.heading("id", text="ID")
+        self.value_table.heading("machine", text="Macchina")
         self.value_table.heading("component", text="Componente")
         self.value_table.heading("problem", text="Problema")
         self.value_table.heading("solution", text="Soluzione")
         self.value_table.heading("doc", text="Allegato")
         # impostazione delle colonne
-        self.value_table.column("id", width=20, stretch=True, anchor="center")
+        self.value_table.column("id", width=15, stretch=True, anchor="center")
+        self.value_table.column("machine", width=90, stretch=True, anchor="center")
         self.value_table.column("component", width=100, stretch=True, anchor="center")
         self.value_table.column("problem", width=400, stretch=True, anchor="w")
         self.value_table.column("solution", width=400, stretch=True, anchor="w")
-        self.value_table.column("doc", width=90, stretch=True, anchor="center")
+        self.value_table.column("doc", width=80, stretch=True, anchor="center")
         # posizionamento della tabella e della scrollbar
         self.value_table.tag_configure("pari", background=self.bg_color_treeview)
         self.value_table.tag_configure("dispari", background=self.bg_color_treeview_alternate)
@@ -387,6 +389,7 @@ class App(ctk.CTk):
 
         for row in rows:
             formatted_data.append([row['ID'],
+                                  row['Macchina'],
                                   row['Componente'],
                                   row['Problema'],
                                   row['Soluzione'],
@@ -410,16 +413,16 @@ class App(ctk.CTk):
             raw_rows = query.get_database()     # lista di dizionari (coppie key-value)
 
         self.formatted_data = self.format_data(raw_rows)
-        # print(self.formatted_data)
+        print(self.formatted_data)
 
         # popolazione della tabella
         for i, row in enumerate(self.formatted_data):
             tag_row = "pari" if i % 2 == 0 else "dispari"
             # modifica per visualizzare una sola riga per ogni colonna (rende ordine nella visualizzazione della tabella)
-            viewed_columns = list(row[:5])
-            viewed_columns[1] = f"       {str(viewed_columns[1]).split('\n')[0]}     "
+            viewed_columns = list(row[:6])
             viewed_columns[2] = f"       {str(viewed_columns[2]).split('\n')[0]}     "
             viewed_columns[3] = f"       {str(viewed_columns[3]).split('\n')[0]}     "
+            viewed_columns[4] = f"       {str(viewed_columns[4]).split('\n')[0]}     "
             self.value_table.insert("", "end", values=viewed_columns, tags=(tag_row, ))
 
         self.selected_row_data = None
@@ -432,6 +435,7 @@ class App(ctk.CTk):
         raw_row = query.get_max_id()
         current_id = raw_row[0]["ID"] if raw_row else 0
 
+        machine = self.combobox_family.get()
         component = self.entry_component.get().strip()
         description = self.text_description.get("1.0", "end-1c").strip()
         document = ""
@@ -461,7 +465,7 @@ class App(ctk.CTk):
             data = datetime.now().strftime("%d-%m-%Y")
             edit = 0
 
-            query.edit_record(record_id, component, description, solution, document, root, edit, self.user, data)
+            query.edit_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
             log("INFO", f"USER={self.user} Salvata modifica su record ID [{record_id}]")
             self.debug_message(f'Salvata modifica su record ID [{record_id}]')
             self.record_edit_id = None
@@ -472,6 +476,7 @@ class App(ctk.CTk):
             self.label_warning_edit.grid_remove()
             self.button_cancel_editing.grid_remove()
             self.button_save.grid(columnspan=2)
+            self.combobox_family.set("Altro")
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
@@ -497,10 +502,12 @@ class App(ctk.CTk):
             if msg.get() == "No":
                 document = "No"
 
-                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
                 self.load_data()
                 log("INFO", f"USER={self.user} Aggiunto nuovo record ID [{record_id}] senza file allegato")
                 self.debug_message(f'Aggiunto nuovo record ID [{record_id}] senza file allegato')
+
+                self.combobox_family.set("Altro")
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -514,10 +521,11 @@ class App(ctk.CTk):
             if not selected_file:
                 document = "No"
 
-                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
                 self.load_data()
                 log("WARNING", f"USER={self.user} Nessun file allegato al record ID [{record_id}] appena inserito")
                 self.debug_message(f'Attenzione: nessun file allegato al record ID [{record_id}] appena inserito')
+                self.combobox_family.set("Altro")
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -533,10 +541,11 @@ class App(ctk.CTk):
                 document = "Si"
                 root = destination_path
 
-                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
                 self.debug_message(f'Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
                 self.load_data()
+                self.combobox_family.set("Altro")
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -558,10 +567,11 @@ class App(ctk.CTk):
             if msg_exist.get() == "No":
                 document = "No"
 
-                query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+                query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
                 log("INFO", f'USER={self.user} Aggiunto record [{record_id}] senza documento allegato (documento "{filename}" già esistente)')
                 self.debug_message(f'Aggiunto record [{record_id}] senza documento allegato (documento già esistente)')
                 self.load_data()
+                self.combobox_family.set("Altro")
                 self.entry_component.delete("0", "end")
                 self.text_description.delete("0.0", "end")
                 self.text_solution.delete("0.0", "end")
@@ -572,11 +582,12 @@ class App(ctk.CTk):
             document = "Si"
             root = destination_path
 
-            query.insert_record(record_id, component, description, solution, document, root, edit, self.user, data)
+            query.insert_record(record_id, machine, component, description, solution, document, root, edit, self.user, data)
             log("INFO", f'USER={self.user} Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
             self.debug_message(f'Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
             self.load_data()
 
+            self.combobox_family.set("Altro")
             self.entry_component.delete("0", "end")
             self.text_description.delete("0.0", "end")
             self.text_solution.delete("0.0", "end")
@@ -681,6 +692,7 @@ class App(ctk.CTk):
         self.editing_id = None
         self.label_warning_edit = None
         # rimozione del testo nei campi
+        self.combobox_family.set("Altro")
         self.entry_component.delete("0", "end")
         self.text_description.delete("0.0", "end")
         self.text_solution.delete("0.0", "end")
