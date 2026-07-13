@@ -61,30 +61,30 @@ def get_max_id():
 
 
 # Inserisci record nel database
-def insert_record(id, componente, macchina, problema, soluzione, documento, percorso, editazione, user, data):
+def insert_record(id, macchina, componente, problema, soluzione, documento, percorso, editazione, user, data):
     with get_connection() as conn:
         cursor = conn.cursor()
 
         query = "INSERT INTO breton_solutionhub VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
 
-        cursor.execute(query, (id, componente, macchina, problema, soluzione, documento, percorso, editazione, user, data))
+        cursor.execute(query, (id, macchina, componente, problema, soluzione, documento, percorso, editazione, user, data))
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
 
 
 # Modifica un record già presente nel database
-def edit_record(id, componente, macchina, problema, soluzione, documento, percorso, editazione, user, data):
+def edit_record(id, macchina, componente, problema, soluzione, documento, percorso, editazione, user, data):
     with get_connection() as conn:
         cursor = conn.cursor()
 
         query = """
         UPDATE breton_solutionhub
-        SET Componente=?, Macchina=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?, Editazione=?, User=?, Data=?
+        SET Macchina=?, Componente=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?, Editazione=?, User=?, Data=?
         WHERE ID=?;
         """
 
-        cursor.execute(query, (componente, macchina, problema, soluzione, documento, percorso, editazione, user, data, id))
+        cursor.execute(query, (macchina, componente, problema, soluzione, documento, percorso, editazione, user, data, id))
         result = cursor.fetchall()
         return [dict(row) for row in result]
 

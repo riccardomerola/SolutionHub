@@ -22,8 +22,8 @@ def create_table():
     query = """
     CREATE TABLE IF NOT EXISTS breton_solutionhub(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Componente TEXT NOT NULL,
     Macchina TEXT NOT NULL,
+    Componente TEXT NOT NULL,
     Problema TEXT NOT NULL,
     Soluzione TEXT NOT NULL,
     Documentazione TEXT,
