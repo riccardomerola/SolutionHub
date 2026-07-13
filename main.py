@@ -1,3 +1,14 @@
+import sys
+if sys.platform.startswith("win"):
+    import ctypes
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+    except Exception:
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()
+        except Exception:
+            pass
+
 from tkinter import filedialog, ttk
 from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
@@ -17,6 +28,7 @@ ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
 documents_root = r"Documents"
 
+ctk.deactivate_automatic_dpi_awareness()
 
 # Classe della finestra principale
 class App(ctk.CTk):
