@@ -36,7 +36,7 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Breton Solution Hub")
-        self.center_win_app(1550, 850)
+        self.center_win_app(1600, 900)
         self.resizable(True, True)
         self.user = os.getlogin()
         log("INFO", f"USER={self.user} Apertura dell'applicazione")
@@ -100,20 +100,32 @@ class App(ctk.CTk):
         # ======================= FRAME DI SINISTRA =======================
         self.left_frame = ctk.CTkFrame(self.frame, width=350, corner_radius=4)
         self.left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.left_frame.grid_rowconfigure(8, weight=1)
+        self.left_frame.grid_rowconfigure(9, weight=1)
         self.left_frame.grid_columnconfigure(0, weight=1)
 
+        # Label ed Entry per selezione della famiglia di macchine
+        self.label_family = ctk.CTkLabel(self.left_frame,
+                                         text="Tipologia",
+                                         font=("Roboto", 16, "bold"))
+        self.label_family.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
+        self.combobox_family = ctk.CTkComboBox(self.left_frame,
+                                               values=["Altro", "Fabshop", "Meccanica", "Levigatrici", "Impianti", "Ricambi"],
+                                               font=("Roboto", 15),
+                                               dropdown_font=("Roboto", 15),
+                                               command=None)
+        self.combobox_family.grid(column=0, row=1, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
+        self.combobox_family.set("Altro")
         # Label ed Entry per inserimento del componente
         self.label_component = ctk.CTkLabel(self.left_frame,
                                             text="Componente",
                                             font=("Roboto", 16, "bold")
                                             )
-        self.label_component.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
+        self.label_component.grid(column=0, row=2, padx=10, pady=10, sticky="nsw")
         self.entry_component = ctk.CTkEntry(self.left_frame,
                                             placeholder_text="Es. KEBA, B&R, Siemens...",
                                             corner_radius=4, font=("Roboto", 15)
                                             )
-        self.entry_component.grid(column=0, row=1, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
+        self.entry_component.grid(column=0, row=3, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
         # Evento per tracciare la scrittura del componente e inserirlo in maiuscolo
         self.entry_component.bind("<KeyRelease>", self.insert_upper)
 
@@ -132,7 +144,7 @@ class App(ctk.CTk):
                                               text="Descrizione problema",
                                               font=("Roboto", 16, "bold")
                                               )
-        self.label_description.grid(column=0, row=2, padx=10, pady=10, sticky="nsw")
+        self.label_description.grid(column=0, row=4, padx=10, pady=10, sticky="nsw")
         self.button_expand_description = ctk.CTkButton(self.left_frame,
                                                        text="📝",
                                                        width=20,
@@ -142,17 +154,17 @@ class App(ctk.CTk):
                                                        hover_color=self.button_hover_color,
                                                        command=self.expand_textbox_description
                                                        )
-        self.button_expand_description.grid(column=1, row=2, padx=10, pady=10, sticky="nse")
+        self.button_expand_description.grid(column=1, row=4, padx=10, pady=10, sticky="nse")
         CTkToolTip(self.button_expand_description, message="Clicca per ingrandire l'area di testo")
         self.text_description = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
-        self.text_description.grid(column=0, row=3, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
+        self.text_description.grid(column=0, row=5, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
 
         # Label e Textbox per inserimento soluzione problema + pulsante ingrandimento testo
         self.label_solution = ctk.CTkLabel(self.left_frame,
                                            text="Soluzione e note",
                                            font=("Roboto", 16, "bold")
                                            )
-        self.label_solution.grid(column=0, row=4, padx=10, pady=10, sticky="nsw")
+        self.label_solution.grid(column=0, row=6, padx=10, pady=10, sticky="nsw")
         self.button_expand_problem = ctk.CTkButton(self.left_frame,
                                                    text="📝",
                                                    width=20,
@@ -162,10 +174,10 @@ class App(ctk.CTk):
                                                    hover_color=self.button_hover_color,
                                                    command=self.expand_textbox_solution
                                                    )
-        self.button_expand_problem.grid(column=1, row=4, padx=10, pady=10, sticky="nse")
+        self.button_expand_problem.grid(column=1, row=6, padx=10, pady=10, sticky="nse")
         CTkToolTip(self.button_expand_problem, message="Clicca per ingrandire l'area di testo")
         self.text_solution = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
-        self.text_solution.grid(column=0, row=5, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
+        self.text_solution.grid(column=0, row=7, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
 
         # Pulsanti per salvare il db e chiudere il programma
         self.button_cancel_editing = ctk.CTkButton(master=self.left_frame,
@@ -180,7 +192,7 @@ class App(ctk.CTk):
                                          hover_color="#218838",
                                          command=self.insert_record
                                          )
-        self.button_save.grid(column=0, row=7, columnspan=2,padx=10, pady=10, sticky="ew")
+        self.button_save.grid(column=0, row=8, columnspan=2,padx=10, pady=10, sticky="ew")
         self.button_exit = ctk.CTkButton(master=self.left_frame,
                                          text="Esci dal programma ❌",
                                          font=("Roboto", 15),
@@ -188,7 +200,7 @@ class App(ctk.CTk):
                                          hover_color="#C82333",
                                          command=self.close_program
                                          )
-        self.button_exit.grid(column=0, row=9, columnspan=2, padx=10, pady=10, sticky="sew")
+        self.button_exit.grid(column=0, row=10, columnspan=2, padx=10, pady=10, sticky="sew")
 
         self.label_warning_edit = None
 
@@ -600,7 +612,7 @@ class App(ctk.CTk):
                                                        font=("Roboto", 15, "bold"),
                                                        text_color="red"
                                                        )
-                self.label_warning_edit.grid(column=0, columnspan=2, row=8, padx=10, pady=10, sticky="new")
+                self.label_warning_edit.grid(column=0, columnspan=2, row=9, padx=10, pady=10, sticky="new")
             except IndexError as err:
                 print("Nessun record in modifica all'apertura del software")
                 log("INFO", "Nessun record aperto in modifica all'avviamento dell'applicazione")

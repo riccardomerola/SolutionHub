@@ -200,7 +200,7 @@ class DetailWindow(ctk.CTkToplevel):
 
         log("INFO", f"USER={self.user} Apertura modifica del record ID [{self.id}]")
         self.master.button_save.grid(columnspan=1)
-        self.master.button_cancel_editing.grid(column=1, row=7, padx=10, pady=10, sticky="ew")
+        self.master.button_cancel_editing.grid(column=1, row=8, padx=10, pady=10, sticky="ew")
 
         self.master.record_edit_id = self.id
 
