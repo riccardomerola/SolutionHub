@@ -105,7 +105,7 @@ class App(ctk.CTk):
 
         # Label ed Entry per selezione della famiglia di macchine
         self.label_family = ctk.CTkLabel(self.left_frame,
-                                         text="Tipologia",
+                                         text="Tipologia di macchina",
                                          font=("Roboto", 16, "bold"))
         self.label_family.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
         self.combobox_family = ctk.CTkComboBox(self.left_frame,

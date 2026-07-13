@@ -40,25 +40,31 @@ class DetailWindow(ctk.CTkToplevel):
         # ======================= FRAME SUPERIORE PER COMPONENTE/AUTORE/DATA =======================
         self.upper_frame = ctk.CTkFrame(self, corner_radius=4)
         self.upper_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew")
-        self.upper_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        self.upper_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
         # Componente, utente e data di rilevazione del problema
+        self.label_family_description = ctk.CTkLabel(master=self.upper_frame,
+                                         text=f"Tipologia di macchina: Meccanica",
+                                         font=("Roboto", 18, "bold"),
+                                         wraplength=1000
+                                        )
+        self.label_family_description.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
         self.label_component_description = ctk.CTkLabel(master=self.upper_frame,
                                                         text=f"Componente: {self.component}",
                                                         font=("Roboto", 18, "bold"),
                                                         wraplength=600
                                                         )
-        self.label_component_description.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
+        self.label_component_description.grid(row=0, column=1, padx=10, pady=10, sticky="nw")
         self.user_label = ctk.CTkLabel(master=self.upper_frame,
                                        text=f"Utente: {self.user}",
                                        font=("Roboto", 14, "bold")
                                        )
-        self.user_label.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+        self.user_label.grid(row=0, column=2, padx=10, pady=10, sticky="ne")
         self.data_label = ctk.CTkLabel(master=self.upper_frame,
                                        text=f"Data: {self.data}",
                                        font=("Roboto", 14, "bold")
                                        )
-        self.data_label.grid(row=0, column=2, padx=10, pady=10, sticky="ne")
+        self.data_label.grid(row=0, column=3, padx=10, pady=10, sticky="ne")
 
         # ======================= FRAME INFERRIORE PER DETTAGLI/PULSANTI ===========================
         self.bottom_frame = ctk.CTkFrame(self, corner_radius=4)
