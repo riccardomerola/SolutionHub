@@ -91,7 +91,7 @@ class App(ctk.CTk):
         self.left_frame.grid_rowconfigure(8, weight=1)
         self.left_frame.grid_columnconfigure(0, weight=1)
 
-        # Label e Entry per inserimento del componente
+        # Label ed Entry per inserimento del componente
         self.label_component = ctk.CTkLabel(self.left_frame,
                                             text="Componente",
                                             font=("Roboto", 16, "bold")
@@ -102,6 +102,8 @@ class App(ctk.CTk):
                                             corner_radius=4, font=("Roboto", 15)
                                             )
         self.entry_component.grid(column=0, row=1, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
+        # Evento per tracciare la scrittura del componente e inserirlo in maiuscolo
+        self.entry_component.bind("<KeyRelease>", self.insert_upper)
 
         # Impostazione colori in base al tema
         if mode == "Dark":
@@ -658,6 +660,18 @@ class App(ctk.CTk):
         self.entry_component.delete("0", "end")
         self.text_description.delete("0.0", "end")
         self.text_solution.delete("0.0", "end")
+
+    # Funzione per forzare inserimento di Componente in maiuscolo
+    def insert_upper(self, event):
+        cursor_position = self.entry_component.index("insert")  # recupera la posizione del cursore
+        current_text = self.entry_component.get()
+        upper_text = current_text.upper()
+
+        if current_text != upper_text:
+            self.entry_component.delete(0, "end")
+            self.entry_component.insert(0, upper_text)
+
+            self.entry_component.icursor(cursor_position)   # riposiziona il cursore dove si trovava
 
 
 # Classe per l'espansione dei textbox
