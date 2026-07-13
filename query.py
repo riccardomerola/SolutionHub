@@ -16,7 +16,7 @@ def get_database():
         cursor.execute("SELECT * FROM breton_solutionhub")
         result = cursor.fetchall()
         return [dict(row) for row in result]
-    
+
 
 # Visualizza dettaglio del problema
 def get_dettaglio(id):
@@ -31,15 +31,15 @@ def get_dettaglio(id):
 def search(text):
     with get_connection() as conn:
         cursor = conn.cursor()
-        
+
         query = """
-        SELECT * FROM breton_solutionhub 
+        SELECT * FROM breton_solutionhub
         WHERE Componente LIKE ? OR Problema LIKE ? OR Soluzione LIKE ?;"""
-        
+
         cursor.execute(query, (f"%{text}%", f"%{text}%", f"%{text}%"))
         result = cursor.fetchall()
         return [dict(row) for row in result]
-    
+
 
 # Cancella un record
 def delete_record(id):
@@ -49,7 +49,7 @@ def delete_record(id):
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
-    
+
 
 # Ricava il record con ID maggiore
 def get_max_id():
@@ -61,33 +61,33 @@ def get_max_id():
 
 
 # Inserisci record nel database
-def insert_record(id, componente, problema, soluzione, documento, percorso, editazione, user, data):
+def insert_record(id, componente, macchina, problema, soluzione, documento, percorso, editazione, user, data):
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        query = "INSERT INTO breton_solutionhub VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        query = "INSERT INTO breton_solutionhub VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
 
-        cursor.execute(query, (id, componente, problema, soluzione, documento, percorso, editazione, user, data))
+        cursor.execute(query, (id, componente, macchina, problema, soluzione, documento, percorso, editazione, user, data))
         conn.commit()
         result = cursor.fetchall()
         return [dict(row) for row in result]
-    
+
 
 # Modifica un record già presente nel database
-def edit_record(id, componente, problema, soluzione, documento, percorso, editazione, user, data):
+def edit_record(id, componente, macchina, problema, soluzione, documento, percorso, editazione, user, data):
     with get_connection() as conn:
         cursor = conn.cursor()
 
         query = """
         UPDATE breton_solutionhub
-        SET Componente=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?, Editazione=?, User=?, Data=?
+        SET Componente=?, Macchina=?, Problema=?, Soluzione=?, Documentazione=?, Percorso=?, Editazione=?, User=?, Data=?
         WHERE ID=?;
         """
 
-        cursor.execute(query, (componente, problema, soluzione, documento, percorso, editazione, user, data, id))
+        cursor.execute(query, (componente, macchina, problema, soluzione, documento, percorso, editazione, user, data, id))
         result = cursor.fetchall()
         return [dict(row) for row in result]
-    
+
 
 # Impostazione campo Editazione = 1
 def set_editing(id):

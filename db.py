@@ -9,7 +9,7 @@ def get_connection():
         os.makedirs(folder)
 
     db_path = os.path.join(folder, "breton_solutionhub.db")
-    
+
     connection = sqlite3.connect(db_path)
     connection.row_factory = sqlite3.Row
     return connection
@@ -23,6 +23,7 @@ def create_table():
     CREATE TABLE IF NOT EXISTS breton_solutionhub(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Componente TEXT NOT NULL,
+    Macchina TEXT NOT NULL,
     Problema TEXT NOT NULL,
     Soluzione TEXT NOT NULL,
     Documentazione TEXT,
