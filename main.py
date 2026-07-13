@@ -582,7 +582,7 @@ class App(ctk.CTk):
                 record_id = query.get_id_editing_record()[0]['ID']
                 self.debug_message(f'Aperto record ID [{record_id}] in modifica')
                 self.label_warning_edit = ctk.CTkLabel(self.left_frame,
-                                                       text=f"ATTENZIONE!\nAperto record con ID [{record_id}] in modifica!",
+                                                       text=f"ATTENZIONE!\nRecord n° [{record_id}] in modifica da {self.user}!",
                                                        font=("Roboto", 15, "bold"),
                                                        text_color="red"
                                                        )
