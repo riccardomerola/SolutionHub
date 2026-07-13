@@ -11,7 +11,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 
-        self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
+        self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
 
         self.grab_set()
@@ -28,21 +28,21 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
         self.document_not_exist_win_frame.grid_columnconfigure(0, weight=1)
         self.document_not_exist_win_frame.grid_rowconfigure((0, 1, 2), weight=1)
 
-        self.label_document_not_exist = ctk.CTkLabel(master=self.document_not_exist_win_frame, 
-                                                     text="Per questo record NON è presente un documento.\nVuoi aggiungerlo?", 
+        self.label_document_not_exist = ctk.CTkLabel(master=self.document_not_exist_win_frame,
+                                                     text="Per questo record NON è presente un documento.\nVuoi aggiungerlo?",
                                                      font=("Roboto", 17, "bold"))
         self.label_document_not_exist.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.button_add_document = ctk.CTkButton(master=self.document_not_exist_win_frame, 
-                                                 text="Aggiungi documento 📄", 
-                                                 font=("Roboto", 15), 
+        self.button_add_document = ctk.CTkButton(master=self.document_not_exist_win_frame,
+                                                 text="Aggiungi documento 📄",
+                                                 font=("Roboto", 15),
                                                  command=self.add_new_document
                                                  )
         self.button_add_document.grid(row=1, column=0, padx=10, pady=10, sticky="sew")
-        self.button_close_win_document = ctk.CTkButton(master=self.document_not_exist_win_frame, 
-                                                       text="Chiudi la finestra ❌", 
-                                                       font=("Roboto", 15), 
-                                                       fg_color="red", 
-                                                       hover_color="#C82333", 
+        self.button_close_win_document = ctk.CTkButton(master=self.document_not_exist_win_frame,
+                                                       text="Chiudi la finestra ❌",
+                                                       font=("Roboto", 15),
+                                                       fg_color="red",
+                                                       hover_color="#C82333",
                                                        command=self.destroy
                                                        )
         self.button_close_win_document.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="new")
@@ -80,12 +80,12 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 self.document = "Si"
                 self.root = destination_path
-                query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                query.edit_record(self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID {self.id}')
                 self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID [{self.id}]')
                 self.master.master.load_data()
                 return
-            
+
             msg_exist = CTkMessagebox(
                 title="File esistente",
                 message=f'Esiste già un file "{filename}" relativo al record ID[{self.id}].\nVuoi sovrascriverlo?',
@@ -104,7 +104,7 @@ class DocumentNotExistAllert(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 self.document = "Si"
                 self.root = destination_path
-                query.edit_record(self.id, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                query.edit_record(self.id, self.machine, self.component, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
                 self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()
