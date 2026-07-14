@@ -218,13 +218,27 @@ class App(ctk.CTk):
                                          font=("Roboto", 18)
                                          )
         self.search_entry.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
-
         self.search_entry.bind("<KeyRelease>", self.dynamic_search)
+
+        # Combobox per i filtri della ricerca
+        self.filter_combobox = ctk.CTkComboBox(self.right_frame,
+                                               height=40,
+                                               width=300,
+                                               values=["Nessun filtro di ricerca", "Altro", "Fabshop", "Meccanica", "Levigatrici", "Impianti", "Ricambi"],
+                                               font=("Roboto", 18),
+                                               dropdown_font=("Roboto", 15),
+                                               command=None
+                                               )
+        self.filter_combobox.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="e")
+
+        # Eventi per evidenziare la combobox al passaggio del mouse sulla barra di ricerca
+        self.search_entry.bind("<Enter>", self.on_hover)
+        self.search_entry.bind("<Leave>", self.on_leave)
 
         # ----------- Frame, stile, gestione click della Tabella ttk.TreeView -----------
         # Frame in cui inserire la tabella
         self.table_frame = ctk.CTkFrame(self.right_frame, corner_radius=4)
-        self.table_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.table_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
         self.table_frame.grid_columnconfigure((0, 1), weight=1)
         self.table_frame.grid_rowconfigure((0, 1), weight=1)
 
@@ -318,7 +332,7 @@ class App(ctk.CTk):
                                            font=("Roboto", 15),
                                            command=self.handle_double_click
                                            )
-        self.open_detail.grid(column=0, row=2, padx=10, pady=10, sticky="ew")
+        self.open_detail.grid(column=0, row=2, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # Verifica se ci sono record in editazione
         self.show_edit_warning(self.record_edit_id)
@@ -332,7 +346,25 @@ class App(ctk.CTk):
             pass
 
 
+    # Funzione per evidenziare la combobox del filtro quando si passa sopra la barra di ricerca
+    def on_hover(self, event):
+        self.filter_combobox.configure(
+            border_color=("#1f6aa5", "#144870"),
+            fg_color=("#ebebeb", "#2a2d2e"),
+            button_hover_color=("#1f6aa5", "#1f6aa5"),
+            button_color=("#1f6aa5", "#1f6aa5"),
+            border_width=4
+        )
 
+    # Funzione per ripristinare i colore della combobox del filtro quando si toglie il mouse dalla barra di ricerca
+    def on_leave(self, event):
+        self.filter_combobox.configure(
+            border_color=("#979da2", "#565b5e"),
+            fg_color=("#f9f9fa", "#343638"),
+            button_hover_color=("#1f6aa5", "#1f6aa5"),
+            button_color=("#979da2", "#565b5e"),
+            border_width=1
+        )
 
     # Funzione per centrare la finestra nello schermo
     def center_win_app(self, width, height):
