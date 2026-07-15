@@ -232,7 +232,7 @@ class MenuBar():
         # versione
         label_version = ctk.CTkLabel(frame_info, text="Versione:", font=("Roboto", 15, "bold"))
         label_version.grid(row=1, column=0, padx=10, pady=10, sticky="nsw")
-        label_version_number = ctk.CTkLabel(frame_info, text="v1.0.0", font=("Roboto", 15))
+        label_version_number = ctk.CTkLabel(frame_info, text="v2.0.0", font=("Roboto", 15))
         label_version_number.grid(row=1, column=1, padx=10, pady=10, sticky="nsw")
 
         # autore

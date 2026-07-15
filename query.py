@@ -41,6 +41,33 @@ def search(text):
         return [dict(row) for row in result]
 
 
+# Ricerca di componente/problema/soluzione con applicazione del filtro
+def search_with_filter(text, filter):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        query = """
+        SELECT * FROM breton_solutionhub
+        WHERE (Elemento LIKE ? OR Problema LIKE ? OR Soluzione LIKE ?) AND Settore LIKE ?;
+        """
+
+        cursor.execute(query, (f"%{text}%", f"%{text}%", f"%{text}%", f"%{filter}%"))
+        result = cursor.fetchall()
+        return [dict(row) for row in result]
+
+
+# Ricerca degli elementi con solo filtro, senza testo scritto da cercare
+def search_only_filter(filter):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM breton_solutionHUB WHERE Settore LIKE ?;"
+
+        cursor.execute(query, (filter, ))
+        result = cursor.fetchall()
+        return [dict(row) for row in result]
+
+
 # Cancella un record
 def delete_record(id):
     with get_connection() as conn:

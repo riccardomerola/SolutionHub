@@ -110,6 +110,7 @@ class App(ctk.CTk):
         self.label_family.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
         self.combobox_family = ctk.CTkComboBox(self.left_frame,
                                                values=["Altro", "Fabshop", "Meccanica", "Levigatrici", "Impianti", "Ricambi"],
+                                               state="readonly",
                                                font=("Roboto", 15),
                                                dropdown_font=("Roboto", 15),
                                                command=None)
@@ -225,11 +226,13 @@ class App(ctk.CTk):
                                                height=40,
                                                width=300,
                                                values=["Nessun filtro di ricerca", "Altro", "Fabshop", "Meccanica", "Levigatrici", "Impianti", "Ricambi"],
+                                               state="readonly",
                                                font=("Roboto", 18),
                                                dropdown_font=("Roboto", 15),
-                                               command=None
+                                               command=self.load_data
                                                )
         self.filter_combobox.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="e")
+        self.filter_combobox.set("Nessun filtro di ricerca")
 
         # Eventi per evidenziare la combobox al passaggio del mouse sulla barra di ricerca
         self.search_entry.bind("<Enter>", self.on_hover)
@@ -277,7 +280,7 @@ class App(ctk.CTk):
                              fieldbackground=self.bg_color_treeview,
                              borderwidth=1,
                              relief="flat",
-                             font=("Roboto", 10)
+                             font=("Roboto", 11)
                              )
         self.style.map("Treeview", background=[("selected", "#3b8ed0")])
         # creazione tabella
@@ -299,9 +302,11 @@ class App(ctk.CTk):
         self.value_table.column("problem", width=400, stretch=True, anchor="w")
         self.value_table.column("solution", width=400, stretch=True, anchor="w")
         self.value_table.column("doc", width=80, stretch=True, anchor="center")
-        # posizionamento della tabella e della scrollbar
+        # definizione dei tag per le righe della tabelle
         self.value_table.tag_configure("pari", background=self.bg_color_treeview)
         self.value_table.tag_configure("dispari", background=self.bg_color_treeview_alternate)
+        self.value_table.tag_configure("nessun_risultato", foreground="orange")
+        # posizionamento della tabella e della scrollbar
         self.scrollbar_y.configure(command=self.value_table.yview)
         self.scrollbar_y.pack(side="right", fill="y")
         self.value_table.pack(padx=0, pady=0, fill="both", expand=True)
@@ -433,29 +438,45 @@ class App(ctk.CTk):
         return formatted_data
 
     # Funzione per caricare i dati del database dentro alla tabella
-    def load_data(self, search_text=None):
+    def load_data(self, *args, **kwargs):
         # pulizia della tabella per inserimento dei dati aggiornati (per evitare duplicati)
         for item in self.value_table.get_children():
             self.value_table.delete(item)
 
-        # se viene scritto qualcosa nella barra si carica la tabella di ricerca
-        if search_text and search_text.strip() != "":
-            raw_rows = query.search(search_text)
+        current_filter = self.filter_combobox.get()
+        active_filter = current_filter != "Nessun filtro di ricerca"    # True o False
+
+        raw_text = self.search_entry.get()
+        clean_text = raw_text.strip() if raw_text else ""
+        clean_text_exist = clean_text != ""     # True o False
+
+        # Selezione della query di ricerca da chiamare in base alla presenza del filtro
+        if clean_text_exist and active_filter:
+            raw_rows = query.search_with_filter(clean_text, current_filter)
+        elif clean_text_exist:
+            raw_rows = query.search(clean_text)
+        elif active_filter:
+            raw_rows = query.search_only_filter(current_filter)
         else:
             raw_rows = query.get_database()     # lista di dizionari (coppie key-value)
 
         self.formatted_data = self.format_data(raw_rows)
-        print(self.formatted_data)
 
-        # popolazione della tabella
-        for i, row in enumerate(self.formatted_data):
-            tag_row = "pari" if i % 2 == 0 else "dispari"
-            # modifica per visualizzare una sola riga per ogni colonna (rende ordine nella visualizzazione della tabella)
-            viewed_columns = list(row[:6])
-            viewed_columns[2] = f"       {str(viewed_columns[2]).split('\n')[0]}     "
-            viewed_columns[3] = f"       {str(viewed_columns[3]).split('\n')[0]}     "
-            viewed_columns[4] = f"       {str(viewed_columns[4]).split('\n')[0]}     "
-            self.value_table.insert("", "end", values=viewed_columns, tags=(tag_row, ))
+        # Popolazione della tabella (diversa se sono stati trovati record o meno dalla ricerca)
+        if not self.formatted_data:
+            self.value_table.column("problem", width=400, stretch=True, anchor="center")
+            self.value_table.column("solution", width=400, stretch=True, anchor="center")
+            empty_message = ["⚠️", "⚠️", "⚠️", "Nessun risultato trovato", "⚠️", "⚠️", "⚠️", "⚠️", "⚠️", "⚠️"]
+            self.value_table.insert("", "end", values=empty_message, tags=("nessun_risultato", ))
+        else:
+            for i, row in enumerate(self.formatted_data):
+                tag_row = "pari" if i % 2 == 0 else "dispari"
+                # modifica per visualizzare una sola riga per ogni colonna (rende ordine nella visualizzazione della tabella)
+                viewed_columns = list(row[:6])
+                viewed_columns[2] = f"       {str(viewed_columns[2]).split('\n')[0]}     "
+                viewed_columns[3] = f"       {str(viewed_columns[3]).split('\n')[0]}     "
+                viewed_columns[4] = f"       {str(viewed_columns[4]).split('\n')[0]}     "
+                self.value_table.insert("", "end", values=viewed_columns, tags=(tag_row, ))
 
         self.selected_row_data = None
         print(f"TEST: Record trovati: {len(raw_rows)}")
@@ -635,12 +656,10 @@ class App(ctk.CTk):
         if event is not None:
             # pianifica di richiamare la funzione forzando event=None per impostare tempo scaduto
             self.search_timer = self.after(300, lambda: self.dynamic_search(event=None))
-            return              # interruzione di esecuzione
+            return
 
-        # event non è None, utente ha smesso di digitare e si cattura il testo
-        text = self.search_entry.get().strip()
         # aggiorna la tabella quando sono finiti altri processi
-        self.after_idle(lambda: self.load_data(search_text=text))
+        self.after_idle(self.load_data)
         # reset del timer pronto per la prossima ricerca
         self.search_timer = None
 
@@ -767,13 +786,13 @@ class LargeTextEditor(ctk.CTkToplevel):
         # Creazione nuovo Textbox più grande + pulsanti salvataggio
         self.label_editor = ctk.CTkLabel(self.text_frame,
                                          text="Text Editor",
-                                         font=("Roboto", 15, "bold")
+                                         font=("Roboto", 18, "bold")
                                          )
         self.label_editor.grid(column=0, row=0, padx=10, pady=10, sticky="nw")
         self.large_textbox = ctk.CTkTextbox(self.text_frame,
                                             height=500,
                                             width=800,
-                                            font=("Roboto", 12)
+                                            font=("Roboto", 15)
                                             )
         self.large_textbox.grid(column=0, row=1, columnspan=3, padx=10, pady=10, sticky="nsew")
         self.save_button = ctk.CTkButton(self.text_frame,
