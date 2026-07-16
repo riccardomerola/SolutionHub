@@ -61,7 +61,7 @@ def search_only_filter(filter):
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        query = "SELECT * FROM breton_solutionHUB WHERE Settore LIKE ?;"
+        query = "SELECT * FROM breton_solutionhub WHERE Settore LIKE ?;"
 
         cursor.execute(query, (filter, ))
         result = cursor.fetchall()

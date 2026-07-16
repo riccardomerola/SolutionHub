@@ -90,7 +90,7 @@ class DocumentExistAllert(ctk.CTkToplevel):
         if msg_warning.get() == "No":
             print("Non voglio cambiare il file")
             self.master.master.debug_message(f'Sostituzione del documento allegato al record ID[{self.id}] annullata')
-            self.destroy
+            self.destroy()
             return
 
         selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Turi i file", "*.*")])
@@ -122,7 +122,7 @@ class DocumentExistAllert(ctk.CTkToplevel):
             if msg_exist.get() == "No" or msg_exist.get() == None:
                 print("Non voglio sovrascrivere")
                 self.master.master.debug_message(f'Documento allegato al record ID[{self.id}] non inserito')
-                self.destroy
+                self.destroy()
             else:
                 shutil.copy(selected_file, destination_path)
                 print("File sovrascritto")
