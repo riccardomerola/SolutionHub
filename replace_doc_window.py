@@ -29,26 +29,28 @@ class DocumentExistAllert(ctk.CTkToplevel):
         self.document_exist_win_frame.grid_columnconfigure(0, weight=1)
         self.document_exist_win_frame.grid_rowconfigure((0, 1, 2), weight=1)
 
-        self.label_document_exist = ctk.CTkLabel(master=self.document_exist_win_frame,
-                                                 text="Per questo record è già presente un documento.\nVuoi sostituirlo?",
-                                                 font=("Roboto", 17, "bold")
-                                                 )
+        self.label_document_exist = ctk.CTkLabel(
+            master=self.document_exist_win_frame,
+            text="Per questo record è già presente un documento.\nVuoi sostituirlo?",
+            font=("Roboto", 17, "bold")
+        )
         self.label_document_exist.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        #self.button_view_document = ctk.CTkButton(master=self.document_exist_win_frame, text="Visualizza documento 📄", font=("Roboto", 15))
-        #self.button_view_document.grid(row=1, column=0, padx=10, pady=10, sticky="sew")
-        self.button_replace_document = ctk.CTkButton(master=self.document_exist_win_frame,
-                                                     text="Sostituisci documento ⬅️",
-                                                     font=("Roboto", 15),
-                                                     command=self.change_document
-                                                     )
+
+        self.button_replace_document = ctk.CTkButton(
+            master=self.document_exist_win_frame,
+            text="Sostituisci documento ⬅️",
+            font=("Roboto", 15),
+            command=self.change_document
+        )
         self.button_replace_document.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
-        self.button_close_win_document = ctk.CTkButton(master=self.document_exist_win_frame,
-                                                       text="Chiudi la finestra ❌",
-                                                       font=("Roboto", 15),
-                                                       fg_color="red",
-                                                       hover_color="#C82333",
-                                                       command=self.destroy
-                                                       )
+        self.button_close_win_document = ctk.CTkButton(
+            master=self.document_exist_win_frame,
+            text="Chiudi la finestra ❌",
+            font=("Roboto", 15),
+            fg_color="red",
+            hover_color="#C82333",
+            command=self.destroy
+        )
         self.button_close_win_document.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="new")
 
         self.attributes("-topmost", True)

@@ -26,31 +26,36 @@ class CancelConfirm(ctk.CTkToplevel):
         self.cancel_win_frame.grid_rowconfigure((0, 1, 2), weight=1)
 
         # Label di attenzione
-        self.label_cancel = ctk.CTkLabel(master=self.cancel_win_frame,
-                                         text="⚠️ ATTENZIONE ⚠️",
-                                         font=("Roboto", 18, "bold"),
-                                         text_color="red"
-                                         )
+        self.label_cancel = ctk.CTkLabel(
+            master=self.cancel_win_frame,
+            text="⚠️ ATTENZIONE ⚠️",
+            font=("Roboto", 18, "bold"),
+            text_color="red"
+        )
         self.label_cancel.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
-        self.label_cancel_confirm = ctk.CTkLabel(master=self.cancel_win_frame,
-                                                 text=f"Il record con ID [{self.id}] verrà cancellato definitivamente.\nVerrà cancellato anche l'eventuale file allegato!\n\nConfermi la cancellazione?",
-                                                 font=("Roboto", 15))
+        self.label_cancel_confirm = ctk.CTkLabel(
+            master=self.cancel_win_frame,
+            text=f"Il record con ID [{self.id}] verrà cancellato definitivamente.\nVerrà cancellato anche l'eventuale file allegato!\n\nConfermi la cancellazione?",
+            font=("Roboto", 15)
+        )
         self.label_cancel_confirm.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # Pulsanti di conferma cancellazione o chiudi finestra (senza cancellare record)
-        self.button_delete_record = ctk.CTkButton(master=self.cancel_win_frame,
-                                                  text="      Cancella record 🗑️",
-                                                  font=("Roboto", 15),
-                                                  fg_color="red",
-                                                  hover_color="#C82333",
-                                                  command=self.delete_record
-                                                  )
+        self.button_delete_record = ctk.CTkButton(
+            master=self.cancel_win_frame,
+            text="      Cancella record 🗑️",
+            font=("Roboto", 15),
+            fg_color="red",
+            hover_color="#C82333",
+            command=self.delete_record
+        )
         self.button_delete_record.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-        self.button_back = ctk.CTkButton(master=self.cancel_win_frame,
-                                         text="Annulla operazione ⬅️",
-                                         font=("Roboto", 15),
-                                         command=self.cancel_deletion
-                                         )
+        self.button_back = ctk.CTkButton(
+            master=self.cancel_win_frame,
+            text="Annulla operazione ⬅️",
+            font=("Roboto", 15),
+            command=self.cancel_deletion
+        )
         self.button_back.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
 
         self.attributes("-topmost", True)
@@ -89,14 +94,15 @@ class CancelConfirm(ctk.CTkToplevel):
             print(f"Documento {document} rimosso")
             return
 
-        msg = CTkMessagebox(title="Not found",
-                            message="Documento non trovato",
-                            icon="warning",
-                            border_width=2,
-                            border_color="orange",
-                            option_1="Ok",
-                            justify="center"
-                            )
+        msg = CTkMessagebox(
+            title="Not found",
+            message="Documento non trovato",
+            icon="warning",
+            border_width=2,
+            border_color="orange",
+            option_1="Ok",
+            justify="center"
+        )
         print("Documento non trovato")
 
     # Fimzopme per annullare la cancellazione (necessaria per messaggi di debug)
