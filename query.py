@@ -23,8 +23,8 @@ def get_dettaglio(id):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM breton_solutionhub WHERE id=?;", (id, ))
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
+        result = cursor.fetchone()
+        return dict(result) if result else None
 
 
 # Ricerca di componente/problema/soluzione
@@ -74,9 +74,7 @@ def delete_record(id):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM breton_solutionhub WHERE id=?;", (id, ))
         conn.commit()
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
-
+        return
 
 # Ricava il record con ID maggiore
 def get_max_id():
@@ -96,8 +94,7 @@ def insert_record(id, settore, elemento, problema, soluzione, documento, percors
 
         cursor.execute(query, (id, settore, elemento, problema, soluzione, documento, percorso, editazione, user, data))
         conn.commit()
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
+        return
 
 
 # Modifica un record già presente nel database
@@ -112,9 +109,8 @@ def edit_record(id, settore, elemento, problema, soluzione, documento, percorso,
         """
 
         cursor.execute(query, (settore, elemento, problema, soluzione, documento, percorso, editazione, user, data, id))
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
-
+        conn.commit()
+        return
 
 # Impostazione campo Editazione = 1
 def set_editing(id):
@@ -126,8 +122,8 @@ def set_editing(id):
         """
 
         cursor.execute(query, (id, ))
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
+        conn.commit()
+        return
 
 # Impostazione campo Editazione = 0 (chiusura editazione)
 def close_editing(id):
@@ -139,17 +135,16 @@ def close_editing(id):
         """
 
         cursor.execute(query, (id, ))
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
-
+        conn.commit()
+        return
 
 # Recupero dell'ID del record in editazione
 def get_id_editing_record():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT ID FROM breton_solutionhub WHERE Editazione=1;")
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
+        result = cursor.fetchone()
+        return dict(result) if result else None
 
 
 # Reset dei record in editazione, da usare in caso di chiusure forzate del programma
@@ -160,5 +155,5 @@ def reset_editazione():
         UPDATE breton_solutionhub SET Editazione=0 WHERE Editazione=1;
         """
         cursor.execute(query, )
-        result = cursor.fetchall()
-        return [dict(row) for row in result]
+        conn.commit()
+        return
