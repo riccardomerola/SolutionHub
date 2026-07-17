@@ -9,29 +9,29 @@ from CTkMessagebox import CTkMessagebox
 
 
 # Classe per la parte sinistra della finestra principale
-class LeftFrame(ctk.CTkFrame):
-    def __init__(self, master):
+class LeftPanel(ctk.CTkFrame):
+    def __init__(self, master, app):
         super().__init__(master)
-        self.master = master
-        self.pack(side="top")
+        self.app = app
+
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # ======================= FRAME =======================
-        self.left_frame = ctk.CTkFrame(self, width=350, corner_radius=4)
-        self.left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.left_frame.grid_rowconfigure(9, weight=1)
-        self.left_frame.grid_columnconfigure(0, weight=1)
+        #self.left_frame = ctk.CTkFrame(self, width=350, corner_radius=0, border_width=0)
+        #self.left_frame.grid(row=0, column=0, padx=10, pady=0, sticky="nsew")
+        #self.left_frame.grid_rowconfigure(9, weight=1)
+        #self.left_frame.grid_columnconfigure(0, weight=1)
 
         # Sezione "Tipologia di macchina" / "Settore"
         self.sector_family = ctk.CTkLabel(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="Tipologia di macchina",
             font=("Roboyo", 16, "bold")
         )
         self.sector_family.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
         self.sector_combobox = ctk.CTkComboBox(
-            master=self.left_frame,
+            master=self.app.left_frame,
             values=["Altro", "Fabshop", "Meccanica", "Levigatrici", "Impianti", "Ricambi"],
             state="readonly",
             font=("Roboto", 15),
@@ -42,13 +42,13 @@ class LeftFrame(ctk.CTkFrame):
 
         # Sezione "Oggetto"
         self.object_label = ctk.CTkLabel(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="Oggetto",
             font=("Roboto", 16, "bold")
         )
         self.object_label.grid(column=0, row=2, padx=10, pady=10, sticky="nsw")
         self.object_entry = ctk.CTkEntry(
-            master=self.left_frame,
+            master=self.app.left_frame,
             placeholder_text="Modello/commessa o oggetto",
             corner_radius=4,
             font=("Roboto", 14)
@@ -58,19 +58,19 @@ class LeftFrame(ctk.CTkFrame):
 
         # Sezione "Descrizione problema"
         self.description_label = ctk.CTkLabel(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="Descrizione del problema",
             font=("Roboto", 16, "bold")
         )
         self.description_label.grid(column=0, row=4, padx=10, pady=10, sticky="nsw")
         self.description_editor_button = ctk.CTkButton(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="📝",
             width=20,
             height=20,
-            text_color=self.master.theme["BUTTON_COLOR"],
-            fg_color=self.master.theme["BUTTON_FG_COLOR"],
-            hover_color=self.master.theme["BUTTON_HOVER_COLOR"],
+            text_color=self.app.theme["BUTTON_COLOR"],
+            fg_color=self.app.theme["BUTTON_FG_COLOR"],
+            hover_color=self.app.theme["BUTTON_HOVER_COLOR"],
             command=self.expand_description_editor
         )
         self.description_editor_button.grid(column=1, row=4, padx=10, pady=10, sticky="nse")
@@ -79,42 +79,42 @@ class LeftFrame(ctk.CTkFrame):
             text="Clicca per ingrandire l'area di testo"
         )
         self.description_text = ctk.CTkTextbox(
-            master=self.left_frame,
+            master=self.app.left_frame,
             font=("Roboto", 15)
         )
         self.description_text.grid(column=0, row=5, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
 
         # Selzione "Soluzioni e note"
         self.solution_label = ctk.CTkLabel(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="Soluzione e note",
             font=("Roboto", 16, "bold")
         )
         self.solution_label.grid(column=0, row=6, padx=10, pady=10, sticky="nsw")
         self.solution_editor_button = ctk.CTkButton(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="📝",
             width=20,
             height=20,
-            text_color=self.master.theme["BUTTON_COLOR"],
-            fg_color=self.master.theme["BUTTON_FG_COLOR"],
-            hover_color=self.master.theme["BUTTON_HOVER_COLOR"],
+            text_color=self.app.theme["BUTTON_COLOR"],
+            fg_color=self.app.theme["BUTTON_FG_COLOR"],
+            hover_color=self.app.theme["BUTTON_HOVER_COLOR"],
             command=self.expand_solution_editor
         )
-        self.solution_editor_button.grid(column=2, row=6, padx=10, pady=10, sticky="nse")
+        self.solution_editor_button.grid(column=1, row=6, padx=10, pady=10, sticky="nse")
         CTkToolTip(
             self.description_editor_button,
             text="Clicca per ingrandire l'area di testo"
         )
         self.solution_text = ctk.CTkTextbox(
-            master=self.left_frame,
+            master=self.app.left_frame,
             font=("Roboto", 15)
         )
         self.solution_text.grid(column=0, row=7, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
 
         # Pulsanti salvataggio e annulla editing, label editing, pulsante chiusura programma
         self.save_button = ctk.CTkButton(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="Salva in database 💾",
             font=("Roboto", 15),
             fg_color="green",
@@ -123,25 +123,26 @@ class LeftFrame(ctk.CTkFrame):
         )
         self.save_button.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky="ew")
         self.cancel_editing_button = ctk.CTkButton(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="Annulla modifica ⬅️",
             font=("Roboto", 15),
             command=self.cancel_editing
         )
         self.editing_record = None  # flag per messaggio di record in editazione
         self.wanrning_edit_label = ctk.CTkLabel(
-            master=self.left_frame,
-            text=f"ATTENZIONE!\nRecord n°[{self.editing_record} in modifica da {self.master.user}]",
+            master=self.app.left_frame,
+            text=f"ATTENZIONE!\nRecord n°[{self.editing_record} in modifica da {self.app.user}]",
             text_color="red"
         )
         self.exit_button = ctk.CTkButton(
-            master=self.left_frame,
+            master=self.app.left_frame,
             text="Esci dal programma ❌",
             font=("Roboto", 15),
             fg_color="red",
             hover_color="#C82333",
             command=self.close_program
         )
+        self.exit_button.grid(column=0, row=10, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # ==================== FINE INIZIALIZZAZIONE DEL FRAME ====================
 
@@ -181,11 +182,11 @@ class LeftFrame(ctk.CTkFrame):
             try:
                 record_id = query.get_id_editing_record()[0]['ID']
                 self.wanrning_edit_label.grid(column=0, columnspan=2, row=9, padx=10, pady=10, sticky="new")
-                self.master.debug_message(f"Aperto record ID [{record_id}] in modifica")
+                self.app.debug_message(f"Aperto record ID [{record_id}] in modifica")
             except IndexError as indexerror:
                 print(f"Nessun record in modifica - IndexError: {indexerror}")
                 log("INFO", "Nessun record aperto in modifica all'avvio dell'applicazione")
-                self.master.debug_message("Nessun record in modifica all'avvio dell'applicazione")
+                self.app.debug_message("Nessun record in modifica all'avvio dell'applicazione")
             except Exception as err:
                 print(f"Errore: {err}")
                 log("ERROR", f"Error: {err}")
@@ -194,7 +195,7 @@ class LeftFrame(ctk.CTkFrame):
 
     # Funzione per annullare l'editing in corso
     def cancel_editing(self):
-        log("INFO", f"USER={self.master.user} Chiusura modifica del rercod ID [{self.editing_record}]")
+        log("INFO", f"USER={self.app.user} Chiusura modifica del rercod ID [{self.editing_record}]")
         query.close_editing(self.editing_record)    # settaggio a 0 del valore di editazione
 
         # rimozione del label di avviso e del pulsante "Annulla"
@@ -208,7 +209,7 @@ class LeftFrame(ctk.CTkFrame):
 
     # Funzione per inserimento dei record nel database
     def insert_record(self):
-        self.master.update_idletasks()
+        self.app.update_idletasks()
         raw_row = query.get_max_id()
         current_id = raw_row[0]['ID'] if raw_row else 0
 
@@ -218,7 +219,7 @@ class LeftFrame(ctk.CTkFrame):
         solution = self.solution_text.get("1.0", "end-1c").strip()
         document = ""
         root = None
-        user = self.master.user
+        user = self.app.user
         date = datetime.now().strftime("%d-%m-%Y")
         edit = 0
 
@@ -252,18 +253,18 @@ class LeftFrame(ctk.CTkFrame):
                 justify="center"
             )
 
-            log("WARNING", f"USER={self.master.user} Terminare la modifica prima di chiudere l'applicazione")
+            log("WARNING", f"USER={self.app.user} Terminare la modifica prima di chiudere l'applicazione")
             self.debug_message("Terminare la modifica del record in corso prima di chiudere l'applicazione")
 
             if msg.get() == "Salva ed esci":
-                log("INFO", f"USER={self.master.user} Modifica salvata e chiusura dell'applicazione")
+                log("INFO", f"USER={self.app.user} Modifica salvata e chiusura dell'applicazione")
                 self.insert_record()
                 self.destroy()
             elif msg.get() == "Esci senza salvare":
                 query.close_editing(self.editing_record)
-                log("INFO", f"USER={self.master.user} Modifica annullata e chiusura dell'applicazione")
-                self.destroy()
+                log("INFO", f"USER={self.app.user} Modifica annullata e chiusura dell'applicazione")
+                self.app.destroy()
             return
         else:
-            log("INFO", f"USER={self.master.user} Chiusura dell'applicazione")
-            self.master.destroy()
+            log("INFO", f"USER={self.app.user} Chiusura dell'applicazione")
+            self.app.destroy()
