@@ -13,15 +13,8 @@ class LeftPanel(ctk.CTkFrame):
     def __init__(self, master, app):
         super().__init__(master)
         self.app = app
-
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        # ======================= FRAME =======================
-        #self.left_frame = ctk.CTkFrame(self, width=350, corner_radius=0, border_width=0)
-        #self.left_frame.grid(row=0, column=0, padx=10, pady=0, sticky="nsew")
-        #self.left_frame.grid_rowconfigure(9, weight=1)
-        #self.left_frame.grid_columnconfigure(0, weight=1)
 
         # Sezione "Tipologia di macchina" / "Settore"
         self.sector_family = ctk.CTkLabel(
@@ -144,7 +137,7 @@ class LeftPanel(ctk.CTkFrame):
         )
         self.exit_button.grid(column=0, row=10, columnspan=2, padx=10, pady=10, sticky="ew")
 
-        # ==================== FINE INIZIALIZZAZIONE DEL FRAME ====================
+        # ======================= FINE INIZIALIZZAZIONE DEL FRAME =======================
 
 
     # Funzione per pulire i campi di inserimento e la combobox

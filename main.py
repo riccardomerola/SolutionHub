@@ -113,7 +113,7 @@ class App(ctk.CTk):
         self.left_panel = LeftPanel(self.left_frame, self)
         self.protocol("WM_DELETE_WINDOW", self.left_panel.close_program)
 
-        #self.show_edit_warning(self.record_edit_id) # verifica se ci sono record in editazione
+        self.show_edit_warning(self.record_edit_id) # verifica se ci sono record in editazione
         self.update()                               # aggiorna la finestra per visualizzare il messaggio record in editazione
 
         # ======================= FRAME DI DESTRA =======================

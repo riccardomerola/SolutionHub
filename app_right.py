@@ -13,15 +13,8 @@ class RightPanel(ctk.CTkFrame):
     def __init__(self, master, app, **kwargs):
         super().__init__(master)
         self.app = app
-
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        # ======================= FRAME =======================
-        #self.right_frame = ctk.CTkFrame(self, corner_radius=0, border_width=0)
-        #self.right_frame.grid(column=0, row=0, padx=0, pady=0, sticky="nsew")
-        #self.right_frame.grid_rowconfigure(1, weight=1)
-        #self.right_frame.grid_columnconfigure(0, weight=1)
 
         # Barra di ricerca e combobox filtri
         self.search_entry = ctk.CTkEntry(
@@ -48,8 +41,8 @@ class RightPanel(ctk.CTkFrame):
         self.filter_combobox.set("Nessun filtro di ricerca")
 
         # Eventi per evidenziare la combobox
-        #self.search_entry.bind("<Enter>", self.on_hover)
-        #self.search_entry.bind("<Leave>", self.on_leave)
+        self.search_entry.bind("<Enter>", self.on_hover)
+        self.search_entry.bind("<Leave>", self.on_leave)
 
         # =================== TABELLA TREEVIEV ===================
         self.table_frame = ctk.CTkFrame(master=self.app.right_frame, corner_radius=4)
@@ -125,8 +118,8 @@ class RightPanel(ctk.CTkFrame):
         self.value_table.pack(padx=0, pady=0, fill="both", expand=True)
 
         # Eventi per la gestione dei click sulla tabella
-        #self.value_table.bind("<<TreeviewSelect>>", self.handle_table_click)
-        #self.value_table.bind("<Double-1>", self.handle_double_click)
+        self.value_table.bind("<<TreeviewSelect>>", self.handle_table_click)
+        self.value_table.bind("<Double-1>", self.handle_double_click)
 
         # Pulsante per visualizzare il dettaglio del record selezionato
         self.open_detail = ctk.CTkButton(
@@ -136,3 +129,5 @@ class RightPanel(ctk.CTkFrame):
             command=None#self.handle_double_click
         )
         self.open_detail.grid(column=0, row=2, columnspan=2, padx=10, pady=10, sticky="ew")
+
+        # ======================= FINE INIZIALIZZAZIONE DEL FRAME =======================
