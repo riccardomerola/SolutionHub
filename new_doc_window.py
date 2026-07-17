@@ -7,7 +7,7 @@ import shutil
 import os
 
 # Classe per la finestra che compare aggiungendo un doc su record in cui non è presente un doc
-class DocumentNotExistAllert(ctk.CTkToplevel):
+class NewDocumentWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 

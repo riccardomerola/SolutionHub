@@ -8,7 +8,7 @@ import shutil
 
 
 # Classe per la finestra che compare aggiungendo un doc su record in cui è presente un doc
-class DocumentExistAllert(ctk.CTkToplevel):
+class ReplaceDocumentWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
 

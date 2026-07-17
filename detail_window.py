@@ -3,9 +3,9 @@ from CTkMessagebox import CTkMessagebox
 from logger import log
 import query
 import os
-from replace_doc_window import DocumentExistAllert
-from new_doc_window import DocumentNotExistAllert
-from cancel_window import CancelConfirm
+from replace_doc_window import ReplaceDocumentWindow
+from new_doc_window import NewDocumentWindow
+from delete_record_win import CancelConfirm
 
 mode = ctk.get_appearance_mode()
 
@@ -198,9 +198,9 @@ class DetailWindow(ctk.CTkToplevel):
     def add_document(self):
         current_data = (self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
         if self.document == "Si":
-            DocumentExistAllert(self, current_data)
+            ReplaceDocumentWindow(self, current_data)
         else:
-            DocumentNotExistAllert(self, current_data)
+            NewDocumentWindow(self, current_data)
 
 
     # Funzione per editare il record
