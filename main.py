@@ -113,7 +113,7 @@ class App(ctk.CTk):
         self.left_panel = LeftPanel(self.left_frame, self)
         self.protocol("WM_DELETE_WINDOW", self.left_panel.close_program)
 
-        self.show_edit_warning(self.record_edit_id) # verifica se ci sono record in editazione
+        #self.show_edit_warning(self.record_edit_id) # verifica se ci sono record in editazione
         self.update()                               # aggiorna la finestra per visualizzare il messaggio record in editazione
 
         # ======================= FRAME DI DESTRA =======================
@@ -122,6 +122,7 @@ class App(ctk.CTk):
         self.right_frame.grid_rowconfigure(1, weight=1)
         self.right_frame.grid_columnconfigure(0, weight=1)
         self.right_panel = RightPanel(self.right_frame, self)
+        self.right_panel.load_data()
 
         # Funzione per chiudere la finestra di splash screen se presente
         try:
@@ -131,27 +132,6 @@ class App(ctk.CTk):
             pass
 
         # ====================== FINE INIZIALIZZAZIONE DELLA FINESTRA PRINCIPALE ======================
-
-
-    # Funzione per evidenziare la combobox del filtro quando si passa sopra la barra di ricerca
-    def on_hover(self, event):
-        self.filter_combobox.configure(
-            border_color=("#1f6aa5", "#144870"),
-            fg_color=("#ebebeb", "#2a2d2e"),
-            button_hover_color=("#1f6aa5", "#1f6aa5"),
-            button_color=("#1f6aa5", "#1f6aa5"),
-            border_width=4
-        )
-
-    # Funzione per ripristinare i colore della combobox del filtro quando si toglie il mouse dalla barra di ricerca
-    def on_leave(self, event):
-        self.filter_combobox.configure(
-            border_color=("#979da2", "#565b5e"),
-            fg_color=("#f9f9fa", "#343638"),
-            button_hover_color=("#1f6aa5", "#1f6aa5"),
-            button_color=("#979da2", "#565b5e"),
-            border_width=1
-        )
 
 
     # Funzione per applicare il tema selezionato al programma
@@ -194,107 +174,6 @@ class App(ctk.CTk):
         x = int(((screen_width / 2) - (width / 2)) * scale)
         y = int(((screen_height / 2) - (height / 2)) * scale)
         self.geometry(f"{width}x{height}+{x}+{y}")
-
-
-    # Funzione per recuperare l'elemento selezionato
-    def get_selected_row(self):
-        selected = self.value_table.selection()     # recupera l'elemento selezionato
-
-        if not selected:
-            return None
-
-        # si prende il primo elemento selezionato, si estrapolano i valori in una lista e si seleziona l'id
-        item = selected[0]
-        values = self.value_table.item(item)["values"]
-        record_id = values[0]
-        return record_id
-
-
-    # Funzione per gestire la selezione di una riga nella tabella
-    def handle_table_click(self, event=None):
-        record_id = self.get_selected_row()
-
-        # cerca nella lista completa il record con quell'id e lo salva in self.selected_row_data
-        for row in self.formatted_data:
-            if row[0] == record_id:
-                self.selected_row_data = row
-                break
-
-
-    # Funzione per l'apertura della finestra al doppio click
-    def handle_double_click(self, event=None):
-        record_id = self.get_selected_row()
-
-        # cerca nella lista completa il record con quell'id e apre la finestra DetailWindow passando le informazioni
-        for row in self.formatted_data:
-            if row[0] == record_id:
-                DetailWindow(self, row)
-                break
-
-
-    # Funzione per formattare i dati del database in liste di liste per la CTkTable
-    def format_data(self, rows):
-        formatted_data = []
-
-        for row in rows:
-            formatted_data.append(
-                [row['ID'],
-                 row['Settore'],
-                 row['Elemento'],
-                 row['Problema'],
-                 row['Soluzione'],
-                 row['Documentazione'],
-                 row['Percorso'],
-                 row['Editazione'],
-                 row['User'],
-                 row['Data']]
-            )
-        return formatted_data
-
-
-    # Funzione per caricare i dati del database dentro alla tabella
-    def load_data(self, *args, **kwargs):
-        # pulizia della tabella per inserimento dei dati aggiornati (per evitare duplicati)
-        for item in self.value_table.get_children():
-            self.value_table.delete(item)
-
-        current_filter = self.filter_combobox.get()
-        active_filter = current_filter != "Nessun filtro di ricerca"    # True o False
-
-        raw_text = self.search_entry.get()
-        clean_text = raw_text.strip() if raw_text else ""
-        clean_text_exist = clean_text != ""     # True o False
-
-        # Selezione della query di ricerca da chiamare in base alla presenza del filtro
-        if clean_text_exist and active_filter:
-            raw_rows = query.search_with_filter(clean_text, current_filter)
-        elif clean_text_exist:
-            raw_rows = query.search(clean_text)
-        elif active_filter:
-            raw_rows = query.search_only_filter(current_filter)
-        else:
-            raw_rows = query.get_database()     # lista di dizionari (coppie key-value)
-
-        self.formatted_data = self.format_data(raw_rows)
-
-        # Popolazione della tabella (diversa se sono stati trovati record o meno dalla ricerca)
-        if not self.formatted_data:
-            self.value_table.column("problem", width=400, stretch=True, anchor="center")
-            self.value_table.column("solution", width=400, stretch=True, anchor="center")
-            empty_message = ["⚠️", "⚠️", "⚠️", "Nessun risultato trovato", "⚠️", "⚠️", "⚠️", "⚠️", "⚠️", "⚠️"]
-            self.value_table.insert("", "end", values=empty_message, tags=("nessun_risultato", ))
-        else:
-            for i, row in enumerate(self.formatted_data):
-                tag_row = "pari" if i % 2 == 0 else "dispari"
-                # modifica per visualizzare una sola riga per ogni colonna (rende ordine nella visualizzazione della tabella)
-                viewed_columns = list(row[:6])
-                viewed_columns[2] = f"       {str(viewed_columns[2]).split('\n')[0]}     "
-                viewed_columns[3] = f"       {str(viewed_columns[3]).split('\n')[0]}     "
-                viewed_columns[4] = f"       {str(viewed_columns[4]).split('\n')[0]}     "
-                self.value_table.insert("", "end", values=viewed_columns, tags=(tag_row, ))
-
-        self.selected_row_data = None
-        self.debug_message(f"Record trovati: {len(raw_rows)}")
 
 
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
@@ -441,22 +320,6 @@ class App(ctk.CTk):
             self.load_data()
 
             self.clear_fields()
-
-    # Funzione per ricerca dinamica
-    def dynamic_search(self, event=None):
-        # reset timer precedente se l'utente clicca un pulsante prima di 400ms
-        if hasattr(self, 'search_timer') and self.search_timer is not None:
-            self.after_cancel(self.search_timer)
-            self.search_timer = None
-
-        # event si attiva al rilascio di un tasto sulla tastiera
-        if event is not None:
-            # pianifica di richiamare la funzione forzando event=None per impostare tempo scaduto
-            self.search_timer = self.after(300, lambda: self.dynamic_search(event=None))
-            return
-
-        self.after_idle(self.load_data) # aggiorna la tabella quando sono finiti altri processi
-        self.search_timer = None        # reset del timer pronto per la prossima ricerca
 
 
     # Funzione per inserire messaggi nella textbox di debug
