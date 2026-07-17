@@ -25,6 +25,7 @@ from datetime import datetime
 from detail_window import DetailWindow
 from drop_menu import MenuBar
 from expand_text import LargeTextEditor
+from app_left import LeftFrame
 from theme import THEMES
 
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
@@ -50,7 +51,8 @@ class App(ctk.CTk):
         self.theme = THEMES[self.theme_name]
 
         # Controllo chiusura del programma tramite "X" della finestra
-        self.protocol("WM_DELETE_WINDOW", self.close_program)
+
+
 
         # configurazione griglia principale
         self.grid_columnconfigure(0, weight=0)
@@ -70,7 +72,7 @@ class App(ctk.CTk):
         #file_dropdown.add_separator()
         file_dropdown.add_option(option="Cambia tema", command=self.action_menu.view_theme_option)
         file_dropdown.add_separator()
-        file_dropdown.add_option(option="Esci", command=self.close_program)
+        #file_dropdown.add_option(option="Esci", command=self.left_frame.close_program)
 
         # Creazione schermata di debug senza posizionarla
         self.frame_textbox = ctk.CTkFrame(self)
@@ -106,119 +108,9 @@ class App(ctk.CTk):
         self.frame.grid_columnconfigure(0, weight=0)
         self.frame.grid_columnconfigure(1, weight=1)
         self.frame.grid_rowconfigure(0, weight=1)
-
-        # ======================= FRAME DI SINISTRA =======================
-        self.left_frame = ctk.CTkFrame(self.frame, width=350, corner_radius=4)
-        self.left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.left_frame.grid_rowconfigure(9, weight=1)
-        self.left_frame.grid_columnconfigure(0, weight=1)
-
-        # Label ed Entry per selezione della famiglia di macchine
-        self.label_family = ctk.CTkLabel(
-            self.left_frame,
-            text="Tipologia di macchina",
-            font=("Roboto", 16, "bold")
-        )
-        self.label_family.grid(column=0, row=0, padx=10, pady=10, sticky="nsw")
-        self.combobox_family = ctk.CTkComboBox(
-            self.left_frame,
-            values=["Altro", "Fabshop", "Meccanica", "Levigatrici", "Impianti", "Ricambi"],
-            state="readonly",
-            font=("Roboto", 15),
-            dropdown_font=("Roboto", 15),
-            command=None
-        )
-        self.combobox_family.grid(column=0, row=1, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
-        self.combobox_family.set("Altro")   # valore di default della combobox
-
-        # Label ed Entry per inserimento del componente
-        self.label_component = ctk.CTkLabel(
-            self.left_frame,
-            text="Oggetto",
-            font=("Roboto", 16, "bold")
-        )
-        self.label_component.grid(column=0, row=2, padx=10, pady=10, sticky="nsw")
-        self.entry_component = ctk.CTkEntry(
-            self.left_frame,
-            placeholder_text="Modello/commessa o oggetto",
-            corner_radius=4, font=("Roboto", 14)
-        )
-        self.entry_component.grid(column=0, row=3, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
-        self.entry_component.bind("<KeyRelease>", self.insert_upper) # evento per trasformare in maiuscolo l'input dell'utente
-
-        # Label e Textbox per inserimento problema + pulsante ingrandimento testo
-        self.label_description = ctk.CTkLabel(
-            self.left_frame,
-            text="Descrizione problema",
-            font=("Roboto", 16, "bold")
-        )
-        self.label_description.grid(column=0, row=4, padx=10, pady=10, sticky="nsw")
-        self.button_expand_description = ctk.CTkButton(
-            self.left_frame,
-            text="📝",
-            width=20,
-            height=20,
-            text_color=self.theme["BUTTON_COLOR"],
-            fg_color=self.theme["BUTTON_FG_COLOR"],
-            hover_color=self.theme["BUTTON_HOVER_COLOR"],
-            command=self.expand_textbox_description
-        )
-        self.button_expand_description.grid(column=1, row=4, padx=10, pady=10, sticky="nse")
-        CTkToolTip(self.button_expand_description, message="Clicca per ingrandire l'area di testo")
-        self.text_description = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
-        self.text_description.grid(column=0, row=5, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
-
-        # Label e Textbox per inserimento soluzione + pulsante ingrandimento testo
-        self.label_solution = ctk.CTkLabel(
-            self.left_frame,
-            text="Soluzione e note",
-            font=("Roboto", 16, "bold")
-        )
-        self.label_solution.grid(column=0, row=6, padx=10, pady=10, sticky="nsw")
-        self.button_expand_problem = ctk.CTkButton(
-            self.left_frame,
-            text="📝",
-            width=20,
-            height=20,
-            text_color=self.theme["BUTTON_COLOR"],
-            fg_color=self.theme["BUTTON_FG_COLOR"],
-            hover_color=self.theme["BUTTON_HOVER_COLOR"],
-            command=self.expand_textbox_solution
-        )
-        self.button_expand_problem.grid(column=1, row=6, padx=10, pady=10, sticky="nse")
-        CTkToolTip(self.button_expand_problem, message="Clicca per ingrandire l'area di testo")
-        self.text_solution = ctk.CTkTextbox(self.left_frame, font=("Roboto", 15))
-        self.text_solution.grid(column=0, row=7, columnspan=2, padx=10, pady=(0, 10), sticky="nsew")
-
-        # Pulsanti per salvare il db e chiudere il programma
-        self.button_save = ctk.CTkButton(
-            master=self.left_frame,
-            text="Salva in database 💾",
-            font=("Roboto", 15),
-            fg_color="green",
-            hover_color="#218838",
-            command=self.insert_record
-        )
-        self.button_save.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky="ew")
-        self.button_exit = ctk.CTkButton(
-            master=self.left_frame,
-            text="Esci dal programma ❌",
-            font=("Roboto", 15),
-            fg_color="red",
-            hover_color="#C82333",
-            command=self.close_program
-        )
-        self.button_exit.grid(column=0, row=10, columnspan=2, padx=10, pady=10, sticky="sew")
-
-        # Pulsante per annullare la modifica di un record in editazione senza posizionarlo
-        self.button_cancel_editing = ctk.CTkButton(
-            master=self.left_frame,
-            text="Annulla modifica ⬅️",
-            font=("Roboto", 15),
-            command=self.cancel_editing
-        )
-
-        self.label_warning_edit = None  # flag per messaggio di record in editazione
+        # ======================= FRAME DI SINISTRA =====================
+        self.left_frame = LeftFrame(self)
+        self.protocol("WM_DELETE_WINDOW", self.left_frame.close_program)
 
         # ======================= FRAME DI DESTRA =======================
         self.right_frame = ctk.CTkFrame(self.frame, corner_radius=4)
@@ -354,7 +246,7 @@ class App(ctk.CTk):
         )
         self.open_detail.grid(column=0, row=2, columnspan=2, padx=10, pady=10, sticky="ew")
 
-        self.show_edit_warning(self.record_edit_id) # verifica se ci sono record in editazione
+        #self.show_edit_warning(self.record_edit_id) # verifica se ci sono record in editazione
         self.update()                               # aggiorna la finestra per visualizzare il messaggio record in editazione
 
         # Funzione per chiudere la finestra di splash screen se presente
@@ -531,14 +423,6 @@ class App(ctk.CTk):
         self.debug_message(f"Record trovati: {len(raw_rows)}")
 
 
-    # Funzione per pulire i campi di inserimento e resettare la combobox
-    def clear_fields(self):
-        self.combobox_family.set("Altro")
-        self.entry_component.delete("0", "end")
-        self.text_description.delete("0.0", "end")
-        self.text_solution.delete("0.0", "end")
-
-
     # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
     def insert_record(self):
         self.update_idletasks()
@@ -701,108 +585,12 @@ class App(ctk.CTk):
         self.search_timer = None        # reset del timer pronto per la prossima ricerca
 
 
-    # Funzione che verifica se è presente un record in editazione nel database all'apertura dell'app
-    def show_edit_warning(self, record_id):
-        if self.label_warning_edit is None:
-            try:
-                record_id = query.get_id_editing_record()[0]['ID']
-                self.debug_message(f'Aperto record ID [{record_id}] in modifica')
-
-                self.label_warning_edit = ctk.CTkLabel(
-                    self.left_frame,
-                    text=f"ATTENZIONE!\nRecord n° [{record_id}] in modifica da {self.user}!",
-                    font=("Roboto", 15, "bold"),
-                    text_color="red"
-                )
-                self.label_warning_edit.grid(column=0, columnspan=2, row=9, padx=10, pady=10, sticky="new")
-            except IndexError as err:
-                print("Nessun record in modifica all'apertura del software")
-                log("INFO", "Nessun record aperto in modifica all'avviamento dell'applicazione")
-                self.debug_message("Nessun record aperto in modifica all'avviamento dell'applicazione")
-            except Exception as err:
-                print(f"Errore in show_edit_warning: {err}")
-                log("ERROR", f"Err: {err}")
-                return
-
-
-    # Funzione che espande i textbox per inserimento di problema
-    def expand_textbox_description(self):
-        LargeTextEditor(self, self.text_description)
-
-    # Funzione che espande i textbox per inserimento di soluzione
-    def expand_textbox_solution(self):
-        LargeTextEditor(self, self.text_solution)
-
-
-    # Funzione che chiude il programma
-    def close_program(self):
-        if self.record_edit_id != None:
-            msg = CTkMessagebox(
-                title="Record in modifica!",
-                message=f"Prima di chiudere l'app è necessario terminare la modifica del record ID [{self.record_edit_id}]",
-                icon="warning",
-                border_width=2,
-                border_color="orange",
-                option_1="Esci senza salvare",
-                option_2="Salva ed esci",
-                justify="center"
-            )
-            log("WARNING", f"USER={self.user} Terminare la modifica prima di chiudere l'applicazione")
-            self.debug_message("Terminare la modifica del record in corso prima di chiudere l'applicazione")
-
-            if msg.get() == "Salva ed esci":
-                log("INFO", f"USER={self.user} Modifica salvata e chiusura dell'applicazione")
-                self.insert_record()
-                self.destroy()
-            elif msg.get() == "Esci senza salvare":
-                query.close_editing(self.record_edit_id)
-                log("INFO", f"USER={self.user} Modifica annullata e chiusura dell'applicazione")
-                self.destroy()
-            return
-        else:
-            log("INFO", f"USER={self.user} Chiusura dell'applicazione")
-            self.destroy()
-
-
     # Funzione per inserire messaggi nella textbox di debug
     def debug_message(self, message):
         self.textbox_debug.configure(state="normal")
         self.textbox_debug.insert("end", f"-> {message}\n")
         self.textbox_debug.see("end")
         self.textbox_debug.configure(state="disabled")
-
-
-    # Funzione per annullare l'editing in corso
-    def cancel_editing(self):
-        log("INFO", f"USER={self.user} Chiusura modifica del rercod ID [{self.record_edit_id}]")
-        query.close_editing(self.record_edit_id)    # settaggio a 0 del valore di editazione
-
-        # rimozione del label di avviso e del pulsante "Annulla"
-        self.label_warning_edit.grid_remove()
-        self.button_cancel_editing.grid_remove()
-        self.button_save.grid(columnspan=2)
-
-        # settaggio a None di tutte le flag relative all'edit
-        self.record_edit_id = None
-        self.editing_actual_record = None
-        self.editing_id = None
-        self.label_warning_edit = None
-
-        # rimozione del testo nei campi
-        self.clear_fields()
-
-
-    # Funzione per forzare inserimento di Componente in maiuscolo
-    def insert_upper(self, event):
-        cursor_position = self.entry_component.index("insert")  # recupera la posizione del cursore
-        current_text = self.entry_component.get()
-        upper_text = current_text.upper()
-
-        if current_text != upper_text:
-            self.entry_component.delete(0, "end")
-            self.entry_component.insert(0, upper_text)
-
-            self.entry_component.icursor(cursor_position)   # riposiziona il cursore dove si trovava
 
 
 
