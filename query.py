@@ -23,8 +23,8 @@ def get_dettaglio(id):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM breton_solutionhub WHERE id=?;", (id, ))
-        result = cursor.fetchone()
-        return dict(result) if result else None
+        result = cursor.fetchall()
+        return [dict(row) for row in result]
 
 
 # Ricerca di componente/problema/soluzione
@@ -143,7 +143,7 @@ def get_id_editing_record():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT ID FROM breton_solutionhub WHERE Editazione=1;")
-        result = cursor.fetchone()
+        result = cursor.fetchall()
         return [dict(row) for row in result]
 
 # Reset dei record in editazione, da usare in caso di chiusure forzate del programma

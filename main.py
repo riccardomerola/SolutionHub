@@ -25,35 +25,12 @@ from datetime import datetime
 from detail_window import DetailWindow
 from drop_menu import MenuBar
 from expand_text import LargeTextEditor
+from theme import THEMES
 
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
 documents_root = r"Documents"
-
-# Creazioni variabili per utillizzo dei colori in base al tema
-if mode == "Dark":
-    # colori tabella treeview
-    BG_COLOR_HEADING = "#3a3d3e"
-    BG_COLOR_TREEVIEW = "#2b2b2b"
-    BG_COLOR_TREEVIEW_ALTERNATE = "#202020"
-    FG_COLOR = "white"
-
-    # colori pulsanti
-    BUTTON_FG_COLOR = "#2b2b2b"
-    BUTTON_HOVER_COLOR = "#3a3d3e"
-    BUTTON_COLOR = "white"
-elif mode == "Light":
-    # colori tabella treeview
-    BG_COLOR_HEADING = "#e5e5e5"
-    BG_COLOR_TREEVIEW = "#f0f0f0"
-    BG_COLOR_TREEVIEW_ALTERNATE = "#f9f9f9"
-    FG_COLOR = "black"
-
-    # colori pulsanti
-    BUTTON_FG_COLOR = "#dbdbdb"
-    BUTTON_HOVER_COLOR = "#cfcfcf"
-    BUTTON_COLOR = "black"
 
 ctk.deactivate_automatic_dpi_awareness()    # disattiva gestione automatica della scala di windows
 
@@ -67,6 +44,10 @@ class App(ctk.CTk):
         self.resizable(True, True)
         self.user = os.getlogin()
         log("INFO", f"USER={self.user} Apertura dell'applicazione")
+
+        # Selezione del tema in base al tema del sistema operativo
+        self.theme_name = ctk.get_appearance_mode()
+        self.theme = THEMES[self.theme_name]
 
         # Controllo chiusura del programma tramite "X" della finestra
         self.protocol("WM_DELETE_WINDOW", self.close_program)
@@ -177,9 +158,9 @@ class App(ctk.CTk):
             text="📝",
             width=20,
             height=20,
-            text_color=BUTTON_COLOR,
-            fg_color=BUTTON_FG_COLOR,
-            hover_color=BUTTON_HOVER_COLOR,
+            text_color=self.theme["BUTTON_COLOR"],
+            fg_color=self.theme["BUTTON_FG_COLOR"],
+            hover_color=self.theme["BUTTON_HOVER_COLOR"],
             command=self.expand_textbox_description
         )
         self.button_expand_description.grid(column=1, row=4, padx=10, pady=10, sticky="nse")
@@ -199,9 +180,9 @@ class App(ctk.CTk):
             text="📝",
             width=20,
             height=20,
-            text_color=BUTTON_COLOR,
-            fg_color=BUTTON_FG_COLOR,
-            hover_color=BUTTON_HOVER_COLOR,
+            text_color=self.theme["BUTTON_COLOR"],
+            fg_color=self.theme["BUTTON_FG_COLOR"],
+            hover_color=self.theme["BUTTON_HOVER_COLOR"],
             command=self.expand_textbox_solution
         )
         self.button_expand_problem.grid(column=1, row=6, padx=10, pady=10, sticky="nse")
@@ -291,8 +272,8 @@ class App(ctk.CTk):
         # configurazione stile della heading e delle celle della tabella
         self.style.configure(
             "Treeview.Heading",
-            background=BG_COLOR_HEADING,
-            foreground=FG_COLOR,
+            background=self.theme["BG_COLOR_HEADING"],
+            foreground=self.theme["FG_COLOR"],
             borderwidth=1,
             relief="solid",
             padding=(0, 8, 0, 8),
@@ -300,10 +281,10 @@ class App(ctk.CTk):
         )
         self.style.configure(
             "Treeview",
-            background=BG_COLOR_TREEVIEW,
-            foreground=FG_COLOR,
+            background=self.theme["BG_COLOR_TREEVIEW"],
+            foreground=self.theme["FG_COLOR"],
             rowheight=40,
-            fieldbackground=BG_COLOR_TREEVIEW,
+            fieldbackground=self.theme["BG_COLOR_TREEVIEW"],
             borderwidth=1,
             relief="flat",
             font=("Roboto", 11)
@@ -333,8 +314,8 @@ class App(ctk.CTk):
         self.value_table.column("doc", width=80, stretch=True, anchor="center")
 
         # Definizione dei tag per le righe della tabelle
-        self.value_table.tag_configure("pari", background=BG_COLOR_TREEVIEW)
-        self.value_table.tag_configure("dispari", background=BG_COLOR_TREEVIEW_ALTERNATE)
+        self.value_table.tag_configure("pari", background=self.theme["BG_COLOR_TREEVIEW"])
+        self.value_table.tag_configure("dispari", background=self.theme["BG_COLOR_TREEVIEW_ALTERNATE"])
         self.value_table.tag_configure("nessun_risultato", foreground="orange")
 
         # Posizionamento della tabella e della scrollbar
@@ -404,6 +385,36 @@ class App(ctk.CTk):
             button_hover_color=("#1f6aa5", "#1f6aa5"),
             button_color=("#979da2", "#565b5e"),
             border_width=1
+        )
+
+
+    # Funzione per applicare il tema selezionato al programma
+    def apply_theme(self):
+        # Applicazione temi della tabella
+        self.style.configure(
+            "Treeview.Heading",
+            background=self.theme["BG_COLOR_HEADING"],
+            foreground=self.theme["FG_COLOR"]
+        )
+        self.style.configure(
+            "Treeview",
+            background=self.theme["BG_COLOR_TREEVIEW"],
+            foreground=self.theme["FG_COLOR"],
+            fieldbackground=self.theme["BG_COLOR_TREEVIEW"]
+        )
+        self.value_table.tag_configure("pari", background=self.theme["BG_COLOR_TREEVIEW"])
+        self.value_table.tag_configure("dispari", background=self.theme["BG_COLOR_TREEVIEW_ALTERNATE"])
+
+        # Applicazione temi dei pulsanti
+        self.button_expand_description.configure(
+            text_color=self.theme["BUTTON_COLOR"],
+            fg_color=self.theme["BUTTON_FG_COLOR"],
+            hover_color=self.theme["BUTTON_HOVER_COLOR"]
+        )
+        self.button_expand_problem.configure(
+            text_color=self.theme["BUTTON_COLOR"],
+            fg_color=self.theme["BUTTON_FG_COLOR"],
+            hover_color=self.theme["BUTTON_HOVER_COLOR"]
         )
 
 

@@ -4,6 +4,9 @@ from logger import log
 import query
 import os
 import win32com.client as win32
+from theme import THEMES
+
+from theme import THEMES
 
 # Classe della barra di menu
 class MenuBar():
@@ -56,49 +59,9 @@ class MenuBar():
         new_theme = self.radio_var.get()
         ctk.set_appearance_mode(new_theme)
 
-        if new_theme == "Dark":
-            self.master.bg_color_heading = "#2b2b2b"
-            self.master.bg_color_treeview = "#2b2b2b"
-            self.master.bg_color_treeview_alternate = "#343434"
-            self.master.fg_color = "white"
-            self.master.button_fg_color = "#2b2b2b"
-            self.master.button_hover_color = "#3a3d3e"
-            self.master.button_color = "white"
-        else:
-            self.master.bg_color_heading = "#e5e5e5"
-            self.master.bg_color_treeview = "#f9f9f9"
-            self.master.bg_color_treeview_alternate = "#f0f0f0"
-            self.master.fg_color = "black"
-            self.master.button_fg_color = "#dbdbdb"
-            self.master.button_hover_color = "#cfcfcf"
-            self.master.button_color = "black"
-
-        self.master.style.configure(
-            "Treeview.Heading",
-            background=self.master.bg_color_heading if hasattr(self.master, 'right_frame') else self.master.bg_color_heading,
-            foreground=self.master.fg_color
-        )
-        self.master.style.configure(
-            "Treeview",
-            background=self.master.bg_color_treeview,
-            foreground=self.master.fg_color,
-            fieldbackground=self.master.bg_color_treeview
-        )
-
-        # Aggiorna i tag e ricarica i dati della TreeView (anch'essa sulla classe principale)
-        self.master.value_table.tag_configure("pari", background=self.master.bg_color_treeview)
-        self.master.value_table.tag_configure("dispari", background=self.master.bg_color_treeview_alternate)
-
-        self.master.button_expand_description.configure(
-            text_color=self.master.button_color,
-            fg_color=self.master.button_fg_color,
-            hover_color=self.master.button_hover_color
-        )
-        self.master.button_expand_problem.configure(
-            text_color=self.master.button_color,
-            fg_color=self.master.button_fg_color,
-            hover_color=self.master.button_hover_color
-        )
+        self.master.theme = new_theme           # Aggiorna il tema dell'applicazione principale
+        self.master.theme = THEMES[new_theme]   # Aggiorna il dizionario dei colori del tema
+        self.master.apply_theme()               # Applica il nuovo tema all'applicazione principale
 
         # Forza il rinfresco visivo della tabella
         self.master.load_data()

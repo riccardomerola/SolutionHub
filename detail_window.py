@@ -15,16 +15,7 @@ class DetailWindow(ctk.CTkToplevel):
         super().__init__(master)
         self.selected_row_data = self.master.selected_row_data
         self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
-        print("id: ", self.id)
-        print("sector: ", self.sector)
-        print("element: ", self.element)
-        print("problem: ", self.description)
-        print("solution: ", self.solution)
-        print("document: ", self.document)
-        print("root: ", self.root)
-        print("edit: ", self.edit)
-        print("user: ", self.user)
-        print("data: ", self.data)
+        self.master = master
 
         self.grab_set()
         self.title(f"Dettaglio problema # {self.id}")
@@ -87,7 +78,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_description_detail = ctk.CTkTextbox(
             master=self.bottom_frame,
             font=("Roboto", 15),
-            fg_color=self.master.button_fg_color
+            fg_color=self.master.theme["BUTTON_FG_COLOR"]
         )
         self.text_win_description_detail.grid(row=2, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_description_detail.insert("0.0", self.description)
@@ -103,11 +94,11 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_solution_detail = ctk.CTkTextbox(
             master=self.bottom_frame,
             font=("Roboto", 15),
-            fg_color=self.master.button_fg_color
+            fg_color=self.master.theme["BUTTON_FG_COLOR"]
         )
         self.text_win_solution_detail.grid(row=4, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_solution_detail.insert("0.0", self.solution)
-        self.text_win_description_detail.configure(state="disabled")
+        self.text_win_solution_detail.configure(state="disabled")
 
         # pulsante edita
         self.button_edit = ctk.CTkButton(
@@ -164,8 +155,15 @@ class DetailWindow(ctk.CTkToplevel):
         else:
             self.button_add_doc.configure(text="Aggiungi allegato 🆕")
 
-        # Necessario per portare la finestra in primo piano
-        self.after(100, self.lift)
+        self.apply_theme()          # applica il tema alla finestra di dettaglio
+        self.after(100, self.lift)  # portar la finestra in primo piano dopo 100ms
+
+
+    # Funzione per applicare il tema alla finestra di dettaglio
+    def apply_theme(self):
+        self.text_win_description_detail.configure(fg_color=self.master.theme["BUTTON_FG_COLOR"])
+        self.text_win_solution_detail.configure(fg_color=self.master.theme["BUTTON_FG_COLOR"])
+
 
     # Funzione per visualizzare il documento allegato
     def view_document(self):
@@ -204,6 +202,7 @@ class DetailWindow(ctk.CTkToplevel):
         else:
             DocumentNotExistAllert(self, current_data)
 
+
     # Funzione per editare il record
     def edit_record(self):
         number_editing_record = query.get_id_editing_record()
@@ -239,6 +238,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.master.text_solution.insert("0.0", solution)
         self.destroy()
 
+
     # Funzione per aprire finestra di conferma cancellazione record
     def open_delete_window(self):
         if not self.master.selected_row_data:
@@ -250,6 +250,7 @@ class DetailWindow(ctk.CTkToplevel):
 
         self.master.debug_message(f"USER={self.user} Apertura finestra di eliminazione record")
         CancelConfirm(self, self.master.selected_row_data)
+
 
     # Funzione per centrare la finestra di dettaglio all'apertura
     def center_win_detail(self, width, height):
