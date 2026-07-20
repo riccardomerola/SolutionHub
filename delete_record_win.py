@@ -11,6 +11,7 @@ class CancelConfirm(ctk.CTkToplevel):
 
         self.id, self.sector, self.element, self.problem, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
+        self.app = self.master.app
 
         self.grab_set()
         self.title("Conferma cancellazione")
@@ -83,7 +84,7 @@ class CancelConfirm(ctk.CTkToplevel):
         query.delete_record(self.id)
         self.master.master.load_data()
         log("INFO", f"USER={self.master.user} Cancellato record ID[{self.id}] e relativi documenti allegati")
-        self.master.master.debug_message(f'Record ID[{self.id}] e relativi documenti allegati eliminati')
+        self.app.debug_message(f'Record ID[{self.id}] e relativi documenti allegati eliminati')
         self.master.destroy()
         self.destroy()
 
@@ -107,5 +108,5 @@ class CancelConfirm(ctk.CTkToplevel):
 
     # Fimzopme per annullare la cancellazione (necessaria per messaggi di debug)
     def cancel_deletion(self):
-        self.master.master.app.debug_message(f'Cancellazione del record ID[{self.id}] annullata')
+        self.master.app.debug_message(f'Cancellazione del record ID[{self.id}] annullata')
         self.destroy()

@@ -2,10 +2,12 @@ from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 import query
 import os
+import shutil
 from logger import log
 from datetime import datetime
 from expand_text import LargeTextEditor
 from CTkMessagebox import CTkMessagebox
+from tkinter import filedialog
 
 
 # Classe per la parte sinistra della finestra principale
@@ -112,7 +114,7 @@ class LeftPanel(ctk.CTkFrame):
             font=("Roboto", 15),
             fg_color="green",
             hover_color="#218838",
-            command=self.insert_record
+            command=self.create_record
         )
         self.save_button.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky="ew")
         self.cancel_editing_button = ctk.CTkButton(
@@ -223,23 +225,26 @@ class LeftPanel(ctk.CTkFrame):
         self.clear_fields()             # pulizia dei campi di inserimento
 
 
-    # Funzione per inserimento dei record nel database
-    def insert_record(self):
+    # Funzione per inserire il record nel database
+    def insert_record(self, document="", root=None):
         self.app.update_idletasks()
-        raw_row = query.get_max_id()
-        current_id = raw_row[0]['ID'] if raw_row else 0
 
         sector = self.sector_combobox.get()
         object = self.object_entry.get().strip()
         description = self.description_text.get("1.0", "end-1c").strip()
         solution = self.solution_text.get("1.0", "end-1c").strip()
-        document = ""
-        root = None
-        user = self.app.user
-        date = datetime.now().strftime("%d-%m-%Y")
         edit = 0
+        self.user = os.getlogin()
+        date = datetime.now().strftime("%d-%m-%Y")
 
-        if object == "" or description == "" or solution == "":
+        query.insert_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
+        self.app.right_panel.load_data()
+        self.clear_fields()
+
+
+    # Funzione creare il record da inserire nel database
+    def create_record(self):
+        if self.object_entry.get().strip() == "" or self.description_text.get("1.0", "end-1c").strip() == "" or self.solution_text.get("1.0", "end-1c").strip() == "":
             CTkMessagebox(
                 title="Campi vuoti",
                 message='Prima di salvare è necessario riempire i campi "Oggetto", "Descrizione", "Soluzione"',
@@ -250,9 +255,54 @@ class LeftPanel(ctk.CTkFrame):
             )
             return
 
-        if self.editing_record is not None:
-            record_id = self.editing_record
-        pass
+        # if la voce editazione del record in analisi è 1, chiama la funzione edita record (da fare)
+
+        raw_row = query.get_max_id()
+        current_id = raw_row[0]['ID'] if raw_row else 0
+        self.new_id = current_id + 1
+
+        msg = CTkMessagebox(
+            title="Allega file",
+            message="Vuoi allegare un file al record?",
+            icon="info",
+            border_width=2,
+            border_color="#0061FF",
+            option_1="Si",
+            option_2="No",
+            justify="center"
+        )
+
+        # richiesta inserimento allegato
+        if msg.get() == "No":
+            document = "No"
+            root = None
+
+            self.insert_record(document, root)
+
+            log("INFO", f"USER={self.user} Aggiunto nuovo record ID [{self.new_id}] senza file allegato")
+            self.app.debug_message(f'Aggiunto nuovo record ID [{self.new_id}] senza file allegato')
+            return
+        else:
+            selected_file = filedialog.askopenfilename(
+                title="Seleziona un file",
+                filetypes=[("Tutti i file", "*.*")]
+            )
+            if not selected_file:
+                self.insert_record(document="No", root=None)
+                log("WARNING", f"USER={self.user} Nessun file allegao al record ID [{self.new_id}] appena inserito")
+                self.app.debug_message(f"Attenzione: nessun file allegato al record ID [{self.new_id}] appena inserito")
+                return
+            else:
+                original_filename = os.path.basename(selected_file) # estrae l'ultimo componente di un percorso (qui è il nome file)
+                new_filename = f"{self.new_id}_{original_filename}" # modifica del nome con aggiunta ID all'inizio
+                root = os.path.join(self.app.documents_root, new_filename) # percorso completo ottenuto unendo root e nuovo nome file
+
+                # verifica esistenza del percorso (True o False)
+                if not os.path.isfile(root):
+                    self.insert_record(document="Si", root=root)
+                    shutil.copy(selected_file, root)    # copia il file al percorso
+                    log("INFO", f'USER={self.user} Aggiunto nuovo record ID [{self.new_id}] con documento "{new_filename}" allegato')
+                    self.app.debug_message(f'Aggiunto nuovo record ID [{self.new_id}] con documento "{new_filename}" allegato')
 
 
     # Funzione per la chiusura del programma

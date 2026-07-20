@@ -32,8 +32,6 @@ from theme import THEMES
 ctk.set_appearance_mode("System")   # imposta il tema del sistema
 ctk.set_default_color_theme("blue") # imposta i colori sul blu
 mode = ctk.get_appearance_mode()
-documents_root = r"Documents"
-
 ctk.deactivate_automatic_dpi_awareness()    # disattiva gestione automatica della scala di windows
 
 # Classe della finestra principale
@@ -46,6 +44,8 @@ class App(ctk.CTk):
         self.resizable(True, True)
         self.user = os.getlogin()
         log("INFO", f"USER={self.user} Apertura dell'applicazione")
+
+        self.documents_root = r"Documents"   # root salvataggio degli allegati
 
         # Selezione del tema in base al tema del sistema operativo
         self.theme_name = ctk.get_appearance_mode()
@@ -227,99 +227,7 @@ class App(ctk.CTk):
             self.label_warning_edit.destroy()
             self.label_warning_edit = None
         else:
-            # Calcola ID del nuovo record e legge le entry
-            record_id = int(current_id) + 1
-
-            # Messaggio per chiedere se si vuole allegare un file
-            msg = CTkMessagebox(
-                title="Allega file",
-                message="Vuoi allegare un file al record?",
-                icon="info",
-                border_width=2,
-                border_color="#0061ff",
-                option_1="Si",
-                option_2="No",
-                justify="center"
-            )
-
-            # Se non si vuole aggiungere un file
-            if msg.get() == "No":
-                document = "No"
-
-                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
-                self.load_data()
-                log("INFO", f"USER={self.user} Aggiunto nuovo record ID [{record_id}] senza file allegato")
-                self.debug_message(f'Aggiunto nuovo record ID [{record_id}] senza file allegato')
-
-                self.clear_fields()
-                return
-
-            # Apre file explorer: restituisce il percorso in stringa se seleziona file, altrimenti stringa vuota
-            selected_file = filedialog.askopenfilename(title="Seleziona un file",
-                                                       filetypes=[("Tutti i file", "*.*")])
-
-            # Se si clicca "Si" ma non si seleziona nessun file
-            if not selected_file:
-                document = "No"
-
-                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
-                self.load_data()
-                log("WARNING", f"USER={self.user} Nessun file allegato al record ID [{record_id}] appena inserito")
-                self.debug_message(f'Attenzione: nessun file allegato al record ID [{record_id}] appena inserito')
-                self.clear_fields()
-                return
-
-            file = os.path.basename(selected_file)                          # estrae l'ultimo componente da un percorso (qui è nome file)
-            filename = f"{record_id}_{file}"                                # modifica il nome del file aggiungendo ID all'inizio
-            destination_path = os.path.join(documents_root, filename)       # combina segmenti creando il percorso con separatori
-
-            # Verifica se il percorso esiste, restituisce True o False
-            if not os.path.isfile(destination_path):
-                shutil.copy(selected_file, destination_path)  # copia file al percorso
-                document = "Si"
-                root = destination_path
-
-                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
-                log("INFO", f'USER={self.user} Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
-                self.debug_message(f'Aggiunto nuovo record ID [{record_id}] con documento "{filename}" allegato')
-                self.load_data()
-                self.clear_fields()
-                self.update()
-                return
-
-            # Messaggio che avvisa di file con stesso nome già presente
-            msg_exist = CTkMessagebox(
-                title="File esistente",
-                message=f'Esiste già un file "{filename}" relativo al record ID[{record_id}].\nVuoi sovrascriverlo?',
-                icon="warning",
-                border_width=2,
-                border_color="orange",
-                option_1="Si",
-                option_2="No",
-                justify="center"
-            )
-
-            if msg_exist.get() == "No":
-                document = "No"
-
-                query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
-                log("INFO", f'USER={self.user} Aggiunto record [{record_id}] senza documento allegato (documento "{filename}" già esistente)')
-                self.debug_message(f'Aggiunto record [{record_id}] senza documento allegato (documento già esistente)')
-                self.load_data()
-                self.clear_fields()
-                return
-
-            # Se si vuole sovrascrivere
-            shutil.copy(selected_file, destination_path)    # copia file al percorso
-            document = "Si"
-            root = destination_path
-
-            query.insert_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
-            log("INFO", f'USER={self.user} Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
-            self.debug_message(f'Aggiunto record ID [{record_id}] con documento allegato (documento "{filename}" sovrasctitto)')
-            self.load_data()
-
-            self.clear_fields()
+            pass
 
 
     # Funzione per inserire messaggi nella textbox di debug
