@@ -138,8 +138,8 @@ class LeftPanel(ctk.CTkFrame):
         }
         self.warning_edit_label = ctk.CTkLabel(
             master=self.app.left_frame,
-            text=f"ATTENZIONE!\nRecord n°[{self.editing_record["ID"]} in modifica da {self.app.user}]",
-            text_color="red"
+            text_color="red",
+            font=("Roboto", 16, "bold")
         )
         self.exit_button = ctk.CTkButton(
             master=self.app.left_frame,
@@ -150,6 +150,12 @@ class LeftPanel(ctk.CTkFrame):
             command=self.close_program
         )
         self.exit_button.grid(column=0, row=10, columnspan=2, padx=10, pady=10, sticky="ew")
+
+        # verifica se ci sono record in editazione per warning all'apertura app
+        is_editing = query.get_id_editing_record()
+        if len(is_editing) > 0:
+            self.editing_record['ID'] = is_editing[0]['ID']
+            self.show_edit_warning(self.editing_record['ID'])
 
         # ======================= FINE INIZIALIZZAZIONE DEL FRAME =======================
 
@@ -184,20 +190,19 @@ class LeftPanel(ctk.CTkFrame):
 
 
     # Funzione per verificare i record in editazione nel db
-    def show_edit_warning(self, record_id):
-        if self.editing_record["ID"] is None:
-            try:
-                record_id = query.get_id_editing_record()[0]['ID']
-                self.warning_edit_label.grid(column=0, columnspan=2, row=9, padx=10, pady=10, sticky="new")
-                self.app.debug_message(f"Aperto record ID [{record_id}] in modifica")
-            except IndexError as indexerror:
-                print(f"Nessun record in modifica - IndexError: {indexerror}")
-                log("INFO", "Nessun record aperto in modifica all'avvio dell'applicazione")
-                self.app.debug_message("Nessun record in modifica all'avvio dell'applicazione")
-            except Exception as err:
-                print(f"Errore: {err}")
-                log("ERROR", f"Error: {err}")
-                return
+    def show_edit_warning(self, editing_record):
+        try:
+            self.warning_edit_label.configure(text=f"ATTENZIONE!\nRecord n°[{editing_record}] in modifica da {self.app.user}")
+            self.warning_edit_label.grid(column=0, columnspan=2, row=9, padx=10, pady=10, sticky="new")
+            self.app.debug_message(f"Aperto record ID [{editing_record}] in modifica")
+        except IndexError as indexerror:
+            print(f"Nessun record in modifica - IndexError: {indexerror}")
+            log("INFO", "Nessun record aperto in modifica all'avvio dell'applicazione")
+            self.app.debug_message("Nessun record in modifica all'avvio dell'applicazione")
+        except Exception as err:
+            print(f"Errore: {err}")
+            log("ERROR", f"Error: {err}")
+            return
 
 
     # Funzione per annullare l'editing in corso

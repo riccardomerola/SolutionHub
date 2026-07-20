@@ -69,7 +69,7 @@ class App(ctk.CTk):
         #file_dropdown.add_separator()
         file_dropdown.add_option(option="Cambia tema", command=self.action_menu.view_theme_option)
         file_dropdown.add_separator()
-        #file_dropdown.add_option(option="Esci", command=self.left_frame.close_program)
+        #file_dropdown.add_option(option="Esci", command=self.left_panel.close_program)
 
         # Creazione schermata di debug senza posizionarla
         self.frame_textbox = ctk.CTkFrame(self)
