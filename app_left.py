@@ -237,9 +237,17 @@ class LeftPanel(ctk.CTkFrame):
         self.user = os.getlogin()
         date = datetime.now().strftime("%d-%m-%Y")
 
-        query.insert_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
-        self.app.right_panel.load_data()
-        self.clear_fields()
+        if self.editing_record['ID'] is not None:
+            self.new_id = self.editing_record['ID']
+            query.edit_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
+            self.app.right_panel.load_data()
+            self.cancel_editing()
+            return
+        else:
+            query.insert_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
+            self.app.right_panel.load_data()
+            self.clear_fields()
+            return
 
 
     # Funzione creare il record da inserire nel database
@@ -255,11 +263,16 @@ class LeftPanel(ctk.CTkFrame):
             )
             return
 
-        # if la voce editazione del record in analisi è 1, chiama la funzione edita record (da fare)
+        # se il record da aggiungere è aperto in modifica
+        if self.editing_record['ID'] is not None:
+            document = self.editing_record['Documentazione']
+            root = self.editing_record['Percorso']
+            self.insert_record(document, root)
+            return
 
         raw_row = query.get_max_id()
-        current_id = raw_row[0]['ID'] if raw_row else 0
-        self.new_id = current_id + 1
+        self.max_id = raw_row[0]['ID'] if raw_row else 0
+        self.new_id = self.max_id + 1
 
         msg = CTkMessagebox(
             title="Allega file",
@@ -307,6 +320,9 @@ class LeftPanel(ctk.CTkFrame):
 
     # Funzione per la chiusura del programma
     def close_program(self):
+
+        self.app.destroy()
+
         if self.editing_record is not None:
             msg = CTkMessagebox(
                 title="Record in modifica!",

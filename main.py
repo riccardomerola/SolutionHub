@@ -176,60 +176,6 @@ class App(ctk.CTk):
         self.geometry(f"{width}x{height}+{x}+{y}")
 
 
-    # Funzione per leggere il contenuto dei Textbox (frame di sinistra)
-    def insert_record(self):
-        self.update_idletasks()
-        raw_row = query.get_max_id()
-        current_id = raw_row[0]["ID"] if raw_row else 0
-
-        sector = self.combobox_family.get()
-        element = self.entry_component.get().strip()
-        description = self.text_description.get("1.0", "end-1c").strip()
-        document = ""
-        solution = self.text_solution.get("1.0", "end-1c").strip()
-        root = None
-        self.user = os.getlogin()
-        data = datetime.now().strftime("%d-%m-%Y")
-        edit = 0
-
-        # controllo se i campi non sono vuoti
-        if element.strip() == "" or description.strip() == "" or solution.strip() == "":
-            msg_empty = CTkMessagebox(
-                title="Campi vuoti",
-                message='Prima di salvare è necessario riempire i campi "Oggetto", "Descrizione" e "Soluzione"',
-                icon="warning",
-                border_width=2,
-                border_color="orange",
-                option_1="Ok"
-            )
-            return
-
-        if self.record_edit_id is not None:
-            record_id = self.record_edit_id
-            document = self.record_edit_document
-            root = self.record_edit_root
-            self.user = os.getlogin()
-            data = datetime.now().strftime("%d-%m-%Y")
-            edit = 0
-
-            query.edit_record(record_id, sector, element, description, solution, document, root, edit, self.user, data)
-            log("INFO", f"USER={self.user} Salvata modifica su record ID [{record_id}]")
-            self.debug_message(f'Salvata modifica su record ID [{record_id}]')
-            self.record_edit_id = None
-            self.editing_actual_record = None
-            self.editing_id = None
-            self.load_data()
-
-            self.label_warning_edit.grid_remove()
-            self.button_cancel_editing.grid_remove()
-            self.button_save.grid(columnspan=2)
-            self.clear_fields()
-            self.label_warning_edit.destroy()
-            self.label_warning_edit = None
-        else:
-            pass
-
-
     # Funzione per inserire messaggi nella textbox di debug
     def debug_message(self, message):
         self.textbox_debug.configure(state="normal")

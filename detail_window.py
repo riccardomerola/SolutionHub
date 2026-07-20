@@ -248,6 +248,7 @@ class DetailWindow(ctk.CTkToplevel):
         solution = self.text_win_solution_detail.get("1.0", "end-1c")
         self.left_panel.solution_text.insert("0.0", solution)
         self.destroy()
+        return
 
 
     # Funzione per aprire finestra di conferma cancellazione record
