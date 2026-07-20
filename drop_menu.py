@@ -174,7 +174,7 @@ class MenuBar():
                     justify="center"
                 )
                 self.reset_edit_window.destroy()
-                self.master.label_warning_edit.destroy()
+                self.master.left_panel.warning_edit_label.destroy()
                 self.master.label_warning_edit = None
                 log("INFO" , "Reset dei record bloccati in modifica")
                 self.master.debug_message("Reset dei record bloccati in modifica")
