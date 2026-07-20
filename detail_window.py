@@ -248,7 +248,6 @@ class DetailWindow(ctk.CTkToplevel):
         solution = self.text_win_solution_detail.get("1.0", "end-1c")
         self.left_panel.solution_text.insert("0.0", solution)
         self.destroy()
-        print(self.left_panel.editing_record['ID'])
         self.left_panel.show_edit_warning(self.left_panel.editing_record['ID'])
         return
 

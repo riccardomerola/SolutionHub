@@ -325,13 +325,10 @@ class LeftPanel(ctk.CTkFrame):
 
     # Funzione per la chiusura del programma
     def close_program(self):
-
-        self.app.destroy()
-
-        if self.editing_record is not None:
+        if self.editing_record['Editazione'] != 0:
             msg = CTkMessagebox(
                 title="Record in modifica!",
-                message=f"Prima di chiudere l'app è necessario terminare la modifica del record ID [{self.editing_record}]",
+                message=f"Prima di chiudere l'app è necessario terminare la modifica del record ID [{self.editing_record['ID']}]",
                 icon="warning",
                 border_width=2,
                 border_color="orange",
@@ -345,10 +342,10 @@ class LeftPanel(ctk.CTkFrame):
 
             if msg.get() == "Salva ed esci":
                 log("INFO", f"USER={self.app.user} Modifica salvata e chiusura dell'applicazione")
-                self.insert_record()
-                self.destroy()
+                self.create_record()
+                self.app.destroy()
             elif msg.get() == "Esci senza salvare":
-                query.close_editing(self.editing_record)
+                query.close_editing(self.editing_record['ID'])
                 log("INFO", f"USER={self.app.user} Modifica annullata e chiusura dell'applicazione")
                 self.app.destroy()
             return
