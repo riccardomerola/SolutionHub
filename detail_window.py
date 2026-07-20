@@ -13,9 +13,13 @@ mode = ctk.get_appearance_mode()
 class DetailWindow(ctk.CTkToplevel):
     def __init__(self, master, data):
         super().__init__(master)
+
+        self.master = master                    # riferimento a RightPanel()
+        self.app = self.master.app              # riferimento a App()
+        self.left_panel = self.app.left_panel   # riferimneto a LeftPanel()
+
         self.selected_row_data = self.master.selected_row_data
         self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
-        self.master = master
 
         self.grab_set()
         self.title(f"Dettaglio problema # {self.id}")
@@ -78,7 +82,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_description_detail = ctk.CTkTextbox(
             master=self.bottom_frame,
             font=("Roboto", 15),
-            fg_color=self.master.theme["BUTTON_FG_COLOR"]
+            fg_color=self.app.theme["BUTTON_FG_COLOR"]
         )
         self.text_win_description_detail.grid(row=2, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_description_detail.insert("0.0", self.description)
@@ -94,7 +98,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.text_win_solution_detail = ctk.CTkTextbox(
             master=self.bottom_frame,
             font=("Roboto", 15),
-            fg_color=self.master.theme["BUTTON_FG_COLOR"]
+            fg_color=self.app.theme["BUTTON_FG_COLOR"]
         )
         self.text_win_solution_detail.grid(row=4, column=0, columnspan=3, padx=0, pady=(0, 10), sticky="nsew")
         self.text_win_solution_detail.insert("0.0", self.solution)
@@ -161,8 +165,8 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per applicare il tema alla finestra di dettaglio
     def apply_theme(self):
-        self.text_win_description_detail.configure(fg_color=self.master.theme["BUTTON_FG_COLOR"])
-        self.text_win_solution_detail.configure(fg_color=self.master.theme["BUTTON_FG_COLOR"])
+        self.text_win_description_detail.configure(fg_color=self.app.theme["BUTTON_FG_COLOR"])
+        self.text_win_solution_detail.configure(fg_color=self.app.theme["BUTTON_FG_COLOR"])
 
 
     # Funzione per visualizzare il documento allegato
@@ -170,12 +174,12 @@ class DetailWindow(ctk.CTkToplevel):
         try:
             if self.root != None:
                 log("INFO", f"USER={self.user} Aperto documento allegato al record ID [{self.id}]")
-                self.master.debug_message(f"Aperto documento allegato al record ID [{self.id}]")
+                self.app.debug_message(f"Aperto documento allegato al record ID [{self.id}]")
                 os.startfile(self.root)
         except FileNotFoundError as err:
             print(f"File non trovato!\n[Error]: {err}")
             log("WARNING", f"USER={self.user} Documento allegato al record ID [{self.id}] non trovato")
-            self.master.debug_message(f"USER={self.user} Documento allegato al record ID [{self.id}] non trovato")
+            self.app.debug_message(f"USER={self.user} Documento allegato al record ID [{self.id}] non trovato")
             msg = CTkMessagebox(
                 title="File non trovato!",
                 message="File non trovato!\nPotrebbe essere stato rinominato o eliminato dalla cartella",
@@ -190,7 +194,7 @@ class DetailWindow(ctk.CTkToplevel):
                 self.document = "No"
                 self.root = None
                 query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
-                self.master.load_data()
+                self.app.load_data()
                 return
 
 
@@ -218,24 +222,31 @@ class DetailWindow(ctk.CTkToplevel):
             return
 
         log("INFO", f"USER={self.user} Apertura modifica del record ID [{self.id}]")
-        self.master.button_save.grid(columnspan=1)
-        self.master.button_cancel_editing.grid(column=1, row=8, padx=10, pady=10, sticky="ew")
+        self.left_panel.save_button.grid(columnspan=1)
+        self.left_panel.cancel_editing_button.grid(column=1, row=8, padx=10, pady=10, sticky="ew")
 
-        self.master.record_edit_id = self.id
+        self.left_panel.editing_record["ID"] = self.id
+        query.set_editing(self.id)
 
-        self.master.editing_actual_record = query.set_editing(self.id)
-        self.master.show_edit_warning(self.id)
+        self.left_panel.editing_record = {
+            "ID":int(self.id),
+            "Settore":str(self.sector),
+            "Elemento":str(self.element),
+            "Problema":str(self.description),
+            "Soluzione":str(self.solution),
+            "Documentazione":str(self.document),
+            "Percorso":str(self.root),
+            "Editazione":1,
+            "User":str(self.user),
+            "Data":str(self.data)
+        }
 
-        self.master.record_edit_document = self.document
-        self.master.record_edit_root = self.root
-        sector = str(self.sector)
-        self.master.combobox_family.set(sector)
-        element = self.element
-        self.master.entry_component.insert("0", element)
+        self.left_panel.sector_combobox.set(self.sector)
+        self.left_panel.object_entry.insert("0", self.element)
         description = self.text_win_description_detail.get("1.0", "end-1c")
-        self.master.text_description.insert("0.0", description)
+        self.left_panel.description_text.insert("0.0", description)
         solution = self.text_win_solution_detail.get("1.0", "end-1c")
-        self.master.text_solution.insert("0.0", solution)
+        self.left_panel.solution_text.insert("0.0", solution)
         self.destroy()
 
 
@@ -248,7 +259,7 @@ class DetailWindow(ctk.CTkToplevel):
         if self.selected_row_data[0] == ' ':
             return
 
-        self.master.debug_message(f"USER={self.user} Apertura finestra di eliminazione record")
+        self.app.debug_message(f"USER={self.user} Apertura finestra di eliminazione record")
         CancelConfirm(self, self.master.selected_row_data)
 
 

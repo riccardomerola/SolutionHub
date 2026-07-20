@@ -127,7 +127,7 @@ class RightPanel(ctk.CTkFrame):
             master=self.app.right_frame,
             text="Apri dettaglio del record selezionato ℹ️",
             font=("Roboto", 15),
-            command=None#self.handle_double_click
+            command=self.handle_double_click
         )
         self.open_detail.grid(column=0, row=2, columnspan=2, padx=10, pady=10, sticky="ew")
 
@@ -202,6 +202,7 @@ class RightPanel(ctk.CTkFrame):
                  row['Problema'],
                  row['Soluzione'],
                  row['Documentazione'],
+                 row['Percorso'],
                  row['Editazione'],
                  row['User'],
                  row['Data']]

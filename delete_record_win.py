@@ -107,5 +107,5 @@ class CancelConfirm(ctk.CTkToplevel):
 
     # Fimzopme per annullare la cancellazione (necessaria per messaggi di debug)
     def cancel_deletion(self):
-        self.master.master.debug_message(f'Cancellazione del record ID[{self.id}] annullata')
+        self.master.master.app.debug_message(f'Cancellazione del record ID[{self.id}] annullata')
         self.destroy()

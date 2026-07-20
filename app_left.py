@@ -121,10 +121,22 @@ class LeftPanel(ctk.CTkFrame):
             font=("Roboto", 15),
             command=self.cancel_editing
         )
-        self.editing_record = None  # flag per messaggio di record in editazione
-        self.wanrning_edit_label = ctk.CTkLabel(
+        # Dizionario per tracciamento record in editazione
+        self.editing_record = {
+            "ID":None,
+            "Settore":None,
+            "Elemento":None,
+            "Problema":None,
+            "Soluzione":None,
+            "Documentazione":None,
+            "Percorso":None,
+            "Editazione":0,
+            "User":None,
+            "Data":None
+        }
+        self.warning_edit_label = ctk.CTkLabel(
             master=self.app.left_frame,
-            text=f"ATTENZIONE!\nRecord n°[{self.editing_record} in modifica da {self.app.user}]",
+            text=f"ATTENZIONE!\nRecord n°[{self.editing_record["ID"]} in modifica da {self.app.user}]",
             text_color="red"
         )
         self.exit_button = ctk.CTkButton(
@@ -171,10 +183,10 @@ class LeftPanel(ctk.CTkFrame):
 
     # Funzione per verificare i record in editazione nel db
     def show_edit_warning(self, record_id):
-        if self.editing_record is None:
+        if self.editing_record["ID"] is None:
             try:
                 record_id = query.get_id_editing_record()[0]['ID']
-                self.wanrning_edit_label.grid(column=0, columnspan=2, row=9, padx=10, pady=10, sticky="new")
+                self.warning_edit_label.grid(column=0, columnspan=2, row=9, padx=10, pady=10, sticky="new")
                 self.app.debug_message(f"Aperto record ID [{record_id}] in modifica")
             except IndexError as indexerror:
                 print(f"Nessun record in modifica - IndexError: {indexerror}")
@@ -188,15 +200,26 @@ class LeftPanel(ctk.CTkFrame):
 
     # Funzione per annullare l'editing in corso
     def cancel_editing(self):
-        log("INFO", f"USER={self.app.user} Chiusura modifica del rercod ID [{self.editing_record}]")
-        query.close_editing(self.editing_record)    # settaggio a 0 del valore di editazione
+        log("INFO", f"USER={self.app.user} Chiusura modifica del rercod ID [{self.editing_record["ID"]}]")
+        query.close_editing(self.editing_record["ID"])    # settaggio a 0 del valore di editazione
 
         # rimozione del label di avviso e del pulsante "Annulla"
-        self.wanrning_edit_label.grid_remove()
+        self.warning_edit_label.grid_remove()
         self.cancel_editing_button.grid_remove()
         self.save_button.grid(columnspan=2)
 
-        self.editing_record = None      # impostazione a None del flag
+        self.editing_record = {
+            "ID":None,
+            "Settore":None,
+            "Elemento":None,
+            "Problema":None,
+            "Soluzione":None,
+            "Documentazione":None,
+            "Percorso":None,
+            "Editazione":0,
+            "User":None,
+            "Data":None
+        }
         self.clear_fields()             # pulizia dei campi di inserimento
 
 
@@ -247,7 +270,7 @@ class LeftPanel(ctk.CTkFrame):
             )
 
             log("WARNING", f"USER={self.app.user} Terminare la modifica prima di chiudere l'applicazione")
-            self.debug_message("Terminare la modifica del record in corso prima di chiudere l'applicazione")
+            self.app.debug_message("Terminare la modifica del record in corso prima di chiudere l'applicazione")
 
             if msg.get() == "Salva ed esci":
                 log("INFO", f"USER={self.app.user} Modifica salvata e chiusura dell'applicazione")
