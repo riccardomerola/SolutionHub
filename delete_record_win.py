@@ -63,6 +63,9 @@ class CancelConfirm(ctk.CTkToplevel):
         self.after(10, self.grab_set)
         self.after(10, self.focus_force)
 
+        # ============================ FINE INIZIALIZZAZIONE ============================
+
+
     # Funzione per centrare la finestra nello schermo
     def center_cancell_win(self, width, height):
         self.update_idletasks()
@@ -73,6 +76,7 @@ class CancelConfirm(ctk.CTkToplevel):
         x = int(((screen_width / 2) - (width / 2)) * scale)
         y = int(((screen_height / 2) - (height / 2)) * scale)
         self.geometry(f"{width}x{height}+{x}+{y}")
+
 
     # Funzione per eliminare il record dal database
     def delete_record(self):
@@ -87,6 +91,7 @@ class CancelConfirm(ctk.CTkToplevel):
         self.app.debug_message(f'Record ID[{self.id}] e relativi documenti allegati eliminati')
         self.master.destroy()
         self.destroy()
+
 
     # Funzione per eliminare il documento allegato
     def delete_document(self, document):
@@ -104,9 +109,9 @@ class CancelConfirm(ctk.CTkToplevel):
             option_1="Ok",
             justify="center"
         )
-        print("Documento non trovato")
 
-    # Fimzopme per annullare la cancellazione (necessaria per messaggi di debug)
+
+    # Funzione per annullare la cancellazione (necessaria per messaggi di debug)
     def cancel_deletion(self):
         self.master.app.debug_message(f'Cancellazione del record ID[{self.id}] annullata')
         self.destroy()

@@ -19,7 +19,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.left_panel = self.app.left_panel   # riferimneto a LeftPanel()
 
         self.selected_row_data = self.master.selected_row_data
-        self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
+        self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
 
         self.grab_set()
         self.title(f"Dettaglio problema # {self.id}")
@@ -48,7 +48,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.label_family_description.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
         self.label_component_description = ctk.CTkLabel(
             master=self.upper_frame,
-            text=f"Oggetto: {self.element}",
+            text=f"Oggetto: {self.object}",
             font=("Roboto", 18, "bold"),
             wraplength=600
         )
@@ -162,6 +162,8 @@ class DetailWindow(ctk.CTkToplevel):
         self.apply_theme()          # applica il tema alla finestra di dettaglio
         self.after(100, self.lift)  # portar la finestra in primo piano dopo 100ms
 
+        # ============================ FINE INIZIALIZZAZIONE ============================
+
 
     # Funzione per applicare il tema alla finestra di dettaglio
     def apply_theme(self):
@@ -193,14 +195,14 @@ class DetailWindow(ctk.CTkToplevel):
                 print("File non trovato - Modifica document=No")
                 self.document = "No"
                 self.root = None
-                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                query.edit_record(self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 self.app.load_data()
                 return
 
 
     # Funzione per aggiungere un documento
     def add_document(self):
-        current_data = (self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+        current_data = (self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
         if self.document == "Si":
             ReplaceDocumentWindow(self, current_data)
         else:
@@ -231,7 +233,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.left_panel.editing_record = {
             "ID":int(self.id),
             "Settore":str(self.sector),
-            "Elemento":str(self.element),
+            "Oggetto":str(self.object),
             "Problema":str(self.description),
             "Soluzione":str(self.solution),
             "Documentazione":str(self.document),
@@ -242,7 +244,7 @@ class DetailWindow(ctk.CTkToplevel):
         }
 
         self.left_panel.sector_combobox.set(self.sector)
-        self.left_panel.object_entry.insert("0", self.element)
+        self.left_panel.object_entry.insert("0", self.object)
         description = self.text_win_description_detail.get("1.0", "end-1c")
         self.left_panel.description_text.insert("0.0", description)
         solution = self.text_win_solution_detail.get("1.0", "end-1c")

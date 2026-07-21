@@ -23,7 +23,7 @@ def create_table():
     CREATE TABLE IF NOT EXISTS breton_solutionhub(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Settore TEXT NOT NULL,
-    Elemento TEXT NOT NULL,
+    Oggetto TEXT NOT NULL,
     Problema TEXT NOT NULL,
     Soluzione TEXT NOT NULL,
     Documentazione TEXT,
@@ -34,7 +34,7 @@ def create_table():
     """
     cursor.execute(query)
 
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_elemento ON breton_solutionhub(Elemento COLLATE NOCASE);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_oggetto ON breton_solutionhub(Oggetto COLLATE NOCASE);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_problema ON breton_solutionhub(Problema COLLATE NOCASE);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_soluzione ON breton_solutionhub(Soluzione COLLATE NOCASE);")
 

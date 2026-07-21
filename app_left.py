@@ -127,7 +127,7 @@ class LeftPanel(ctk.CTkFrame):
         self.editing_record = {
             "ID":None,
             "Settore":None,
-            "Elemento":None,
+            "Oggetto":None,
             "Problema":None,
             "Soluzione":None,
             "Documentazione":None,
@@ -218,7 +218,7 @@ class LeftPanel(ctk.CTkFrame):
         self.editing_record = {
             "ID":None,
             "Settore":None,
-            "Elemento":None,
+            "Oggetto":None,
             "Problema":None,
             "Soluzione":None,
             "Documentazione":None,

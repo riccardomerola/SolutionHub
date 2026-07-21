@@ -11,10 +11,7 @@ if sys.platform.startswith("win"):
             pass
 
 # Importazione librerie e moduli necessari
-from tkinter import filedialog, ttk
-from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
-from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 import shutil
 from logger import log
@@ -22,9 +19,7 @@ import db
 import query
 import os
 from datetime import datetime
-from detail_window import DetailWindow
 from drop_menu import MenuBar
-from expand_text import LargeTextEditor
 from app_left import LeftPanel
 from app_right import RightPanel
 from theme import THEMES

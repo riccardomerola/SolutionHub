@@ -6,7 +6,6 @@ import os
 import win32com.client as win32
 from theme import THEMES
 
-from theme import THEMES
 
 # Classe della barra di menu
 class MenuBar():
@@ -16,8 +15,10 @@ class MenuBar():
         self.master = master
         self.debug_console_visible = False
 
+
     def change_database(self):
         print("Cambio database")
+
 
     # Cambio del tema dell'app
     def view_theme_option(self):
@@ -55,6 +56,7 @@ class MenuBar():
         )
         button_light_theme.pack(padx=20, pady=20)
 
+
     def change_theme(self):
         new_theme = self.radio_var.get()
         ctk.set_appearance_mode(new_theme)
@@ -68,6 +70,7 @@ class MenuBar():
 
         log("INFO", f"Tema dell'applicazione cambiato in {new_theme}")
         print(f"Tema aggiornato a {new_theme} dall'interno della classe secondaria")
+
 
     # Apertura del file .pdf con le istruzioni di utilizzo
     def open_instruction(self):
@@ -90,6 +93,7 @@ class MenuBar():
             if msg.get() == "Ok":
                 msg.destroy()
 
+
     # Apertura (e sotto chiusura) del frame di debug
     def open_debug(self):
         print("Apertura debug")
@@ -98,11 +102,13 @@ class MenuBar():
             self.master.frame_textbox.pack(padx=10, pady=(0, 10), fill="x", side="bottom")
             self.debug_console_visible = True
 
+
     def close_debug(self):
         print("Chiudi debug")
         log("INFO", "Chiusura finestra di debug")
         self.master.frame_textbox.pack_forget()
         self.debug_console_visible = False
+
 
     # Apertura finestra in cui admin può resettare record in editazione in caso di chiusura forzata
     def reset_edit(self):
@@ -143,6 +149,7 @@ class MenuBar():
         confirm_button = ctk.CTkButton(frame_reset_edit, text="Conferma", font=("Roboto", 15), command=self.check_login)
         confirm_button.grid(row=5, column=0, padx=10, pady=10, sticky="nsew")
 
+
     # Funzione per verificare username e pwd per reset record in editazione
     def check_login(self):
         username = self.user_entry.get()
@@ -180,6 +187,7 @@ class MenuBar():
                 self.master.debug_message("Reset dei record bloccati in modifica")
         else:
             self.message_label.configure(text="Username o Password errati!",  text_color="red",font=("Roboto", 15, "bold"))
+
 
     # Apertura label con informazioni versione e autore
     def open_info(self):
@@ -221,6 +229,7 @@ class MenuBar():
         button_ok = ctk.CTkButton(frame_info, text="Ok", font=("Roboto", 13), command=self.info_window.destroy)
         button_ok.grid(row=3, column=1, padx=10, pady=10, sticky="nse")
 
+
     # Funzione per segnalazione di problemi o bug
     def signal_problem(self):
         try:
@@ -239,6 +248,7 @@ class MenuBar():
             log("ERROR", f"Apertura Outlook fallita: {err}")
             print(f"Impossibile aprire Outlook. Assicurarsi che sia installato: {err}")
             self.master.debug_message(f"Impossibile aprire Outlook. Assicurarsi che sia installato: {err}")
+
 
     # Funzione per centrare la finestra di dettaglio all'apertura
     def center_win_detail(self, window, width, height):

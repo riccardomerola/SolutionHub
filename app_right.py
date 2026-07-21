@@ -2,11 +2,6 @@ from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 from tkinter import ttk
 import query
-import os
-from logger import log
-from datetime import datetime
-from expand_text import LargeTextEditor
-from CTkMessagebox import CTkMessagebox
 from detail_window import DetailWindow
 
 # Classe per la parte destra della finestra principale
@@ -198,7 +193,7 @@ class RightPanel(ctk.CTkFrame):
             formatted_data.append(
                 [row['ID'],
                  row['Settore'],
-                 row['Elemento'],
+                 row['Oggetto'],
                  row['Problema'],
                  row['Soluzione'],
                  row['Documentazione'],
