@@ -16,7 +16,7 @@ import customtkinter as ctk
 import shutil
 from logger import log
 import db
-import query
+import repository
 import os
 from datetime import datetime
 from drop_menu import MenuBar
@@ -183,7 +183,7 @@ class App(ctk.CTk):
 
 # ======================== AVVIAMENTO DEL PROGRAMMA ========================
 if __name__ == "__main__":
-    db_integrity = query.check_db_integrity()
+    db_integrity = repository.check_db_integrity()
 
     if db_integrity == "ok":
         log("INFO", "Integrità database: OK")

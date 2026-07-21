@@ -2,7 +2,7 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from tkinter import filedialog
 from logger import log
-import query
+import repository
 import shutil
 import os
 
@@ -71,7 +71,7 @@ class NewDocumentWindow(ctk.CTkToplevel):
     def add_new_document(self):
         self.master.destroy()
         self.destroy()
-        data = query.get_dettaglio(self.id)
+        data = repository.get_dettaglio(self.id)
         selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
 
         file = os.path.basename(selected_file)
@@ -84,7 +84,7 @@ class NewDocumentWindow(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 self.document = "Si"
                 self.root = destination_path
-                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                repository.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID {self.id}')
                 self.app.debug_message(f'Aggiunto un nuovo documento allegato al record ID [{self.id}]')
                 self.master.master.load_data()
@@ -108,7 +108,7 @@ class NewDocumentWindow(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 self.document = "Si"
                 self.root = destination_path
-                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                repository.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
                 self.app.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()

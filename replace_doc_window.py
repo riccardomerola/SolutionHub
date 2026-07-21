@@ -2,7 +2,7 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from tkinter import filedialog
 from logger import log
-import query
+import repository
 import os
 import shutil
 
@@ -73,7 +73,7 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
     def change_document(self):
         self.master.destroy()
         self.destroy()
-        data = query.get_dettaglio(self.id)
+        data = repository.get_dettaglio(self.id)
         print(data)
 
         msg_warning = CTkMessagebox(
@@ -102,7 +102,7 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
                 print("Nuovo file")
                 shutil.copy(selected_file, destination_path)
                 self.root = destination_path
-                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                repository.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID [{self.id}]')
                 self.app.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
                 self.master.master.load_data()
@@ -127,7 +127,7 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
                 shutil.copy(selected_file, destination_path)
                 print("File sovrascritto")
                 self.root = destination_path
-                query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                repository.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
                 self.app.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()

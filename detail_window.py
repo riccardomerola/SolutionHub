@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from logger import log
-import query
+import repository
 import os
 from replace_doc_window import ReplaceDocumentWindow
 from new_doc_window import NewDocumentWindow
@@ -195,7 +195,7 @@ class DetailWindow(ctk.CTkToplevel):
                 print("File non trovato - Modifica document=No")
                 self.document = "No"
                 self.root = None
-                query.edit_record(self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                repository.edit_record(self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 self.app.load_data()
                 return
 
@@ -211,7 +211,7 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per editare il record
     def edit_record(self):
-        number_editing_record = query.get_id_editing_record()
+        number_editing_record = repository.get_id_editing_record()
         if len(number_editing_record) >= 1:
             msg_edit_not_possible = CTkMessagebox(
                 title="Modifica non possibile",
@@ -228,7 +228,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.left_panel.cancel_editing_button.grid(column=1, row=8, padx=10, pady=10, sticky="ew")
 
         self.left_panel.editing_record["ID"] = self.id
-        query.set_editing(self.id)
+        repository.set_editing(self.id)
 
         self.left_panel.editing_record = {
             "ID":int(self.id),

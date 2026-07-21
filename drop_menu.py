@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from logger import log
-import query
+import repository
 import os
 import win32com.client as win32
 from theme import THEMES
@@ -170,7 +170,7 @@ class MenuBar():
             if msg.get() == "No" or msg.get() == None:
                 self.reset_edit_window.destroy()
             else:
-                query.reset_editazione()
+                repository.reset_editazione()
                 confirm_msg = CTkMessagebox(
                     title="Reset confermato",
                     message="Reset dei record in modifica avvenuto con successo",

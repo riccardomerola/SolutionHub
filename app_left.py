@@ -1,6 +1,6 @@
 from CTkToolTip import CTkToolTip
 import customtkinter as ctk
-import query
+import repository
 import os
 import shutil
 from logger import log
@@ -152,7 +152,7 @@ class LeftPanel(ctk.CTkFrame):
         self.exit_button.grid(column=0, row=10, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # verifica se ci sono record in editazione per warning all'apertura app
-        is_editing = query.get_id_editing_record()
+        is_editing = repository.get_id_editing_record()
         if len(is_editing) > 0:
             self.editing_record['ID'] = is_editing[0]['ID']
             self.show_edit_warning(self.editing_record['ID'])
@@ -208,7 +208,7 @@ class LeftPanel(ctk.CTkFrame):
     # Funzione per annullare l'editing in corso
     def cancel_editing(self):
         log("INFO", f"USER={self.app.user} Chiusura modifica del rercod ID [{self.editing_record["ID"]}]")
-        query.close_editing(self.editing_record["ID"])    # settaggio a 0 del valore di editazione
+        repository.close_editing(self.editing_record["ID"])    # settaggio a 0 del valore di editazione
 
         # rimozione del label di avviso e del pulsante "Annulla"
         self.warning_edit_label.grid_remove()
@@ -244,12 +244,12 @@ class LeftPanel(ctk.CTkFrame):
 
         if self.editing_record['ID'] is not None:
             self.new_id = self.editing_record['ID']
-            query.edit_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
+            repository.edit_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
             self.app.right_panel.load_data()
             self.cancel_editing()
             return
         else:
-            query.insert_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
+            repository.insert_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
             self.app.right_panel.load_data()
             self.clear_fields()
             return
@@ -275,7 +275,7 @@ class LeftPanel(ctk.CTkFrame):
             self.insert_record(document, root)
             return
 
-        raw_row = query.get_max_id()
+        raw_row = repository.get_max_id()
         self.max_id = raw_row[0]['ID'] if raw_row else 0
         self.new_id = self.max_id + 1
 
@@ -345,7 +345,7 @@ class LeftPanel(ctk.CTkFrame):
                 self.create_record()
                 self.app.destroy()
             elif msg.get() == "Esci senza salvare":
-                query.close_editing(self.editing_record['ID'])
+                repository.close_editing(self.editing_record['ID'])
                 log("INFO", f"USER={self.app.user} Modifica annullata e chiusura dell'applicazione")
                 self.app.destroy()
             return
