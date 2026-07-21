@@ -12,7 +12,8 @@ class NewDocumentWindow(ctk.CTkToplevel):
         super().__init__(master)
 
         self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
-        self.master = master
+        self.master = master                # riferimento a DetailWindow()
+        self.app = self.master.master.app   # riferimento a App()
 
         self.grab_set()
         self.title("Documento non esistente")
@@ -68,7 +69,6 @@ class NewDocumentWindow(ctk.CTkToplevel):
 
     # Funzione per aggiungere un documento ad un record creato senza
     def add_new_document(self):
-        from main import documents_root
         self.master.destroy()
         self.destroy()
         data = query.get_dettaglio(self.id)
@@ -76,7 +76,7 @@ class NewDocumentWindow(ctk.CTkToplevel):
 
         file = os.path.basename(selected_file)
         filename = f"{self.id}_{file}"
-        destination_path = os.path.join(documents_root, filename)
+        destination_path = os.path.join(self.app.documents_root, filename)
 
         try:
             if not os.path.isfile(destination_path):
@@ -86,7 +86,7 @@ class NewDocumentWindow(ctk.CTkToplevel):
                 self.root = destination_path
                 query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID {self.id}')
-                self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID [{self.id}]')
+                self.app.debug_message(f'Aggiunto un nuovo documento allegato al record ID [{self.id}]')
                 self.master.master.load_data()
                 return
 
@@ -110,7 +110,7 @@ class NewDocumentWindow(ctk.CTkToplevel):
                 self.root = destination_path
                 query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
-                self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
+                self.app.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()
                 return
         except FileNotFoundError as err:

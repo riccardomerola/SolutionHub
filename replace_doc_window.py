@@ -14,6 +14,7 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
 
         self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
+        self.app = self.master.master.app
 
         self.grab_set()
         self.title("Documento già esistente")
@@ -70,7 +71,6 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
 
     # Funzione pre sostituire il documento già presente
     def change_document(self):
-        from main import documents_root
         self.master.destroy()
         self.destroy()
         data = query.get_dettaglio(self.id)
@@ -89,14 +89,14 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
 
         if msg_warning.get() == "No":
             print("Non voglio cambiare il file")
-            self.master.master.debug_message(f'Sostituzione del documento allegato al record ID[{self.id}] annullata')
+            self.app.debug_message(f'Sostituzione del documento allegato al record ID[{self.id}] annullata')
             self.destroy()
             return
 
         selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Turi i file", "*.*")])
         file = os.path.basename(selected_file)
         filename = f"{self.id}_{file}"
-        destination_path = os.path.join(documents_root, filename)
+        destination_path = os.path.join(self.app.documents_root, filename)
         try:
             if not os.path.isfile(destination_path):
                 print("Nuovo file")
@@ -104,7 +104,7 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
                 self.root = destination_path
                 query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Aggiunto nuovo documento "{filename}" allegato al record ID [{self.id}]')
-                self.master.master.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
+                self.app.debug_message(f'Aggiunto un nuovo documento allegato al record ID[{self.id}]')
                 self.master.master.load_data()
                 return
 
@@ -121,7 +121,7 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
 
             if msg_exist.get() == "No" or msg_exist.get() == None:
                 print("Non voglio sovrascrivere")
-                self.master.master.debug_message(f'Documento allegato al record ID[{self.id}] non inserito')
+                self.app.debug_message(f'Documento allegato al record ID[{self.id}] non inserito')
                 self.destroy()
             else:
                 shutil.copy(selected_file, destination_path)
@@ -129,7 +129,7 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
                 self.root = destination_path
                 query.edit_record(self.id, self.sector, self.element, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 log("INFO", f'USER={self.user} Sovrascritto documento allegato al record ID [{self.id}]. Nuovo documento: "{filename}"')
-                self.master.master.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
+                self.app.debug_message(f'Aggiunto un documento allegato al record ID[{self.id}] (sovrascritto vecchio documento)')
                 self.master.master.load_data()
                 return
 
