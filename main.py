@@ -17,6 +17,7 @@ import shutil
 from logger import log
 import db
 import repository
+from service import Service
 import os
 from datetime import datetime
 from drop_menu import MenuBar
@@ -183,32 +184,12 @@ class App(ctk.CTk):
 
 # ======================== AVVIAMENTO DEL PROGRAMMA ========================
 if __name__ == "__main__":
-    db_integrity = repository.check_db_integrity()
+    service = Service()
+    db_integrity = service.initialize_database()
 
-    if db_integrity == "ok":
-        log("INFO", "Integrità database: OK")
-        db_path = r"Database\breton_solutionhub.db"
-        # creazione cartella di backup
-        bck_folder = r"Database\backup"
-        if not os.path.exists(bck_folder):
-            os.makedirs(bck_folder)
-
-        # creazione file di backup
-        bck_name = f"backup_{datetime.now().strftime('%Y_%m_%d')}.db"
-        bck_path = os.path.join(bck_folder, bck_name)
-
-        if not os.path.exists(bck_path):
-            try:
-                shutil.copy2(db_path, bck_path)
-                log("INFO", f"Creato backup del database '{bck_name}'")
-            except Exception as err:
-                log("ERROR", str(err))
-
-        db.create_table()
+    if db_integrity:
         app = App()
         app.mainloop()
     else:
-        log("CRITICAL", f"Errore di integrità del database - ERR: {db_integrity}")
         pass
-
     pass
