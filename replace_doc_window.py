@@ -73,8 +73,6 @@ class ReplaceDocumentWindow(ctk.CTkToplevel):
     def change_document(self):
         self.master.destroy()
         self.destroy()
-        data = repository.get_dettaglio(self.id)
-        print(data)
 
         msg_warning = CTkMessagebox(
             title="ATTENZIONE",

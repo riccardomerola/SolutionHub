@@ -71,7 +71,6 @@ class NewDocumentWindow(ctk.CTkToplevel):
     def add_new_document(self):
         self.master.destroy()
         self.destroy()
-        data = repository.get_dettaglio(self.id)
         selected_file = filedialog.askopenfilename(title="Seleziona un file", filetypes=[("Tutti i file", "*.*")])
 
         file = os.path.basename(selected_file)

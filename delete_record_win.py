@@ -3,6 +3,7 @@ from CTkMessagebox import CTkMessagebox
 import os
 from logger import log
 import repository
+from service import Service
 
 # Classe per la finestra di conferma cancellazione record
 class CancelConfirm(ctk.CTkToplevel):
@@ -12,6 +13,7 @@ class CancelConfirm(ctk.CTkToplevel):
         self.id, self.sector, self.element, self.problem, self.solution, self.document, self.root, self.edit, self.user, self.data = data
         self.master = master
         self.app = self.master.app
+        self.service = Service()
 
         self.grab_set()
         self.title("Conferma cancellazione")
@@ -80,7 +82,7 @@ class CancelConfirm(ctk.CTkToplevel):
 
     # Funzione per eliminare il record dal database
     def delete_record(self):
-        row = repository.get_dettaglio(self.id)
+        row = self.service.get_row(self.id)
         document = row[0]["Percorso"]
         if document != None:
             self.delete_document(document)

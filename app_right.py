@@ -2,6 +2,7 @@ from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 from tkinter import ttk
 import repository
+from service import Service
 from detail_window import DetailWindow
 
 # Classe per la parte destra della finestra principale
@@ -9,6 +10,7 @@ class RightPanel(ctk.CTkFrame):
     def __init__(self, master, app, **kwargs):
         super().__init__(master)
         self.app = app
+        self.service = Service()
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
@@ -227,7 +229,7 @@ class RightPanel(ctk.CTkFrame):
         elif active_filter:
             raw_rows = repository.search_only_filter(current_filter)
         else:
-            raw_rows = repository.get_database()
+            raw_rows = self.service.get_database()
 
         self.formatted_data = self.format_data(raw_rows)
 

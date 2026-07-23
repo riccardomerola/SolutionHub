@@ -9,6 +9,7 @@ class Service():
     def __init__(self):
         pass
 
+    # Funzione per inizializzare db e creare il backup
     def initialize_database(self):
         db_integrity = rep.check_db_integrity()
         if db_integrity == "ok":
@@ -37,3 +38,15 @@ class Service():
         else:
             log.log("CRITICAL", f"Errore di integrità del database - ERR: {db_integrity}")
             return False
+
+
+    # Funzione per estrarre tutte le righe del database
+    def get_database(self):
+        raw_rows = rep.get_database()
+        return raw_rows
+
+
+    # Funzione per estrarre solo una riga del database
+    def get_row(self, id):
+        row = rep.get_dettaglio(id)
+        return row
