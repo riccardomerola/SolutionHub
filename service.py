@@ -82,3 +82,8 @@ class Service():
         max_id = raw[0]['ID'] if raw else 0
         new_id = max_id + 1
         return new_id
+
+
+    # Funzione che inserisce la nuova riga nel db
+    def insert_row(self, *args):
+        rep.insert_record(*args)
