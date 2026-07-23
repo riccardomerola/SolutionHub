@@ -1,6 +1,7 @@
 from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 import repository
+from service import Service
 import os
 import shutil
 from logger import log
@@ -15,6 +16,7 @@ class LeftPanel(ctk.CTkFrame):
     def __init__(self, master, app):
         super().__init__(master)
         self.app = app
+        self.service = Service()
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
@@ -275,9 +277,7 @@ class LeftPanel(ctk.CTkFrame):
             self.insert_record(document, root)
             return
 
-        raw_row = repository.get_max_id()
-        self.max_id = raw_row[0]['ID'] if raw_row else 0
-        self.new_id = self.max_id + 1
+        self.new_id = self.service.get_new_id()
 
         msg = CTkMessagebox(
             title="Allega file",

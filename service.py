@@ -74,3 +74,11 @@ class Service():
     def delete_record(self, id):
         delete = rep.delete_record(id)
         return delete
+
+
+    # Funzione per calcolare l'ID del prossimo record
+    def get_new_id(self):
+        raw = rep.get_max_id()
+        max_id = raw[0]['ID'] if raw else 0
+        new_id = max_id + 1
+        return new_id
