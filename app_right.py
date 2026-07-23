@@ -1,7 +1,6 @@
 from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 from tkinter import ttk
-import repository
 from service import Service
 from detail_window import DetailWindow
 
@@ -223,11 +222,11 @@ class RightPanel(ctk.CTkFrame):
 
         # Selezione della query di ricerca in base al testo scritto e al filtro inserito
         if clean_text_exist and active_filter:
-            raw_rows = repository.search_with_filter(clean_text, current_filter)
+            raw_rows = self.service.search_with_filter(clean_text, current_filter)
         elif clean_text_exist:
-            raw_rows = repository.search(clean_text)
+            raw_rows = self.service.search(clean_text)
         elif active_filter:
-            raw_rows = repository.search_only_filter(current_filter)
+            raw_rows = self.service.search_only_filter(current_filter)
         else:
             raw_rows = self.service.get_database()
 

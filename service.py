@@ -50,3 +50,21 @@ class Service():
     def get_row(self, id):
         row = rep.get_dettaglio(id)
         return row
+
+
+    # Funzione per la ricerca del solo testo
+    def search(self, text):
+        results = rep.search(text)
+        return results
+
+
+    # Funzione per la ricerca combinata di testo e filtro
+    def search_with_filter(self, text, filter):
+        result = rep.search_with_filter(text, filter)
+        return result
+
+
+    # Funzione per la ricerca con solo filtro
+    def search_only_filter(self, filter):
+        result = rep.search_only_filter(filter)
+        return result
