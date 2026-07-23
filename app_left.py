@@ -246,7 +246,7 @@ class LeftPanel(ctk.CTkFrame):
 
         if self.editing_record['ID'] is not None:
             self.new_id = self.editing_record['ID']
-            repository.edit_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
+            self.service.edit_record(self.new_id, sector, object, description, solution, document, root, edit, self.user, date)
             self.app.right_panel.load_data()
             self.cancel_editing()
             return

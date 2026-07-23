@@ -2,6 +2,7 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from logger import log
 import repository
+from service import Service
 import os
 from replace_doc_window import ReplaceDocumentWindow
 from new_doc_window import NewDocumentWindow
@@ -17,6 +18,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.master = master                    # riferimento a RightPanel()
         self.app = self.master.app              # riferimento a App()
         self.left_panel = self.app.left_panel   # riferimneto a LeftPanel()
+        self.service = Service()
 
         self.selected_row_data = self.master.selected_row_data
         self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
@@ -195,7 +197,7 @@ class DetailWindow(ctk.CTkToplevel):
                 print("File non trovato - Modifica document=No")
                 self.document = "No"
                 self.root = None
-                repository.edit_record(self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
+                self.service.edit_record(self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data)
                 self.app.load_data()
                 return
 

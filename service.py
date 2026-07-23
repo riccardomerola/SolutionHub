@@ -87,3 +87,8 @@ class Service():
     # Funzione che inserisce la nuova riga nel db
     def insert_row(self, *args):
         rep.insert_record(*args)
+
+
+    # Funzione per editare un record
+    def edit_record(self, *args):
+        rep.edit_record(*args)
