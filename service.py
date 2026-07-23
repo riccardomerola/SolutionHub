@@ -92,3 +92,13 @@ class Service():
     # Funzione per editare un record
     def edit_record(self, *args):
         rep.edit_record(*args)
+
+
+    # Funzione impostare nel db Editazione=1
+    def set_editing(self, id):
+        rep.set_editing(id)
+
+
+    # Funzione impostare nel db Editazione=0
+    def close_editing(self, id):
+        rep.close_editing(id)

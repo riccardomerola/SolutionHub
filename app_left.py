@@ -210,7 +210,7 @@ class LeftPanel(ctk.CTkFrame):
     # Funzione per annullare l'editing in corso
     def cancel_editing(self):
         log("INFO", f"USER={self.app.user} Chiusura modifica del rercod ID [{self.editing_record["ID"]}]")
-        repository.close_editing(self.editing_record["ID"])    # settaggio a 0 del valore di editazione
+        self.service.close_editing(self.editing_record["ID"])    # settaggio a 0 del valore di editazione
 
         # rimozione del label di avviso e del pulsante "Annulla"
         self.warning_edit_label.grid_remove()
@@ -345,7 +345,7 @@ class LeftPanel(ctk.CTkFrame):
                 self.create_record()
                 self.app.destroy()
             elif msg.get() == "Esci senza salvare":
-                repository.close_editing(self.editing_record['ID'])
+                self.service.close_editing(self.editing_record['ID'])
                 log("INFO", f"USER={self.app.user} Modifica annullata e chiusura dell'applicazione")
                 self.app.destroy()
             return

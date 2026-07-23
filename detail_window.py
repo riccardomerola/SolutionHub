@@ -230,7 +230,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.left_panel.cancel_editing_button.grid(column=1, row=8, padx=10, pady=10, sticky="ew")
 
         self.left_panel.editing_record["ID"] = self.id
-        repository.set_editing(self.id)
+        self.service.set_editing(self.id)
 
         self.left_panel.editing_record = {
             "ID":int(self.id),
