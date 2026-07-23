@@ -68,3 +68,9 @@ class Service():
     def search_only_filter(self, filter):
         result = rep.search_only_filter(filter)
         return result
+
+
+   # Funzione per eliminare un record dal database
+    def delete_record(self, id):
+        delete = rep.delete_record(id)
+        return delete

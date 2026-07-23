@@ -13,13 +13,9 @@ if sys.platform.startswith("win"):
 # Importazione librerie e moduli necessari
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 import customtkinter as ctk
-import shutil
 from logger import log
-import db
-import repository
 from service import Service
 import os
-from datetime import datetime
 from drop_menu import MenuBar
 from app_left import LeftPanel
 from app_right import RightPanel
