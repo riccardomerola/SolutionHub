@@ -102,3 +102,14 @@ class Service():
     # Funzione impostare nel db Editazione=0
     def close_editing(self, id):
         rep.close_editing(id)
+
+
+    # Funzione per estrarre l'id del record in editazione
+    def get_id_editing_record(self):
+        editing_record = rep.get_id_editing_record()
+        return editing_record
+
+
+    # Funzione per forzare Editazione=0 dove Editazione=1
+    def reset_editazione(self):
+        rep.reset_editazione()

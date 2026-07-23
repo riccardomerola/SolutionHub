@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from logger import log
-import repository
+from service import Service
 import os
 import win32com.client as win32
 from theme import THEMES
@@ -14,6 +14,7 @@ class MenuBar():
 
         self.master = master
         self.debug_console_visible = False
+        self.service = Service()
 
 
     def change_database(self):
@@ -170,7 +171,7 @@ class MenuBar():
             if msg.get() == "No" or msg.get() == None:
                 self.reset_edit_window.destroy()
             else:
-                repository.reset_editazione()
+                self.service.reset_editazione()
                 confirm_msg = CTkMessagebox(
                     title="Reset confermato",
                     message="Reset dei record in modifica avvenuto con successo",

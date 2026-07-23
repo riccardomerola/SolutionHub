@@ -1,7 +1,6 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from logger import log
-import repository
 from service import Service
 import os
 from replace_doc_window import ReplaceDocumentWindow
@@ -213,7 +212,7 @@ class DetailWindow(ctk.CTkToplevel):
 
     # Funzione per editare il record
     def edit_record(self):
-        number_editing_record = repository.get_id_editing_record()
+        number_editing_record = self.service.get_id_editing_record()
         if len(number_editing_record) >= 1:
             msg_edit_not_possible = CTkMessagebox(
                 title="Modifica non possibile",

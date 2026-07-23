@@ -2,7 +2,6 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from tkinter import filedialog
 from logger import log
-import repository
 from service import Service
 import shutil
 import os

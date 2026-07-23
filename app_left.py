@@ -1,6 +1,5 @@
 from CTkToolTip import CTkToolTip
 import customtkinter as ctk
-import repository
 from service import Service
 import os
 import shutil
@@ -154,7 +153,7 @@ class LeftPanel(ctk.CTkFrame):
         self.exit_button.grid(column=0, row=10, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # verifica se ci sono record in editazione per warning all'apertura app
-        is_editing = repository.get_id_editing_record()
+        is_editing = self.service.get_id_editing_record()
         if len(is_editing) > 0:
             self.editing_record['ID'] = is_editing[0]['ID']
             self.show_edit_warning(self.editing_record['ID'])

@@ -116,7 +116,6 @@ class App(ctk.CTk):
         self.right_panel = RightPanel(self.right_frame, self)
         self.right_panel.load_data()
 
-        print(self.left_panel.editing_record)
         # Funzione per chiudere la finestra di splash screen se presente
         try:
             import pyi_splash   # type: ignore
