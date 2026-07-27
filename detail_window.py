@@ -20,7 +20,8 @@ class DetailWindow(ctk.CTkToplevel):
         self.service = Service()
 
         self.selected_row_data = self.master.selected_row_data
-        self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.user, self.data = data
+        self.id, self.sector, self.object, self.description, self.solution, self.document, self.root, self.edit, self.record_user, self.data = data
+        self.user = os.getlogin()
 
         self.grab_set()
         self.title(f"Dettaglio problema # {self.id}")
@@ -56,7 +57,7 @@ class DetailWindow(ctk.CTkToplevel):
         self.label_component_description.grid(row=0, column=1, padx=10, pady=10, sticky="nw")
         self.user_label = ctk.CTkLabel(
             master=self.upper_frame,
-            text=f"Utente: {self.user}",
+            text=f"Utente: {self.record_user}",
             font=("Roboto", 14, "bold")
         )
         self.user_label.grid(row=0, column=2, padx=10, pady=10, sticky="ne")
